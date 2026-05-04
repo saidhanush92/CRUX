@@ -1,0 +1,14 @@
+# MODULE artifact — one logical module derived from the PRD.
+# Usage: copy to docs/sdlc/modules/MOD-<n>.yaml. One per module / package.
+# A module is the unit of ownership and parallel work; tasks reference a module.
+
+id: MOD-001
+name: core                       # short, kebab-case, matches the package directory if applicable
+responsibility: |                # required, single-sentence statement of what this module owns
+  Example: Gate state machine, trace-graph index, capability registry consumer.
+surface: headless                # ui | headless | none — does this module render anything?
+depends_on:                      # other MOD ids this module imports from (acyclic)
+  - MOD-002
+derived_from:                    # REQ ids this module exists to satisfy
+  - REQ-001
+  - REQ-004

@@ -1,0 +1,23 @@
+# GRILL artifact — one Q&A produced by the grill-interviewer subagent.
+# Usage: copy to docs/sdlc/grill/GRILL-<n>.yaml and fill. One file per question.
+# Required: id, gate, question, asked_by, answered_at
+# A grill is "answered" when EITHER `answer` OR `defer_to`+`default_assumption` is set.
+
+id: GRILL-001                    # required, unique, monotonic
+gate: 1                          # required, 1..8 — which gate produced this question
+question: |                      # required, the question posed to the human
+  Example: who is the primary user persona, and what failure mode hurts them most?
+answer: |                        # optional, the human's answer (omit if deferred)
+  Example: SDLC platform engineers; biggest pain is losing the "why" behind a decision.
+confidence: high                 # high | medium | low — how confident the answerer is
+source: user                     # user | default | deferred | inferred
+asked_by: grill-interviewer      # subagent or human id
+answered_at: 2026-05-05T12:00:00Z # ISO-8601 timestamp; null if deferred
+
+# Deferral fields — populate when the human cannot answer now.
+defer_to: null                   # gate id (e.g., 5) or artifact id where this resolves later
+defer_reason: null               # why deferral is acceptable
+default_assumption: null         # what we assume in the meantime; becomes binding if defer expires
+blast_radius: low                # low | medium | high — impact if default assumption is wrong
+
+supersedes: null                 # GRILL id this answer replaces, when an earlier answer changed

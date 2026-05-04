@@ -1,0 +1,21 @@
+# TASK artifact — one unit of work executed by /crux-task.
+# Usage: copy to docs/sdlc/tasks/<task-id>/TASK.yaml. Task dir also holds TEST_PLAN, REVIEW.
+# A task is the only legitimate vehicle for code changes after Gate 4.
+
+id: TASK-001
+title: Implement gate state machine in core
+module: MOD-001                  # required, MOD id this task belongs to
+satisfies:                       # required, REQ ids this task moves toward done
+  - REQ-001
+honors_adrs:                     # ADR ids whose constraints this task must respect
+  - ADR-001
+  - ADR-003
+touches_files:                   # glob list — coder may not write outside this surface
+  - packages/core/src/gate/**
+  - packages/core/test/gate/**
+risk: medium                     # low | medium | high — escalation thresholds key off this
+parallelizable_with:             # other TASK ids that can run concurrently with this one
+  - TASK-002
+depends_on:                      # TASK ids that must be merged before this one starts
+  - TASK-000
+estimated_cost_usd: 2.50         # rough LLM + CI cost; populated by planner, refined by metrics

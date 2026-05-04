@@ -1,0 +1,20 @@
+# REQ artifact — one product requirement, derived from grill answers.
+# Usage: copy to docs/sdlc/prd/REQ-<n>.yaml. One file per requirement.
+# Trace integrity: `derived_from` MUST list at least one GRILL id.
+
+id: REQ-001                      # required, unique
+text: |                          # required, the requirement statement (testable, scoped)
+  Example: every artifact must expose its upstream chain in <200ms via /crux-trace.
+derived_from:                    # required, list of GRILL ids that motivated this requirement
+  - GRILL-003
+  - GRILL-007
+acceptance_criteria:             # required, observable conditions for "done"
+  - Given an artifact id, the trace command returns the full upstream chain.
+  - Response time is under 200ms on a 1000-artifact corpus.
+health_signals:                  # optional, runtime signals that prove the REQ stays satisfied
+  - metric: trace_latency_p95_ms
+    source: telemetry            # telemetry | log | manual | ci
+    threshold: 200
+    breach_action: open_incident # open_incident | warn | rollback | none
+priority: must                   # must | should | could | wont
+gate: 2                          # gate that produced this REQ (typically 2 = PRD)

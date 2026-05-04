@@ -1,0 +1,22 @@
+# REVIEW artifact — verdict from the reviewer subagent (or design-reviewer for UI tasks).
+# Usage: copy to docs/sdlc/tasks/<task-id>/REVIEW-<cycle>.yaml. One per review cycle.
+# Reviewer identity MUST be different from the coder identity; this is enforced upstream.
+
+task: TASK-001                   # required, TASK id under review
+reviewer: reviewer               # subagent name, or human handle for HITL escalations
+verdict: request_changes         # approve | request_changes | escalate
+concerns:                        # list of issues; empty if verdict is `approve`
+  - severity: high               # critical | high | medium | low
+    location: packages/core/src/gate/machine.ts:42
+    finding: |
+      State transition swallows an unknown-event case silently. Should raise
+      and surface to the caller per ADR-005 error-handling contract.
+    suggests: |
+      Replace the default branch with `assertNever(event)` and let the type
+      system enforce exhaustiveness.
+  - severity: medium
+    location: packages/core/test/gate/transitions.test.ts
+    finding: missing coverage for the supersede transition path
+    suggests: add a parametrized case covering supersede across all source states
+cycle_number: 1                  # 1-indexed; escalation rule fires when cycle_number >= 3
+escalation_target: human         # null on first cycle; "human" or specific reviewer on cycle >= 3

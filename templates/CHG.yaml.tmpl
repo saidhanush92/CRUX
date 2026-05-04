@@ -1,0 +1,21 @@
+# CHG artifact — Change event. Records that something already-approved is being revised.
+# Usage: copy to docs/sdlc/chg/CHG-<n>.yaml. Open ANY time an approved artifact is amended.
+# CHG events feed cost-of-rework reporting; suppressing them defeats the audit trail.
+
+id: CHG-001
+trigger_event: |                 # required, what caused this change (free text + source)
+  Reviewer flagged that REQ-004 conflicts with ADR-002 during TASK-007 review cycle 2.
+classification: reqs_misaligned  # bug | reqs_misaligned | new_scope
+superseded_artifacts:            # artifact ids being replaced or deprecated by this change
+  - REQ-004
+new_artifacts:                   # artifact ids being introduced as part of this change
+  - REQ-004b
+  - ADR-009
+affected_artifacts:              # artifacts not replaced but touched (e.g., dependent tasks)
+  - TASK-007
+  - MOD-002
+estimated_rework_cost:
+  llm_usd: 1.20                  # estimated additional LLM spend
+  human_minutes: 30              # estimated human review/approval time
+  ci_minutes: 5
+source: reviewer                 # reviewer | architect | human | incident | drift-detector

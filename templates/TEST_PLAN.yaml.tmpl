@@ -1,0 +1,21 @@
+# TEST_PLAN artifact — written BEFORE implementation by the test-writer subagent.
+# Usage: copy to docs/sdlc/tasks/<task-id>/TEST_PLAN.yaml. One per task.
+# The coder cannot satisfy a task whose tests are missing or failing for the wrong reason.
+
+task: TASK-001                   # required, TASK id this plan covers
+test_layers:
+  unit:                          # smallest possible scope; pure functions and module units
+    - covers: gate transition table is total and deterministic
+      file: packages/core/test/gate/transitions.test.ts
+    - covers: invalid transition raises a typed error
+      file: packages/core/test/gate/errors.test.ts
+  integration:                   # cross-module / IO-touching tests
+    - covers: trace index updates when a new artifact is written to docs/sdlc/
+      file: packages/core/test/integration/trace-index.test.ts
+  e2e:                           # only when the task touches a user-visible flow
+    - covers: /crux-status renders gate state for an empty repo
+      file: packages/audit-site/e2e/status.spec.ts
+coverage_target: 80              # percent — must not drop below the project floor in stack.yaml
+out_of_scope:                    # explicit non-tests (prevents scope creep into reviewer)
+  - performance benchmarks (tracked separately under benchmarks/)
+  - cross-platform path handling (covered by TASK-014)

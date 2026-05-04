@@ -1,0 +1,40 @@
+# ADR artifact — Architecture Decision Record.
+# Usage: copy to docs/sdlc/adr/ADR-<n>.yaml. One per decision.
+#
+# The 3-question gating test (apply BEFORE writing an ADR):
+#   1. Does this decision constrain future work in a non-trivial way?
+#      (If no — it's an implementation detail, not an ADR.)
+#   2. Is at least one credible alternative being rejected?
+#      (If no — there is no decision to record.)
+#   3. Will reversing this later be expensive?
+#      (If no — capture as a code comment, not an ADR.)
+# If the answer to any question is "no", DO NOT create this ADR.
+
+id: ADR-001
+title: Use TypeScript monorepo with pnpm workspaces
+status: proposed                 # proposed | accepted | superseded | needs-revisit
+decision: |                      # required, the choice in plain language
+  Crux is structured as a TypeScript monorepo with pnpm workspaces; each package
+  declared in pnpm-workspace.yaml has its own tsconfig extending tsconfig.base.json.
+alternatives_considered:
+  - option: single-package repo with deep src/ tree
+    rationale: rejected — five distinct deliverables (core, adapter, cli, extension, audit-site)
+      have different dependency surfaces and release cadences.
+  - option: nx or turbo-orchestrated monorepo
+    rationale: rejected at v1 — extra tooling burden without a current need for cached graph builds.
+consequences:                    # what becomes easier and what becomes harder
+  - Cross-package refactors stay atomic.
+  - VS Code extension and Astro audit-site keep isolated dependency trees.
+  - Contributors must learn pnpm workspace conventions.
+resolves:                        # GRILL ids this decision answers
+  - GRILL-002
+satisfies:                       # REQ ids this decision serves
+  - REQ-003
+constrains:                      # MOD ids whose shape is now fixed by this decision
+  - MOD-001
+  - MOD-002
+revisit_when: |                  # the trigger that would force a re-look
+  Build orchestration becomes a measurable bottleneck OR a sixth deliverable joins the repo.
+validated_by:                    # tasks / tests / metrics that prove the decision is in force
+  - task: TASK-007
+  - check: pnpm -r build succeeds in CI

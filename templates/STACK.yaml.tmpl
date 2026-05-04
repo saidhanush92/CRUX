@@ -1,0 +1,45 @@
+# STACK artifact — the canonical, single-source-of-truth declaration of the project's stack.
+# Usage: lives at docs/sdlc/stack/stack.yaml (one per project). ADRs amend this file.
+# The harness installer (Gate 5) treats this as the install contract — do not deviate.
+
+language: typescript             # primary language; secondary languages go under `frameworks`
+runtime:
+  node: ">=20.10 <23"
+  os: [linux, macos, windows]
+package_manager:
+  name: pnpm
+  version: "9"
+frameworks:
+  app:
+    - name: astro
+      version: "^5"
+      scope: packages/audit-site
+  test_runner:
+    - name: vitest
+      version: "^2"
+  e2e:
+    - name: playwright
+      version: "^1.48"
+      scope: packages/audit-site
+data:
+  storage: sqlite                # sqlite | postgres | none
+  schema_dir: packages/core/schema
+testing:
+  unit: vitest
+  integration: vitest
+  e2e: playwright
+  coverage_target: 80            # percent, enforced in CI
+ops:
+  ci: github-actions
+  release: changesets            # changesets | release-please | manual
+  docs_site: astro
+constraints:
+  - no runtime dependency may be added unless declared here first
+  - no skill may be installed whose declared capability is not in capabilities/registry.v1.yaml
+  - hooks are deterministically generated from this file by Gate 5
+quality_gates:
+  typecheck: pnpm tsc --noEmit
+  lint: pnpm eslint .
+  format_check: pnpm prettier --check .
+  unit: pnpm vitest run
+  e2e: pnpm --filter audit-site playwright test

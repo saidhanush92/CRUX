@@ -1,0 +1,49 @@
+# TOKENS artifact — design tokens + component inventory for UI work.
+# Usage: copy to docs/sdlc/design/TOKENS.yaml. One per design system version.
+# Every token referenced by a component MUST be defined in this file.
+
+color:                           # OKLCH preferred; semantic names, not raw hex aliases
+  surface: "oklch(98% 0 0)"
+  surface_inverse: "oklch(18% 0 0)"
+  text: "oklch(18% 0 0)"
+  text_muted: "oklch(45% 0 0)"
+  accent: "oklch(68% 0.21 250)"
+  border: "oklch(90% 0 0)"
+typography:
+  families:
+    sans: '"Inter Variable", system-ui, sans-serif'
+    serif: '"Source Serif 4", Georgia, serif'
+  scale:
+    body: "clamp(1rem, 0.92rem + 0.4vw, 1.125rem)"
+    heading_1: "clamp(3rem, 1rem + 7vw, 8rem)"
+    heading_2: "clamp(2rem, 1rem + 3vw, 4rem)"
+spacing:
+  unit: 4                        # base unit in px; all spacing values are multiples
+  section: "clamp(4rem, 3rem + 5vw, 10rem)"
+radius:
+  sm: 4
+  md: 8
+  lg: 16
+motion:
+  duration:
+    fast: 150
+    normal: 300
+    slow: 500
+  easing:
+    out_expo: "cubic-bezier(0.16, 1, 0.3, 1)"
+    standard: "cubic-bezier(0.2, 0, 0, 1)"
+  reduced_motion_fallback: instant   # instant | crossfade
+
+components:                      # every UI component the codebase produces
+  - id: button-primary
+    figma_node: "abcd1234?node-id=10:42"
+    states: [default, hover, focus, active, disabled, loading]
+    a11y_requirements:
+      - 4.5:1 text contrast against surface
+      - visible focus ring at 2px outset
+      - keyboard activation via Enter and Space
+  - id: surface-card
+    figma_node: "abcd1234?node-id=10:88"
+    states: [default, hover, selected]
+    a11y_requirements:
+      - if interactive, role=button or anchor with proper href

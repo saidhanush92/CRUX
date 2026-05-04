@@ -1,0 +1,28 @@
+# DESIGN_BRIEF artifact — visual / experiential direction for UI work.
+# Usage: copy to docs/sdlc/design/DESIGN_BRIEF.yaml. One per surface or campaign.
+# This is intentionally opinionated; do not ship "clean minimal" defaults.
+
+id: DESIGN-001
+visual_direction: |              # required, the chosen direction (not "TBD")
+  Example: editorial / magazine — high contrast typography, generous whitespace,
+  asymmetric grid, restrained motion that supports reading rhythm.
+references:
+  approved:                      # links / Figma node ids / screenshots that match the intent
+    - figma:abcd1234?node-id=10:42
+    - https://example.com/inspiration/article-layout
+  rejected:                      # references explicitly ruled out (and why, in `tone` or notes)
+    - https://example.com/dashboard-template
+tone: |                          # voice and feel; informs copy and motion
+  Confident, specific, never marketing-fluff. Motion is purposeful, never decorative.
+brand_anchors:                   # non-negotiables that survive any visual iteration
+  - logomark must always sit on a neutral surface
+  - body text must hit WCAG AA contrast minimum
+constraints:
+  - dark mode is opt-in, not default
+  - no third-party fonts beyond the two declared in TOKENS
+  - prefers-reduced-motion must collapse hero animation to a static frame
+non_goals:
+  - we are not chasing "delight" through gratuitous micro-interactions
+derived_from:                    # GRILL or REQ ids that justify this direction
+  - GRILL-014
+  - REQ-006

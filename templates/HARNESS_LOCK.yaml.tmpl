@@ -1,0 +1,48 @@
+# HARNESS_LOCK artifact — frozen snapshot of the dev harness at the moment Gate 5 closed.
+# Usage: lives at docs/sdlc/harness/harness.lock. Regenerated only on intentional re-install.
+# Treat this like a package lockfile: commit it; review changes carefully.
+
+generated_at: 2026-05-05T12:00:00Z
+gate: 5                          # the gate that produced this lock (Gate 5 = harness install)
+stack_manifest_hash: sha256:abcd # sha256 of docs/sdlc/stack/stack.yaml at install time
+
+skills:                          # every skill resolved into the harness
+  - name: tdd-workflow
+    version: "1.4.0"
+    source_hash: sha256:1111
+    origin: ecc                  # ecc | pocock | local
+    capabilities:                # capabilities this skill claims to provide (per registry)
+      - testing.tdd-loop
+      - quality.coverage-floor
+  - name: grill-me
+    version: "0.3.0"
+    source_hash: sha256:2222
+    origin: pocock
+    capabilities:
+      - process.adversarial-grill
+
+rules:                           # rules files installed (e.g., from rules/typescript/)
+  - source: rules/common/coding-style.md
+    hash: sha256:aaaa
+  - source: rules/typescript/hooks.md
+    hash: sha256:bbbb
+
+hooks_config_hash: sha256:cccc   # sha256 of .claude/settings.json hooks block at lock time
+
+ci_templates:                    # GitHub Actions (or equivalent) workflows installed
+  - path: .github/workflows/ci.yml
+    hash: sha256:dddd
+  - path: .github/workflows/audit-site-deploy.yml
+    hash: sha256:eeee
+  - path: .github/workflows/trace-lint.yml
+    hash: sha256:ffff
+
+verification:                    # outcomes of the Gate 5 verification suite
+  format_check: pass
+  lint_check: pass
+  typecheck: pass
+  test_runner_empty: pass
+  skill_discovery: pass
+  hook_fire: pass
+
+conflicts_unresolved: []         # MUST be empty for the lock to be valid; halt if any exist
