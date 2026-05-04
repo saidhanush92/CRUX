@@ -6,9 +6,15 @@
       "Bash(pnpm --version)",
       "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"chore: bootstrap repo scaffolding\")",
       "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: artifact templates \\(Phase 1\\)\")",
-      "Write(**/*.md)",
-      "Edit(**/*.md)",
-      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: slash commands \\(Phase 2\\)\")"
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: slash commands \\(Phase 2\\)\")",
+      "Read(//c/Dev/everything-claude-code/**)",
+      "Read(//c/Users/Dhanush Sai/.claude/plugins/cache/everything-claude-code/**)",
+      "Read(//tmp/pocock-skills/**)",
+      "Bash(xargs grep *)",
+      "Bash(python scripts/_import_skills.py)",
+      "Bash(python)",
+      "Bash(grep -c '^### `' .claude/skills/INDEX.md)",
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: import curated skills from Pocock + ECC \\(Phase 4\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Dev\\CRUX\\.claude",
