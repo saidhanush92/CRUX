@@ -1,0 +1,16 @@
+# Project-specific capability extensions.
+#
+# Add capabilities here that are specific to this project and not part of the
+# canonical Crux registry (capabilities/registry.v1.yaml).
+#
+# Use this for:
+#   - Domain-specific patterns that only exist in this codebase.
+#   - Internal tooling capabilities that are not portable to other projects.
+#   - Experimental capabilities being trialed before promotion to the registry.
+#
+# Promotion path: when a capability defined here proves general, lift it into
+# capabilities/registry.v1.yaml with the next minor bump and remove it from this
+# file. Local capabilities follow the same field shape as registry capabilities.
+
+version: 0.1.0
+capabilities: []

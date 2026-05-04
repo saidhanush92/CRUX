@@ -22,7 +22,8 @@
       "Bash(bash scripts/check-orphans.sh)",
       "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& 'C:\\\\Dev\\\\CRUX\\\\scripts\\\\status.ps1'\")",
       "Bash(echo \"ps exit=$?\")",
-      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: bootstrap helper scripts with .sh/.ps1 wrappers \\(Phase 5\\)\")"
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: bootstrap helper scripts with .sh/.ps1 wrappers \\(Phase 5\\)\")",
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: capability registry v1.0.0 with 32 seed capabilities \\(Phase 6\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Dev\\CRUX\\.claude",

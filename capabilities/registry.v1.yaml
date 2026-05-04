@@ -1,0 +1,140 @@
+# Crux capability registry v1
+#
+# A capability is a contract: every skill installed under that capability MUST teach
+# the agent to perform the described action. Skills declare what they `provides_capabilities`,
+# and gates resolve the set of skills they need by querying capabilities.
+#
+# Semver rules (see capabilities/README.md):
+#   - Adding a new capability id   -> minor bump  (1.x.0)
+#   - Changing a description       -> minor bump  (clarifications), major if behavior shifts
+#   - Renaming or removing an id   -> MAJOR bump  (v2)
+#
+# Field shape per capability:
+#   id            - "namespace.kebab-case-name", globally unique
+#   description   - one line: what an installed skill MUST teach an agent to do
+#   governs_gate  - 1..8 - the primary gate that fails to close without this capability
+
+version: 1.0.0
+namespaces:
+  - language       # which programming language an installed skill teaches
+  - framework      # specific tools/frameworks within a language
+  - data           # storage and persistence
+  - testing        # testing strategies, runners, layers
+  - process        # workflow patterns; how to think and work
+  - ops            # CI/CD, deployment, infrastructure
+  - design         # design systems, accessibility, visual quality
+  - quality        # code review, verification loops, defect prevention
+
+capabilities:
+
+  # ----- language -----
+  - id: language.typescript
+    description: Write idiomatic TypeScript and configure tsconfig/strict mode appropriately.
+    governs_gate: 5
+  - id: language.python
+    description: Write idiomatic Python following PEP 8 with proper type hints and packaging.
+    governs_gate: 5
+  - id: language.golang
+    description: Write idiomatic Go following effective-Go conventions and module layout.
+    governs_gate: 5
+
+  # ----- framework -----
+  - id: framework.vitest
+    description: Configure and run Vitest for fast TypeScript unit and integration tests.
+    governs_gate: 5
+  - id: framework.pytest
+    description: Configure and run pytest including fixtures, parametrization, and markers.
+    governs_gate: 5
+  - id: framework.gotest
+    description: Configure and run go test with table-driven patterns and benchmarks.
+    governs_gate: 5
+
+  # ----- data -----
+  - id: data.sqlite
+    description: Design SQLite schema, migrations, and query patterns suitable for embedded use.
+    governs_gate: 4
+
+  # ----- testing -----
+  - id: testing.tdd-loop
+    description: Drive development by writing failing tests first, then minimal code to pass them.
+    governs_gate: 7
+  - id: testing.unit
+    description: Write isolated unit tests at the smallest practical scope with no external dependencies.
+    governs_gate: 7
+  - id: testing.integration
+    description: Write integration tests that exercise real cross-module IO and storage paths.
+    governs_gate: 7
+  - id: testing.e2e
+    description: Write end-to-end tests that drive the system through its public user-facing surface.
+    governs_gate: 7
+  - id: testing.playwright
+    description: Configure and run Playwright for browser-based E2E tests with deterministic waits.
+    governs_gate: 5
+
+  # ----- process -----
+  - id: process.adversarial-grill
+    description: Interrogate a plan or idea relentlessly, surfacing gaps and assumptions one branch at a time.
+    governs_gate: 1
+  - id: process.assumption-surfacing
+    description: Detect implicit decisions and unverified claims in input text and convert them to questions.
+    governs_gate: 1
+  - id: process.docs-grounded-grill
+    description: Run a grill pass anchored in canonical documentation rather than recall.
+    governs_gate: 1
+  - id: process.diagnostic-loop
+    description: Investigate a failure by hypothesis-and-test, narrowing the search space deterministically.
+    governs_gate: 7
+  - id: process.context-reframing
+    description: Zoom out from a stuck local view to the broader problem, surface the real question.
+    governs_gate: 4
+  - id: process.adr-authoring
+    description: Apply the 3-question ADR test and produce decision records that constrain future work.
+    governs_gate: 4
+  - id: process.docs-lookup
+    description: Fetch current authoritative library and framework documentation before writing code.
+    governs_gate: 5
+  - id: process.hex-architecture
+    description: Design systems with explicit ports and adapters, keeping the domain free of IO concerns.
+    governs_gate: 4
+  - id: process.git-workflow
+    description: Use conventional-commit messages, structured branches, and PR templates with trace blocks.
+    governs_gate: 7
+  - id: process.codemap-maintenance
+    description: Generate and refresh repository codemaps so the agent has token-lean architectural context.
+    governs_gate: 8
+
+  # ----- ops -----
+  - id: ops.github-actions
+    description: Author CI workflows with parallel jobs, caching, and matrix strategies.
+    governs_gate: 5
+
+  # ----- design -----
+  - id: design.a11y
+    description: Implement components that pass automated accessibility checks and keyboard navigation.
+    governs_gate: 6
+  - id: design.wcag-aa
+    description: Meet WCAG 2.2 Level AA contrast, focus, and semantic-markup requirements.
+    governs_gate: 6
+
+  # ----- quality -----
+  - id: quality.code-review
+    description: Apply a structured review checklist covering correctness, security, and maintainability.
+    governs_gate: 7
+  - id: quality.coverage-floor
+    description: Enforce a minimum coverage threshold and fail CI when coverage drops below it.
+    governs_gate: 7
+  - id: quality.lint
+    description: Configure linters with project-aware rules and run them as a build gate.
+    governs_gate: 5
+  - id: quality.typecheck
+    description: Configure strict static type-checking and run it as a build gate.
+    governs_gate: 5
+  - id: quality.root-cause-analysis
+    description: Trace a defect to its root cause rather than patching the proximate symptom.
+    governs_gate: 7
+  - id: quality.silent-failure-detection
+    description: Detect swallowed errors, empty catch blocks, and bad fallbacks in code review.
+    governs_gate: 7
+  - id: quality.verification-loop
+    description: Run a deterministic format/lint/typecheck/test loop after every code change until green.
+    governs_gate: 5
