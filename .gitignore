@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.crux/trace.db
+.crux/cache/
+.env*
+*.local
+coverage/
+.DS_Store
+playwright-report/
+.astro/

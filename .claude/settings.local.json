@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Dev/Ruflow_Claude/**)",
+      "Bash(git --version)",
+      "Bash(pnpm --version)",
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"chore: bootstrap repo scaffolding\")"
+    ],
+    "additionalDirectories": [
+      "C:\\Dev\\CRUX\\.claude"
+    ]
+  }
+}

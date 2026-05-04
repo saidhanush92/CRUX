@@ -1,0 +1,6 @@
+{
+  "name": "crux",
+  "private": true,
+  "packageManager": "pnpm@9",
+  "workspaces": ["packages/*"]
+}
