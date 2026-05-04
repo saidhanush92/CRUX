@@ -14,7 +14,15 @@
       "Bash(python scripts/_import_skills.py)",
       "Bash(python)",
       "Bash(grep -c '^### `' .claude/skills/INDEX.md)",
-      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: import curated skills from Pocock + ECC \\(Phase 4\\)\")"
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: import curated skills from Pocock + ECC \\(Phase 4\\)\")",
+      "Bash(bash scripts/status.sh)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(bash scripts/gate.sh 1)",
+      "Bash(bash scripts/gate.sh 9)",
+      "Bash(bash scripts/check-orphans.sh)",
+      "Bash(powershell.exe -NoProfile -ExecutionPolicy Bypass -Command \"& 'C:\\\\Dev\\\\CRUX\\\\scripts\\\\status.ps1'\")",
+      "Bash(echo \"ps exit=$?\")",
+      "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: bootstrap helper scripts with .sh/.ps1 wrappers \\(Phase 5\\)\")"
     ],
     "additionalDirectories": [
       "C:\\Dev\\CRUX\\.claude",
