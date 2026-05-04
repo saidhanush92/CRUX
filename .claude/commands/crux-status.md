@@ -25,9 +25,16 @@ You are running `/crux-status`. This is a read-only summary; never mutate artifa
    - TASKs whose linked ADRs are not yet `accepted`.
    List these grouped by category. Each line: id, what's needed, who from.
 
-3. **Cost burn.** If `docs/sdlc/costs/log.csv` exists, sum `tokens_estimated` and `wall_seconds` over the last 7 days. Print the totals and the top 3 most expensive `task_id`s. If the file doesn't exist, print "cost log not yet initialized".
+3. **Critiques.** Count unresolved entries in each adversarial output, treating an entry as "resolved" only if its `target` artifact has been re-written (timestamp newer than the critique's `noted_at`) OR a `waived_by` field exists on the entry:
+   - `docs/sdlc/prd/spec-critique.yaml` → spec count.
+   - `docs/sdlc/adr/arch-critique.yaml` → arch count.
+   - `docs/sdlc/adr/pre-mortem.yaml` → count `route-to-ADR-clause` items still open (test-routed and accepted-risk items are not blockers).
+   Render as: `Critiques: <n> spec, <m> arch, <k> pre-mortem unresolved`. Treat any unresolved critique as a **soft block** on advancing past its gate (gate 2 for spec, gate 4 for arch and pre-mortem).
+   If none of the three files exist yet (pre-Phase-7 state), render: `Critiques: 0 spec, 0 arch, 0 pre-mortem unresolved`.
 
-4. **Last 5 events.** Tail the last 5 lines of `docs/sdlc/approvals.log`.
+4. **Cost burn.** If `docs/sdlc/costs/log.csv` exists, sum `tokens_estimated` and `wall_seconds` over the last 7 days. Print the totals and the top 3 most expensive `task_id`s. If the file doesn't exist, print "cost log not yet initialized".
+
+5. **Last 5 events.** Tail the last 5 lines of `docs/sdlc/approvals.log`.
 
 ## Output shape
 
@@ -43,6 +50,8 @@ HITL blocks (4)
   REQ-012        approve-deferral    user
   ...
 
+Critiques: 2 spec, 0 arch, 1 pre-mortem unresolved
+
 Cost (7d)
   $4.20 estimated, 14m wall, top: TASK-007 ($1.10)
 
@@ -55,5 +64,7 @@ Recent
 ## Empty repo case
 
 If no artifacts exist yet:
-- Print "no gates open" and a one-line reminder pointing to `/crux-init` or `/crux-idea`.
+- Print "no gates open".
+- Print `Critiques: 0 spec, 0 arch, 0 pre-mortem unresolved`.
+- Print a one-line reminder pointing to `/crux-init` or `/crux-idea`.
 - Exit 0.

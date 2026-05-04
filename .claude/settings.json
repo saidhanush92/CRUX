@@ -1,7 +1,8 @@
 {
   "hooks": {},
   "permissions": {
-    "allow": [],
+    "allow": ["Write(**/*.md)",
+      "Edit(**/*.md)"],
     "deny": []
   }
 }

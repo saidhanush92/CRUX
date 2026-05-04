@@ -1,6 +1,6 @@
 ---
-description: Generate PRD and REQ files from an IDEA + its grill answers. Every REQ traces to GRILLs.
-allowed-tools: Read, Write, Edit, Glob, Grep
+description: Generate PRD and REQ files from an IDEA + its grill answers. Every REQ traces to GRILLs. Runs spec-critic before HITL approval.
+allowed-tools: Read, Write, Edit, Glob, Grep, Task
 argument-hint: "<idea-id>"
 ---
 
@@ -36,13 +36,23 @@ Before writing, check:
 - Every GRILL with `source: user` or `source: default` is referenced by at least one REQ, OR explicitly noted in PRD "Open questions" as not yet binding. Orphan GRILLs are a smell — surface them.
 - `priority: must` count is realistic (typical PRDs have 5–15 `must` REQs; flag if you produced more).
 
+## Spec-critic pass
+
+After all REQ files and PRD.md are written:
+
+1. Invoke the **spec-critic** subagent (Task tool, `subagent_type: spec-critic`) with brief: "Read every REQ in `docs/sdlc/prd/` and the PRD narrative. Detect contradictions, untestable REQs, vague REQs, orphan REQs (broken `derived_from`), missing coverage of must-priority intent, and invented health-signal thresholds. Write `docs/sdlc/prd/spec-critique.yaml`."
+2. Read the resulting critique file.
+3. If `critiques: []` — note "spec-critic: clean" in the output and proceed.
+4. If non-empty — surface a numbered summary of every concern with severity, target, and finding. Mark the PRD as **soft-blocked**: do NOT proceed to `/crux-approve PRD` until the human has resolved each critique by either rerunning `/crux-prd`, deleting offending REQs, or explicitly waiving with a comment.
+
 ## Output summary
 
 Print:
 - Count of REQs by priority.
 - List of GRILL ids that did not motivate any REQ.
-- Reminder: "Run `/crux-modules <PRD-id>` next, then `/crux-architect`."
+- Spec-critic verdict: `clean` or `<n> concerns flagged`.
+- Reminder: "Run `/crux-modules <PRD-id>` next, then `/crux-architect`. Resolve spec-critic concerns first if any."
 
 ## Approval
 
-Do NOT mark the PRD approved. Approval requires explicit `/crux-approve PRD`.
+Do NOT mark the PRD approved. Approval requires explicit `/crux-approve PRD`. A non-empty `spec-critique.yaml` is a soft block on approval — `/crux-approve` will warn if you proceed past it.

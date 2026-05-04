@@ -6,6 +6,8 @@
       "Bash(pnpm --version)",
       "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"chore: bootstrap repo scaffolding\")",
       "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: artifact templates \\(Phase 1\\)\")",
+      "Write(**/*.md)",
+      "Edit(**/*.md)",
       "Bash(git -c user.email=dhanush.sai@bcg.com -c user.name=\"Dhanush Sai\" commit -m \"feat: slash commands \\(Phase 2\\)\")"
     ],
     "additionalDirectories": [

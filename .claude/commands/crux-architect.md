@@ -1,5 +1,5 @@
 ---
-description: Invoke the architect subagent to draft ADRs and amend stack.yaml. Self-grills before committing.
+description: Invoke the architect subagent to draft ADRs and amend stack.yaml. Self-grills, then runs arch-critic and pre-mortem in parallel before HITL approval.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
 ---
 
@@ -50,15 +50,39 @@ For each surviving decision:
 
 For decisions that pin a framework, runtime version, or quality gate, edit `docs/sdlc/stack/stack.yaml` to reflect the ADR. Add a comment `# pinned by ADR-<n>` next to each amended field.
 
+### 8. Adversarial pass (gate 4.6)
+
+Invoke two subagents **in parallel** (single message, two Task calls):
+
+- **arch-critic** (`subagent_type: arch-critic`) — brief: "Read every ADR (proposed and accepted), the PRD, every REQ, every MOD, current stack.yaml. Detect contradictions, implicit decisions absent from the ADR ledger, hidden compounding constraints, ADRs that fail the 3-question test, vague `revisit_when` triggers, missing `validated_by`, and stack drift. Write `docs/sdlc/adr/arch-critique.yaml`."
+- **pre-mortem** (`subagent_type: pre-mortem`) — brief: "Read every ADR, the PRD, every REQ, every MOD, current stack.yaml. Imagine the system in production right now with an unfolding incident; produce 5–10 failure modes. Classify each as `route-to-test`, `route-to-ADR-clause`, or `accept-as-known-risk`. Write `docs/sdlc/adr/pre-mortem.yaml`."
+
+Read both output files. Surface their findings:
+
+- Print arch-critic concerns by severity, with target ADR ids.
+- Print pre-mortem failure modes grouped by classification.
+
+Routing actions:
+- `route-to-test` items are queued for the Gate 6 / Gate 7 task DAG (record their ids; planner picks them up later).
+- `route-to-ADR-clause` items return to the architect: surface to the human, ask whether to amend the affected ADR or write a new one. Looping back to step 5 is acceptable.
+- `accept-as-known-risk` items are logged into `docs/sdlc/approvals.log` with `kind=accepted-risk` and the failure-mode id, and remain visible via `/crux-trace` from the relevant ADR.
+
 ## Output
 
 - List of new ADR ids and their status.
 - Updated `stack.yaml` diff summary.
 - Any ADRs marked `needs-revisit` and why.
-- Reminder: "Approve each ADR via `/crux-approve ADR-<n>`. Then run `/crux-modules` again if any constraint changed module shape."
+- arch-critic verdict: `clean` or `<n> concerns flagged` (with severity counts).
+- pre-mortem verdict: `<n> failure modes` (with classification counts).
+- Reminder: "Resolve any `route-to-ADR-clause` items first. Then approve each ADR via `/crux-approve ADR-<n>`. Then run `/crux-modules` again if any constraint changed module shape."
+
+## Approval block
+
+A non-empty arch-critique OR a non-empty pre-mortem `route-to-ADR-clause` set is a **hard block** on architect HITL approval. `/crux-approve ADR-<n>` will refuse to flip status to `accepted` until both are resolved.
 
 ## Constraints
 
 - Architect MUST run context load before deciding (no cold-start ADRs).
 - Architect MUST self-grill before surfacing the strawman.
 - Architect MAY NOT mark its own ADRs `accepted`. Only `/crux-approve` does that.
+- arch-critic and pre-mortem MUST run before HITL approval. Skipping them is a process violation.
