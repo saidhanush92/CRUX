@@ -1,0 +1,20 @@
+id: TASK-CRUX-013
+title: '/crux-idea + /crux-grill: scaled-by-depth budget + design_gate_enabled prompt'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-015
+  - REQ-CRUX-020
+honors_adrs:
+  - ADR-CRUX-007
+touches_files:
+  - packages/cli/src/commands/idea/**
+  - packages/cli/src/commands/grill/**
+  - packages/cli/test/commands/idea/**
+  - packages/cli/test/commands/grill/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-012
+  - TASK-CRUX-014
+depends_on:
+  - TASK-CRUX-011
+estimated_cost_usd: 4.0

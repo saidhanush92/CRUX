@@ -1,0 +1,17 @@
+id: TASK-CRUX-007
+title: 'Adapter interface declaration: 17 fns, 7 concern groups'
+module: MOD-CRUX-002
+satisfies:
+  - REQ-CRUX-005
+honors_adrs:
+  - ADR-CRUX-003
+touches_files:
+  - packages/core/src/adapter/interface.ts
+  - packages/core/src/adapter/types.ts
+  - packages/core/test/adapter/interface.test.ts
+risk: high
+parallelizable_with:
+  - TASK-CRUX-001
+  - TASK-CRUX-002
+depends_on: []
+estimated_cost_usd: 3.0

@@ -1,6 +1,6 @@
 id: ADR-CRUX-008
 title: 'Hook collision policy: matcher+event halt, manual resolution'
-status: proposed
+status: accepted
 decision: |
   A hook collision is two or more hooks with the same event (PreToolUse / PostToolUse / Stop) AND the same matcher regex AND none of them carries an explicit priority field. Multiple commands at the same matcher / event pair ARE allowed when the harness installer assigns each an explicit priority (ascending order of execution). When a collision is detected during /crux-init's harness-install path, halt before writing harness.lock. Surface the colliding entries with the source skill of each. User resolves manually by editing one skill out of the install set OR adding explicit priority fields to the offending hooks. Re-run /crux-init until clean. Skill-declared conflicts_with field and interactive resolution prompts are v1.1+ enhancements.
 
@@ -36,3 +36,5 @@ validated_by:
   - collision-detection unit test on a synthetic two-hook fixture
   - install-halt integration test (REQ-CRUX-022 AC#1)
   - 'resolution-persistence test: collision detected, manually resolved, harness.lock written, install re-run; resolution applied automatically without re-prompting; addresses PM-CRUX-005'
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

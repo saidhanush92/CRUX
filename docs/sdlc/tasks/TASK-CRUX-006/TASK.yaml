@@ -1,0 +1,19 @@
+id: TASK-CRUX-006
+title: 'Capability registry consumer + INC/CHG/AMD plumbing'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-010
+honors_adrs:
+  - ADR-CRUX-005
+touches_files:
+  - packages/core/src/capabilities/**
+  - packages/core/src/incidents/**
+  - packages/core/test/capabilities/**
+  - packages/core/test/incidents/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-004
+  - TASK-CRUX-005
+depends_on:
+  - TASK-CRUX-002
+estimated_cost_usd: 3.0

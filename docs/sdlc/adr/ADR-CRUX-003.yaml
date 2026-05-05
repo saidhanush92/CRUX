@@ -1,6 +1,6 @@
 id: ADR-CRUX-003
 title: 'Runtime adapter interface: 17 functions in 7 concern groups'
-status: proposed
+status: accepted
 decision: |
   The runtime adapter interface is exactly 17 functions, organized into 7 concern groups. The interface lives in packages/core as TypeScript types and a reference contract; adapters implement against this. Function list:
   
@@ -42,3 +42,5 @@ validated_by:
   - arch-critic concern-group expansion check (per REQ-CRUX-005 AC#3)
   - A printed function list ships in this ADR (above)
   - 'paper-only second-adapter spec at docs/sdlc/architecture/adapter-second-spec.md ships at v1.0 (added per arch-critique ARCH-CRIT-002): each of the 17 functions is marked feasible | needs-redesign | unknown for a chosen paper adapter (Cursor, Aider, or raw Anthropic SDK). If any function is needs-redesign, ADR-CRUX-003 is reopened pre-v1.0 release. Converts the abstraction-quality check from v1.1 deferral into a v1.0 deliverable.'
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

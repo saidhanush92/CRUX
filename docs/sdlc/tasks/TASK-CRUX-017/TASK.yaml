@@ -1,0 +1,24 @@
+id: TASK-CRUX-017
+title: '/crux-status + /crux-trace + /crux-incident: critique counts, walk, cascade'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-019
+honors_adrs:
+  - ADR-CRUX-002
+  - ADR-CRUX-005
+touches_files:
+  - packages/cli/src/commands/status/**
+  - packages/cli/src/commands/trace/**
+  - packages/cli/src/commands/incident/**
+  - packages/cli/test/commands/status/**
+  - packages/cli/test/commands/trace/**
+  - packages/cli/test/commands/incident/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-015
+  - TASK-CRUX-016
+depends_on:
+  - TASK-CRUX-011
+  - TASK-CRUX-003
+  - TASK-CRUX-006
+estimated_cost_usd: 4.0

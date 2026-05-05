@@ -1,0 +1,23 @@
+id: TASK-CRUX-008
+title: 'claude-code adapter: lifecycle + subagents + skills + hooks (10 fns)'
+module: MOD-CRUX-002
+satisfies:
+  - REQ-CRUX-006
+  - REQ-CRUX-017
+honors_adrs:
+  - ADR-CRUX-003
+  - ADR-CRUX-004
+touches_files:
+  - packages/adapter-claude-code/src/lifecycle.ts
+  - packages/adapter-claude-code/src/subagents.ts
+  - packages/adapter-claude-code/src/skills.ts
+  - packages/adapter-claude-code/src/hooks.ts
+  - packages/adapter-claude-code/test/**
+  - packages/adapter-claude-code/package.json
+  - packages/adapter-claude-code/tsconfig.json
+risk: high
+parallelizable_with:
+  - TASK-CRUX-009
+depends_on:
+  - TASK-CRUX-007
+estimated_cost_usd: 6.0

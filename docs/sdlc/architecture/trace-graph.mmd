@@ -1,0 +1,237 @@
+graph TD
+  ADR-CRUX-001["ADR-CRUX-001: TypeScript monorepo with pnpm workspaces"]
+  ADR-CRUX-002["ADR-CRUX-002: Trace graph storage: markdown canonical + derived SQLite cache"]
+  ADR-CRUX-003["ADR-CRUX-003: Runtime adapter interface: 17 functions in 7 concern groups"]
+  ADR-CRUX-004["ADR-CRUX-004: Subagent invocation isolation + model assignment rule"]
+  ADR-CRUX-005["ADR-CRUX-005: Amendment layering: separate AMD files, runtime merge by orchestrator"]
+  ADR-CRUX-006["ADR-CRUX-006: Gate-mode dial in stack.yaml + artifact-invariance rule"]
+  ADR-CRUX-007["ADR-CRUX-007: Orchestration model: DAG subagent pipeline + structural Ruflo absorption"]
+  ADR-CRUX-008["ADR-CRUX-008: Hook collision policy: matcher+event halt, manual resolution"]
+  ADR-CRUX-009["ADR-CRUX-009: Per-task cost halt contract: 1.0x soft warn, 2.0x hard halt"]
+  ADR-CRUX-010["ADR-CRUX-010: PR_DESCRIPTION.md generation; manual `gh pr create` at v1.0"]
+  GRILL-CRUX-001["GRILL-CRUX-001: What is the literal scope of Crux v1.0? Which of the 8 gates must execute"]
+  GRILL-CRUX-002["GRILL-CRUX-002: Which single persona is v1.0 designed to delight, and which two are"]
+  GRILL-CRUX-003["GRILL-CRUX-003: What is the canonical source of truth for the trace graph -- the"]
+  GRILL-CRUX-004["GRILL-CRUX-004: What are the ~15 functions of the runtime adapter interface, named?"]
+  GRILL-CRUX-005["GRILL-CRUX-005: How will v1 prove the adapter abstraction is correct given only one"]
+  GRILL-CRUX-006["GRILL-CRUX-006: Where is the gate-mode dial actually configured, and when? (a) /crux-init"]
+  GRILL-CRUX-007["GRILL-CRUX-007: What does v1.0 give a user instead of Loop 9 to make incident-driven"]
+  GRILL-CRUX-008["GRILL-CRUX-008: At v1.0 release, what is the binding cost-tracking contract? CSV-only,"]
+  GRILL-CRUX-009["GRILL-CRUX-009: Is Gate 0 a real gate at v1.0, or is brownfield support folded into"]
+  GRILL-CRUX-010["GRILL-CRUX-010: Why is Ruflo conspicuously absent from the imported skill set when the"]
+  GRILL-CRUX-011["GRILL-CRUX-011: Does Gate 4.5 (Design) fire by default at v1.0, or is it opt-in per"]
+  GRILL-CRUX-012["GRILL-CRUX-012: In v1.0, when a real user runs Gate 5, is the install deterministic or"]
+  GRILL-CRUX-013["GRILL-CRUX-013: What runtime guarantee does v1.0 give that the test-writer / coder /"]
+  GRILL-CRUX-014["GRILL-CRUX-014: Where do amendments live and how does the next agent invocation pick"]
+  GRILL-CRUX-015["GRILL-CRUX-015: At v1.0, what is the audit consumption surface? Markdown-only (a),"]
+  GRILL-CRUX-016["GRILL-CRUX-016: What is the binding policy at v1.0 for under-thin inputs? Refuse and"]
+  GRILL-CRUX-017["GRILL-CRUX-017: At v1.0, when a depends_on cycle is detected in the module graph, what"]
+  GRILL-CRUX-018["GRILL-CRUX-018: What counts as a hook collision at v1.0, and what happens when one is"]
+  GRILL-CRUX-019["GRILL-CRUX-019: What is the literal shape of the trace block at v1.0? Where does it"]
+  GRILL-CRUX-020["GRILL-CRUX-020: Given Gate 8 deploy automation is deferred (per GRILL-CRUX-001), how"]
+  IDEA-001["IDEA-001: <IDEA>"]
+  MOD-CRUX-001["MOD-CRUX-001: core"]
+  MOD-CRUX-002["MOD-CRUX-002: adapter-claude-code"]
+  MOD-CRUX-003["MOD-CRUX-003: cli"]
+  REQ-CRUX-001["REQ-CRUX-001: At v1.0, gates 1 through 7 of the Crux pipeline (input, PRD, modules, architectu..."]
+  REQ-CRUX-002["REQ-CRUX-002: Crux v1.0 must name the small founding-team workflow (2-3 people: PM + 1-2 devel..."]
+  REQ-CRUX-003["REQ-CRUX-003: The trace graph must be canonically stored as plain markdown and YAML files unde..."]
+  REQ-CRUX-004["REQ-CRUX-004: When the markdown source and the SQLite cache disagree on any field, the markdow..."]
+  REQ-CRUX-005["REQ-CRUX-005: The runtime adapter interface must consist of 16 to 18 functions, organized into..."]
+  REQ-CRUX-006["REQ-CRUX-006: The Claude Code reference adapter must implement the full adapter interface defi..."]
+  REQ-CRUX-007["REQ-CRUX-007: The ADR for the adapter interface should include a non-empty revisit_when clause..."]
+  REQ-CRUX-008["REQ-CRUX-008: The active gate-mode must be configurable via a top-level crux_mode field in sta..."]
+  REQ-CRUX-010["REQ-CRUX-010: The INC -> CHG -> AMD cascade must function end-to-end at v1.0 via manual /crux-..."]
+  REQ-CRUX-011["REQ-CRUX-011: /crux-task must enforce a per-task cost halt. The halt fires when accrued cost e..."]
+  REQ-CRUX-012["REQ-CRUX-012: docs/sdlc/costs/log.csv must record every LLM agent invocation whose wall_second..."]
+  REQ-CRUX-013["REQ-CRUX-013: /crux-init in brownfield mode must produce a gap report at docs/sdlc/gate0/gap-r..."]
+  REQ-CRUX-014["REQ-CRUX-014: The orchestration-model ADR must explicitly credit and reference the Ruflo proje..."]
+  REQ-CRUX-015["REQ-CRUX-015: /crux-grill must ask the user whether the work has meaningful UI / visual-design..."]
+  REQ-CRUX-016["REQ-CRUX-016: Gate 5 harness install must be advisory at v1.0: each proposal item is surfaced ..."]
+  REQ-CRUX-017["REQ-CRUX-017: In /crux-task, the test-writer, coder, and reviewer phases must run as three sep..."]
+  REQ-CRUX-018["REQ-CRUX-018: Amendments must live as separate AMD-<n>.yaml files under docs/sdlc/amendments/...."]
+  REQ-CRUX-019["REQ-CRUX-019: At v1.0, the audit consumption surface must consist of: (a) markdown / YAML file..."]
+  REQ-CRUX-020["REQ-CRUX-020: /crux-grill must scale its question count by input depth. Word-count thresholds:..."]
+  REQ-CRUX-021["REQ-CRUX-021: /crux-modules must detect cycles in the depends_on graph. When a cycle is detect..."]
+  REQ-CRUX-022["REQ-CRUX-022: Gate 5 harness install must detect hook collisions, defined as two or more hooks..."]
+  REQ-CRUX-023["REQ-CRUX-023: After reviewer (and design-reviewer when applicable) approval, /crux-task must p..."]
+  REQ-CRUX-024["REQ-CRUX-024: Crux v1.0 must ship a release-readiness check accessible to the user (either as ..."]
+  TASK-CRUX-001["TASK-CRUX-001: Gate state machine + crux_mode reader"]
+  TASK-CRUX-002["TASK-CRUX-002: Trace graph: markdown reader + writer"]
+  TASK-CRUX-003["TASK-CRUX-003: Trace graph: SQLite cache index with concurrent-write semantics"]
+  TASK-CRUX-004["TASK-CRUX-004: Amendment merge + cycle detection"]
+  TASK-CRUX-005["TASK-CRUX-005: Cost ledger CSV writer + halt-rebase ladder"]
+  TASK-CRUX-006["TASK-CRUX-006: Capability registry consumer + INC/CHG/AMD plumbing"]
+  TASK-CRUX-007["TASK-CRUX-007: Adapter interface declaration: 17 fns, 7 concern groups"]
+  TASK-CRUX-008["TASK-CRUX-008: claude-code adapter: lifecycle + subagents + skills + hooks (10 fns)"]
+  TASK-CRUX-009["TASK-CRUX-009: claude-code adapter: slash + fs/shell + trace+capability (7 fns)"]
+  TASK-CRUX-010["TASK-CRUX-010: Paper-only second-adapter spec (Cursor / raw SDK)"]
+  TASK-CRUX-011["TASK-CRUX-011: CLI entry point + command dispatch + workspace package skeleton"]
+  TASK-CRUX-012["TASK-CRUX-012: /crux-init: greenfield + brownfield (gap report + idempotent mkdir + auto-IDEA)"]
+  TASK-CRUX-013["TASK-CRUX-013: /crux-idea + /crux-grill: scaled-by-depth budget + design_gate_enabled prompt"]
+  TASK-CRUX-014["TASK-CRUX-014: /crux-prd + /crux-modules + /crux-approve (with cycle-halt + spec-critic invocat..."]
+  TASK-CRUX-015["TASK-CRUX-015: /crux-architect: arch-critic + pre-mortem flows; persona-conflict check"]
+  TASK-CRUX-016["TASK-CRUX-016: /crux-task pipeline: test-writer -> coder -> reviewer; cost halt; PR_DESCRIPTION..."]
+  TASK-CRUX-017["TASK-CRUX-017: /crux-status + /crux-trace + /crux-incident: critique counts, walk, cascade"]
+  TASK-CRUX-018["TASK-CRUX-018: /crux-release-check + harness install advisory + collision detection"]
+  TASK-CRUX-019["TASK-CRUX-019: Stub READMEs in deferred packages (audit-site, extension-vscode)"]
+  IDEA-001 --> GRILL-CRUX-001
+  IDEA-001 --> GRILL-CRUX-002
+  IDEA-001 --> GRILL-CRUX-003
+  IDEA-001 --> GRILL-CRUX-004
+  IDEA-001 --> GRILL-CRUX-005
+  IDEA-001 --> GRILL-CRUX-006
+  IDEA-001 --> GRILL-CRUX-007
+  IDEA-001 --> GRILL-CRUX-008
+  IDEA-001 --> GRILL-CRUX-009
+  IDEA-001 --> GRILL-CRUX-010
+  IDEA-001 --> GRILL-CRUX-011
+  IDEA-001 --> GRILL-CRUX-012
+  IDEA-001 --> GRILL-CRUX-013
+  IDEA-001 --> GRILL-CRUX-014
+  IDEA-001 --> GRILL-CRUX-015
+  IDEA-001 --> GRILL-CRUX-016
+  IDEA-001 --> GRILL-CRUX-017
+  IDEA-001 --> GRILL-CRUX-018
+  IDEA-001 --> GRILL-CRUX-019
+  IDEA-001 --> GRILL-CRUX-020
+  GRILL-CRUX-001 --> REQ-CRUX-001
+  GRILL-CRUX-002 --> REQ-CRUX-002
+  GRILL-CRUX-003 --> REQ-CRUX-003
+  GRILL-CRUX-003 --> REQ-CRUX-004
+  GRILL-CRUX-004 --> REQ-CRUX-005
+  GRILL-CRUX-004 --> REQ-CRUX-006
+  GRILL-CRUX-005 --> REQ-CRUX-007
+  GRILL-CRUX-006 --> REQ-CRUX-008
+  GRILL-CRUX-007 --> REQ-CRUX-010
+  GRILL-CRUX-008 --> REQ-CRUX-011
+  GRILL-CRUX-008 --> REQ-CRUX-012
+  GRILL-CRUX-009 --> REQ-CRUX-013
+  GRILL-CRUX-010 --> REQ-CRUX-014
+  GRILL-CRUX-011 --> REQ-CRUX-015
+  GRILL-CRUX-012 --> REQ-CRUX-016
+  GRILL-CRUX-013 --> REQ-CRUX-017
+  GRILL-CRUX-014 --> REQ-CRUX-018
+  GRILL-CRUX-015 --> REQ-CRUX-019
+  GRILL-CRUX-016 --> REQ-CRUX-020
+  GRILL-CRUX-017 --> REQ-CRUX-021
+  GRILL-CRUX-018 --> REQ-CRUX-022
+  GRILL-CRUX-019 --> REQ-CRUX-023
+  GRILL-CRUX-020 --> REQ-CRUX-024
+  REQ-CRUX-003 --> MOD-CRUX-001
+  REQ-CRUX-004 --> MOD-CRUX-001
+  REQ-CRUX-008 --> MOD-CRUX-001
+  REQ-CRUX-010 --> MOD-CRUX-001
+  REQ-CRUX-011 --> MOD-CRUX-001
+  REQ-CRUX-012 --> MOD-CRUX-001
+  REQ-CRUX-018 --> MOD-CRUX-001
+  REQ-CRUX-021 --> MOD-CRUX-001
+  REQ-CRUX-005 --> MOD-CRUX-002
+  REQ-CRUX-006 --> MOD-CRUX-002
+  REQ-CRUX-007 --> MOD-CRUX-002
+  REQ-CRUX-014 --> MOD-CRUX-002
+  REQ-CRUX-017 --> MOD-CRUX-002
+  REQ-CRUX-001 --> MOD-CRUX-003
+  REQ-CRUX-002 --> MOD-CRUX-003
+  REQ-CRUX-013 --> MOD-CRUX-003
+  REQ-CRUX-015 --> MOD-CRUX-003
+  REQ-CRUX-016 --> MOD-CRUX-003
+  REQ-CRUX-019 --> MOD-CRUX-003
+  REQ-CRUX-020 --> MOD-CRUX-003
+  REQ-CRUX-022 --> MOD-CRUX-003
+  REQ-CRUX-023 --> MOD-CRUX-003
+  REQ-CRUX-024 --> MOD-CRUX-003
+  REQ-CRUX-001 --> ADR-CRUX-001
+  GRILL-CRUX-003 --> ADR-CRUX-002
+  REQ-CRUX-003 --> ADR-CRUX-002
+  REQ-CRUX-004 --> ADR-CRUX-002
+  GRILL-CRUX-004 --> ADR-CRUX-003
+  REQ-CRUX-005 --> ADR-CRUX-003
+  REQ-CRUX-006 --> ADR-CRUX-003
+  GRILL-CRUX-013 --> ADR-CRUX-004
+  REQ-CRUX-017 --> ADR-CRUX-004
+  GRILL-CRUX-014 --> ADR-CRUX-005
+  REQ-CRUX-018 --> ADR-CRUX-005
+  GRILL-CRUX-006 --> ADR-CRUX-006
+  REQ-CRUX-008 --> ADR-CRUX-006
+  GRILL-CRUX-010 --> ADR-CRUX-007
+  REQ-CRUX-014 --> ADR-CRUX-007
+  GRILL-CRUX-018 --> ADR-CRUX-008
+  REQ-CRUX-022 --> ADR-CRUX-008
+  GRILL-CRUX-008 --> ADR-CRUX-009
+  REQ-CRUX-011 --> ADR-CRUX-009
+  REQ-CRUX-012 --> ADR-CRUX-009
+  GRILL-CRUX-019 --> ADR-CRUX-010
+  REQ-CRUX-023 --> ADR-CRUX-010
+  REQ-CRUX-008 --> TASK-CRUX-001
+  ADR-CRUX-001 --> TASK-CRUX-001
+  ADR-CRUX-006 --> TASK-CRUX-001
+  MOD-CRUX-001 --> TASK-CRUX-001
+  REQ-CRUX-003 --> TASK-CRUX-002
+  ADR-CRUX-002 --> TASK-CRUX-002
+  MOD-CRUX-001 --> TASK-CRUX-002
+  REQ-CRUX-004 --> TASK-CRUX-003
+  ADR-CRUX-002 --> TASK-CRUX-003
+  MOD-CRUX-001 --> TASK-CRUX-003
+  REQ-CRUX-018 --> TASK-CRUX-004
+  REQ-CRUX-021 --> TASK-CRUX-004
+  ADR-CRUX-005 --> TASK-CRUX-004
+  MOD-CRUX-001 --> TASK-CRUX-004
+  REQ-CRUX-011 --> TASK-CRUX-005
+  REQ-CRUX-012 --> TASK-CRUX-005
+  ADR-CRUX-009 --> TASK-CRUX-005
+  MOD-CRUX-001 --> TASK-CRUX-005
+  REQ-CRUX-010 --> TASK-CRUX-006
+  ADR-CRUX-005 --> TASK-CRUX-006
+  MOD-CRUX-001 --> TASK-CRUX-006
+  REQ-CRUX-005 --> TASK-CRUX-007
+  ADR-CRUX-003 --> TASK-CRUX-007
+  MOD-CRUX-002 --> TASK-CRUX-007
+  REQ-CRUX-006 --> TASK-CRUX-008
+  REQ-CRUX-017 --> TASK-CRUX-008
+  ADR-CRUX-003 --> TASK-CRUX-008
+  ADR-CRUX-004 --> TASK-CRUX-008
+  MOD-CRUX-002 --> TASK-CRUX-008
+  REQ-CRUX-006 --> TASK-CRUX-009
+  ADR-CRUX-003 --> TASK-CRUX-009
+  MOD-CRUX-002 --> TASK-CRUX-009
+  REQ-CRUX-007 --> TASK-CRUX-010
+  ADR-CRUX-003 --> TASK-CRUX-010
+  MOD-CRUX-002 --> TASK-CRUX-010
+  REQ-CRUX-001 --> TASK-CRUX-011
+  ADR-CRUX-001 --> TASK-CRUX-011
+  ADR-CRUX-007 --> TASK-CRUX-011
+  MOD-CRUX-003 --> TASK-CRUX-011
+  REQ-CRUX-013 --> TASK-CRUX-012
+  ADR-CRUX-001 --> TASK-CRUX-012
+  ADR-CRUX-006 --> TASK-CRUX-012
+  MOD-CRUX-003 --> TASK-CRUX-012
+  REQ-CRUX-015 --> TASK-CRUX-013
+  REQ-CRUX-020 --> TASK-CRUX-013
+  ADR-CRUX-007 --> TASK-CRUX-013
+  MOD-CRUX-003 --> TASK-CRUX-013
+  REQ-CRUX-021 --> TASK-CRUX-014
+  ADR-CRUX-007 --> TASK-CRUX-014
+  MOD-CRUX-003 --> TASK-CRUX-014
+  REQ-CRUX-002 --> TASK-CRUX-015
+  ADR-CRUX-001 --> TASK-CRUX-015
+  ADR-CRUX-007 --> TASK-CRUX-015
+  MOD-CRUX-003 --> TASK-CRUX-015
+  REQ-CRUX-017 --> TASK-CRUX-016
+  REQ-CRUX-023 --> TASK-CRUX-016
+  ADR-CRUX-004 --> TASK-CRUX-016
+  ADR-CRUX-007 --> TASK-CRUX-016
+  ADR-CRUX-009 --> TASK-CRUX-016
+  ADR-CRUX-010 --> TASK-CRUX-016
+  MOD-CRUX-003 --> TASK-CRUX-016
+  REQ-CRUX-019 --> TASK-CRUX-017
+  ADR-CRUX-002 --> TASK-CRUX-017
+  ADR-CRUX-005 --> TASK-CRUX-017
+  MOD-CRUX-003 --> TASK-CRUX-017
+  REQ-CRUX-016 --> TASK-CRUX-018
+  REQ-CRUX-022 --> TASK-CRUX-018
+  REQ-CRUX-024 --> TASK-CRUX-018
+  ADR-CRUX-008 --> TASK-CRUX-018
+  MOD-CRUX-003 --> TASK-CRUX-018
+  REQ-CRUX-019 --> TASK-CRUX-019
+  MOD-CRUX-003 --> TASK-CRUX-019

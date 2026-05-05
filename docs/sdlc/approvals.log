@@ -3,3 +3,14 @@
 2026-05-05T00:00:00Z  /crux-approve  PRD-CRUX  approved-by=Dhanush Sai  reqs=23  spec-critique=resolved
 2026-05-05T00:00:00Z  pre-mortem  PM-CRUX-006  kind=accepted-risk  source=ADR-CRUX-010  note=CRLF line endings on Windows-authored PR_DESCRIPTION.md (cosmetic only)
 2026-05-05T00:00:00Z  pre-mortem  PM-CRUX-007  kind=accepted-risk  source=ADR-CRUX-006  note=approvals.log non-atomic-append race (only material if MOD-CRUX-003 ever parallelizes auto-approvals; currently sequential)
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-001  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-002  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-003  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-004  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-005  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-006  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-007  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-008  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-009  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  ADR-CRUX-010  approved-by=Dhanush Sai  prior=proposed  new=accepted
+2026-05-05T00:00:00Z  /crux-approve  TASK-DAG-CRUX-v1  approved-by=Dhanush Sai  tasks=19  total_estimated_cost_usd=67.50

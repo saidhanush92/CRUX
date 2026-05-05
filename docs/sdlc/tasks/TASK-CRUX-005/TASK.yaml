@@ -1,0 +1,17 @@
+id: TASK-CRUX-005
+title: 'Cost ledger CSV writer + halt-rebase ladder'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-011
+  - REQ-CRUX-012
+honors_adrs:
+  - ADR-CRUX-009
+touches_files:
+  - packages/core/src/cost/**
+  - packages/core/test/cost/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-004
+  - TASK-CRUX-006
+depends_on: []
+estimated_cost_usd: 2.5

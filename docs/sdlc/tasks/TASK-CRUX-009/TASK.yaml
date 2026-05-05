@@ -1,0 +1,18 @@
+id: TASK-CRUX-009
+title: 'claude-code adapter: slash + fs/shell + trace+capability (7 fns)'
+module: MOD-CRUX-002
+satisfies:
+  - REQ-CRUX-006
+honors_adrs:
+  - ADR-CRUX-003
+touches_files:
+  - packages/adapter-claude-code/src/commands.ts
+  - packages/adapter-claude-code/src/fs-shell.ts
+  - packages/adapter-claude-code/src/trace.ts
+  - packages/adapter-claude-code/test/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-008
+depends_on:
+  - TASK-CRUX-007
+estimated_cost_usd: 4.0

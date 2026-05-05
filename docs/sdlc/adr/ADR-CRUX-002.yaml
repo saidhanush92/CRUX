@@ -1,6 +1,6 @@
 id: ADR-CRUX-002
 title: 'Trace graph storage: markdown canonical + derived SQLite cache'
-status: proposed
+status: accepted
 decision: |
   Markdown / YAML files under docs/sdlc/ are the canonical source of truth for the trace graph. SQLite at .crux/trace.db is a derived cache, regenerated entirely from markdown on demand. Cache invalidation: per-file mtime + sha256 content hash. On any disagreement between markdown and the cache, markdown wins; the cache is rebuilt, never written back to markdown.
 
@@ -35,3 +35,5 @@ validated_by:
   - cache_rebuild_lossless CI check (delete cache, rebuild, diff against pre-delete query results)
   - markdown-mutation-vs-cache-stale unit test (REQ-CRUX-004 AC#1)
   - concurrent-write race test (synthetic harness writes 10 GRILLs in tight loop; assertion every artifact reachable via /crux-trace within 200ms of the last write; addresses PM-CRUX-001)
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

@@ -1,0 +1,20 @@
+id: TASK-CRUX-011
+title: 'CLI entry point + command dispatch + workspace package skeleton'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-001
+honors_adrs:
+  - ADR-CRUX-001
+  - ADR-CRUX-007
+touches_files:
+  - packages/cli/src/index.ts
+  - packages/cli/src/dispatch.ts
+  - packages/cli/test/**
+  - packages/cli/package.json
+  - packages/cli/tsconfig.json
+  - packages/cli/bin/crux
+risk: medium
+parallelizable_with: []
+depends_on:
+  - TASK-CRUX-001
+estimated_cost_usd: 3.0

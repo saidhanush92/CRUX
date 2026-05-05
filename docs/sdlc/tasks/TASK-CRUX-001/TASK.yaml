@@ -1,0 +1,21 @@
+id: TASK-CRUX-001
+title: 'Gate state machine + crux_mode reader'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-008
+honors_adrs:
+  - ADR-CRUX-001
+  - ADR-CRUX-006
+touches_files:
+  - packages/core/src/gate/**
+  - packages/core/src/mode/**
+  - packages/core/test/gate/**
+  - packages/core/test/mode/**
+  - packages/core/package.json
+  - packages/core/tsconfig.json
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-002
+  - TASK-CRUX-007
+depends_on: []
+estimated_cost_usd: 2.5

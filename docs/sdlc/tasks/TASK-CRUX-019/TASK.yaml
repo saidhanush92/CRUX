@@ -1,0 +1,14 @@
+id: TASK-CRUX-019
+title: 'Stub READMEs in deferred packages (audit-site, extension-vscode)'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-019
+honors_adrs: []
+touches_files:
+  - packages/audit-site/README.md
+  - packages/extension-vscode/README.md
+risk: low
+parallelizable_with:
+  - TASK-CRUX-018
+depends_on: []
+estimated_cost_usd: 0.5

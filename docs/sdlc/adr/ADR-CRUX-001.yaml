@@ -1,6 +1,6 @@
 id: ADR-CRUX-001
 title: 'TypeScript monorepo with pnpm workspaces'
-status: proposed
+status: accepted
 decision: |
   Crux is structured as a TypeScript monorepo with pnpm workspaces. Each package declared in pnpm-workspace.yaml has its own tsconfig extending tsconfig.base.json. The workspace shape was pre-confirmed by the user at TODO 7.5 before /crux-architect ran.
 alternatives_considered:
@@ -30,3 +30,5 @@ revisit_when: |
 validated_by:
   - '`pnpm -r build` succeeds in CI on every PR'
   - tsconfig path inheritance test in packages/core
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

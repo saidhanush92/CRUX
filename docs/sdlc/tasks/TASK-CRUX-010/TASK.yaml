@@ -1,0 +1,16 @@
+id: TASK-CRUX-010
+title: 'Paper-only second-adapter spec (Cursor / raw SDK)'
+module: MOD-CRUX-002
+satisfies:
+  - REQ-CRUX-007
+honors_adrs:
+  - ADR-CRUX-003
+touches_files:
+  - docs/sdlc/architecture/adapter-second-spec.md
+risk: low
+parallelizable_with:
+  - TASK-CRUX-008
+  - TASK-CRUX-009
+depends_on:
+  - TASK-CRUX-007
+estimated_cost_usd: 1.5

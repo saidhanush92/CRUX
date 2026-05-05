@@ -1,0 +1,49 @@
+graph TD
+  subgraph MOD_CRUX_001["MOD-CRUX-001: core"]
+    TASK_CRUX_001["TASK-CRUX-001<br/>Gate state machine + crux_mode reader<br/>$2.50 / medium"]:::medRisk
+    TASK_CRUX_002["TASK-CRUX-002<br/>Trace graph: markdown reader + writer<br/>$2.50 / medium"]:::medRisk
+    TASK_CRUX_003["TASK-CRUX-003<br/>Trace graph: SQLite cache index with concurrent-wr<br/>$4.00 / high"]:::highRisk
+    TASK_CRUX_004["TASK-CRUX-004<br/>Amendment merge + cycle detection<br/>$3.00 / medium"]:::medRisk
+    TASK_CRUX_005["TASK-CRUX-005<br/>Cost ledger CSV writer + halt-rebase ladder<br/>$2.50 / medium"]:::medRisk
+    TASK_CRUX_006["TASK-CRUX-006<br/>Capability registry consumer + INC/CHG/AMD plumbin<br/>$3.00 / medium"]:::medRisk
+  end
+  subgraph MOD_CRUX_002["MOD-CRUX-002: adapter-claude-code"]
+    TASK_CRUX_007["TASK-CRUX-007<br/>Adapter interface declaration: 17 fns, 7 concern g<br/>$3.00 / high"]:::highRisk
+    TASK_CRUX_008["TASK-CRUX-008<br/>claude-code adapter: lifecycle + subagents + skill<br/>$6.00 / high"]:::highRisk
+    TASK_CRUX_009["TASK-CRUX-009<br/>claude-code adapter: slash + fs/shell + trace+capa<br/>$4.00 / medium"]:::medRisk
+    TASK_CRUX_010["TASK-CRUX-010<br/>Paper-only second-adapter spec (Cursor / raw SDK)<br/>$1.50 / low"]:::lowRisk
+  end
+  subgraph MOD_CRUX_003["MOD-CRUX-003: cli"]
+    TASK_CRUX_011["TASK-CRUX-011<br/>CLI entry point + command dispatch + workspace pac<br/>$3.00 / medium"]:::medRisk
+    TASK_CRUX_012["TASK-CRUX-012<br/>/crux-init: greenfield + brownfield (gap report + <br/>$4.00 / medium"]:::medRisk
+    TASK_CRUX_013["TASK-CRUX-013<br/>/crux-idea + /crux-grill: scaled-by-depth budget +<br/>$4.00 / medium"]:::medRisk
+    TASK_CRUX_014["TASK-CRUX-014<br/>/crux-prd + /crux-modules + /crux-approve (with cy<br/>$4.50 / medium"]:::medRisk
+    TASK_CRUX_015["TASK-CRUX-015<br/>/crux-architect: arch-critic + pre-mortem flows; p<br/>$4.00 / medium"]:::medRisk
+    TASK_CRUX_016["TASK-CRUX-016<br/>/crux-task pipeline: test-writer -> coder -> revie<br/>$7.00 / high"]:::highRisk
+    TASK_CRUX_017["TASK-CRUX-017<br/>/crux-status + /crux-trace + /crux-incident: criti<br/>$4.00 / medium"]:::medRisk
+    TASK_CRUX_018["TASK-CRUX-018<br/>/crux-release-check + harness install advisory + c<br/>$4.50 / medium"]:::medRisk
+    TASK_CRUX_019["TASK-CRUX-019<br/>Stub READMEs in deferred packages (audit-site, ext<br/>$0.50 / low"]:::lowRisk
+  end
+  TASK_CRUX_002 --> TASK_CRUX_003
+  TASK_CRUX_002 --> TASK_CRUX_004
+  TASK_CRUX_002 --> TASK_CRUX_006
+  TASK_CRUX_007 --> TASK_CRUX_008
+  TASK_CRUX_007 --> TASK_CRUX_009
+  TASK_CRUX_007 --> TASK_CRUX_010
+  TASK_CRUX_001 --> TASK_CRUX_011
+  TASK_CRUX_011 --> TASK_CRUX_012
+  TASK_CRUX_011 --> TASK_CRUX_013
+  TASK_CRUX_011 --> TASK_CRUX_014
+  TASK_CRUX_004 --> TASK_CRUX_014
+  TASK_CRUX_011 --> TASK_CRUX_015
+  TASK_CRUX_008 --> TASK_CRUX_015
+  TASK_CRUX_011 --> TASK_CRUX_016
+  TASK_CRUX_005 --> TASK_CRUX_016
+  TASK_CRUX_008 --> TASK_CRUX_016
+  TASK_CRUX_011 --> TASK_CRUX_017
+  TASK_CRUX_003 --> TASK_CRUX_017
+  TASK_CRUX_006 --> TASK_CRUX_017
+  TASK_CRUX_011 --> TASK_CRUX_018
+  classDef highRisk fill:#fee,stroke:#c33,stroke-width:2px
+  classDef medRisk fill:#ffe,stroke:#a90
+  classDef lowRisk fill:#efe,stroke:#0a0

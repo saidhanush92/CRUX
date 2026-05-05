@@ -1,0 +1,20 @@
+id: TASK-CRUX-004
+title: 'Amendment merge + cycle detection'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-018
+  - REQ-CRUX-021
+honors_adrs:
+  - ADR-CRUX-005
+touches_files:
+  - packages/core/src/amendments/**
+  - packages/core/src/graph/cycle.ts
+  - packages/core/test/amendments/**
+  - packages/core/test/graph/cycle.test.ts
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-005
+  - TASK-CRUX-006
+depends_on:
+  - TASK-CRUX-002
+estimated_cost_usd: 3.0

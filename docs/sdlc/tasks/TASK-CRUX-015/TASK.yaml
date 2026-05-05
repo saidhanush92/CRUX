@@ -1,0 +1,20 @@
+id: TASK-CRUX-015
+title: '/crux-architect: arch-critic + pre-mortem flows; persona-conflict check'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-002
+honors_adrs:
+  - ADR-CRUX-001
+  - ADR-CRUX-007
+touches_files:
+  - packages/cli/src/commands/architect/**
+  - packages/cli/test/commands/architect/**
+  - docs/sdlc/PERSONA.md
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-016
+  - TASK-CRUX-017
+depends_on:
+  - TASK-CRUX-011
+  - TASK-CRUX-008
+estimated_cost_usd: 4.0

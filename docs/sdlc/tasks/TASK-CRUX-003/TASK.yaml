@@ -1,0 +1,18 @@
+id: TASK-CRUX-003
+title: 'Trace graph: SQLite cache index with concurrent-write semantics'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-004
+honors_adrs:
+  - ADR-CRUX-002
+touches_files:
+  - packages/core/src/trace/cache.ts
+  - packages/core/src/trace/indexer.ts
+  - packages/core/schema/**
+  - packages/core/test/trace/cache.test.ts
+  - packages/core/test/trace/indexer.test.ts
+risk: high
+parallelizable_with: []
+depends_on:
+  - TASK-CRUX-002
+estimated_cost_usd: 4.0

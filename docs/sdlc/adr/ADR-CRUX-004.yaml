@@ -1,6 +1,6 @@
 id: ADR-CRUX-004
 title: 'Subagent invocation isolation + model assignment rule'
-status: proposed
+status: accepted
 decision: |
   In /crux-task, the test-writer, coder, and reviewer phases run as three separate Task tool invocations with no shared transcript context. Each subagent receives only the orchestrator-supplied brief plus the artifacts it explicitly reads. Reviewer cannot lazy-share the coder's reasoning trace. Model-assignment rule: the highest-reasoning role gets model: opus; all other roles default to model: sonnet. Specific agent file frontmatter (e.g. architect=opus, reviewer=sonnet) is editable per deployment without a CHG event; only the rule itself is binding via this ADR.
 alternatives_considered:
@@ -33,3 +33,5 @@ revisit_when: |
 validated_by:
   - integration test asserting reviewer subagent cannot read test-writer's transcript
   - three distinct Task tool invocations visible in /crux-task execution trace
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

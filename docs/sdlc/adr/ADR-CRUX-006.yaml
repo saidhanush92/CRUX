@@ -1,6 +1,6 @@
 id: ADR-CRUX-006
 title: 'Gate-mode dial in stack.yaml + artifact-invariance rule'
-status: proposed
+status: accepted
 decision: |
   stack.yaml carries a top-level crux_mode field. Allowed values: compressed, standard, strict, solo, observation. Greenfield default = compressed; brownfield default = standard. **Artifact invariance:** every gate produces its REQs, ADRs, MODs, TASKs, REVIEWs, and other artifacts under EVERY mode. Modes differ only in HITL approval frequency. Auto-approvals in compressed mode are recorded in approvals.log with source: mode-compressed -- never silently. Mid-project mode change requires a CHG event documenting the transition. This ADR explicitly ratifies the resolution of IDEA-001's ambiguity about what Compressed Mode skips (answer: only HITL approval, never artifact production).
 alternatives_considered:
@@ -30,3 +30,5 @@ revisit_when: |
 validated_by:
   - same-input-different-mode artifact-set equality test (REQ-CRUX-008 AC#4)
   - 'auto-approval audit-log assertion: every mode-compressed approval is logged (REQ-CRUX-008 AC#5)'
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

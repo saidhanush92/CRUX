@@ -1,0 +1,17 @@
+id: TASK-CRUX-002
+title: 'Trace graph: markdown reader + writer'
+module: MOD-CRUX-001
+satisfies:
+  - REQ-CRUX-003
+honors_adrs:
+  - ADR-CRUX-002
+touches_files:
+  - packages/core/src/trace/markdown.ts
+  - packages/core/src/trace/types.ts
+  - packages/core/test/trace/markdown.test.ts
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-001
+  - TASK-CRUX-007
+depends_on: []
+estimated_cost_usd: 2.5

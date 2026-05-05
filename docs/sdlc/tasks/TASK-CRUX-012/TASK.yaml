@@ -1,0 +1,18 @@
+id: TASK-CRUX-012
+title: '/crux-init: greenfield + brownfield (gap report + idempotent mkdir + auto-IDEA)'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-013
+honors_adrs:
+  - ADR-CRUX-001
+  - ADR-CRUX-006
+touches_files:
+  - packages/cli/src/commands/init/**
+  - packages/cli/test/commands/init/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-013
+  - TASK-CRUX-014
+depends_on:
+  - TASK-CRUX-011
+estimated_cost_usd: 4.0

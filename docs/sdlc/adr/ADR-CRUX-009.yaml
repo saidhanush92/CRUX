@@ -1,6 +1,6 @@
 id: ADR-CRUX-009
 title: 'Per-task cost halt contract: 1.0x soft warn, 2.0x hard halt'
-status: proposed
+status: accepted
 decision: |
   /crux-task enforces a per-task cost halt. Soft warn at 1.0x TASK.estimated_cost_usd; HARD HALT at 2.0x. The 2.0x multiplier is configurable via stack.yaml.cost_halt_multiplier. Halt requires explicit user confirmation before the cycle continues. /crux-status surfaces 7-day burn totals and the top-3 most expensive task ids. Cost-log threshold is pinned at wall_seconds >= 60 per agent invocation per REQ-CRUX-012 (formerly the ambiguous "multi-minute" phrase). No per-session aggregate cap at v1.0.
 
@@ -41,3 +41,5 @@ validated_by:
   - 2.0x halt integration test
   - /crux-status 7-day burn snapshot end-to-end test
   - 'halt-rebase ladder test: synthetic task overruns to 2.5x (halt 1), confirms, runs to 3.5x (halt 2), confirms, runs to 4.5x (halt 3), confirms, runs to 5.0x (auto-stop + CHG event); addresses PM-CRUX-003'
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

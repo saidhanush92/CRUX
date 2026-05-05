@@ -1,0 +1,22 @@
+id: TASK-CRUX-014
+title: '/crux-prd + /crux-modules + /crux-approve (with cycle-halt + spec-critic invocation)'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-021
+honors_adrs:
+  - ADR-CRUX-007
+touches_files:
+  - packages/cli/src/commands/prd/**
+  - packages/cli/src/commands/modules/**
+  - packages/cli/src/commands/approve/**
+  - packages/cli/test/commands/prd/**
+  - packages/cli/test/commands/modules/**
+  - packages/cli/test/commands/approve/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-012
+  - TASK-CRUX-013
+depends_on:
+  - TASK-CRUX-011
+  - TASK-CRUX-004
+estimated_cost_usd: 4.5

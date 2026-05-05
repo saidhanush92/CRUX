@@ -1,0 +1,23 @@
+id: TASK-CRUX-016
+title: '/crux-task pipeline: test-writer -> coder -> reviewer; cost halt; PR_DESCRIPTION.md'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-017
+  - REQ-CRUX-023
+honors_adrs:
+  - ADR-CRUX-004
+  - ADR-CRUX-007
+  - ADR-CRUX-009
+  - ADR-CRUX-010
+touches_files:
+  - packages/cli/src/commands/task/**
+  - packages/cli/test/commands/task/**
+risk: high
+parallelizable_with:
+  - TASK-CRUX-015
+  - TASK-CRUX-017
+depends_on:
+  - TASK-CRUX-011
+  - TASK-CRUX-005
+  - TASK-CRUX-008
+estimated_cost_usd: 7.0

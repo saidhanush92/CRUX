@@ -1,0 +1,20 @@
+id: TASK-CRUX-018
+title: '/crux-release-check + harness install advisory + collision detection'
+module: MOD-CRUX-003
+satisfies:
+  - REQ-CRUX-016
+  - REQ-CRUX-022
+  - REQ-CRUX-024
+honors_adrs:
+  - ADR-CRUX-008
+touches_files:
+  - packages/cli/src/commands/release-check/**
+  - packages/cli/src/commands/harness/**
+  - packages/cli/test/commands/release-check/**
+  - packages/cli/test/commands/harness/**
+risk: medium
+parallelizable_with:
+  - TASK-CRUX-019
+depends_on:
+  - TASK-CRUX-011
+estimated_cost_usd: 4.5
