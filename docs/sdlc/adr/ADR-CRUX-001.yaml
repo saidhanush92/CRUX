@@ -1,0 +1,32 @@
+id: ADR-CRUX-001
+title: 'TypeScript monorepo with pnpm workspaces'
+status: proposed
+decision: |
+  Crux is structured as a TypeScript monorepo with pnpm workspaces. Each package declared in pnpm-workspace.yaml has its own tsconfig extending tsconfig.base.json. The workspace shape was pre-confirmed by the user at TODO 7.5 before /crux-architect ran.
+alternatives_considered:
+  - option: single-package repo with deep src/ tree
+    rationale: |
+      rejected: 5 deliverables (core, adapter, cli, extension, audit-site) have different dependency surfaces and release cadences.
+  - option: nx- or turbo-orchestrated monorepo
+    rationale: |
+      rejected at v1: extra tooling burden without a current measurable need for cached graph builds.
+  - option: polyrepo with submodules
+    rationale: |
+      rejected: cross-package refactors become painful; trace graph spans repos and loses portability claim.
+consequences:
+  - Cross-package refactors stay atomic.
+  - Each package keeps an isolated dependency tree.
+  - Contributors must learn pnpm workspace conventions.
+  - CI must run `pnpm -r build` and `pnpm -r test` to cover all packages.
+resolves: []
+satisfies:
+  - REQ-CRUX-001
+constrains:
+  - MOD-CRUX-001
+  - MOD-CRUX-002
+  - MOD-CRUX-003
+revisit_when: |
+  Build orchestration becomes a measurable bottleneck (>2x slowdown vs flat repo) OR a sixth deliverable joins the repo.
+validated_by:
+  - '`pnpm -r build` succeeds in CI on every PR'
+  - tsconfig path inheritance test in packages/core

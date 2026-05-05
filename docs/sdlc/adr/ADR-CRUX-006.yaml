@@ -1,0 +1,32 @@
+id: ADR-CRUX-006
+title: 'Gate-mode dial in stack.yaml + artifact-invariance rule'
+status: proposed
+decision: |
+  stack.yaml carries a top-level crux_mode field. Allowed values: compressed, standard, strict, solo, observation. Greenfield default = compressed; brownfield default = standard. **Artifact invariance:** every gate produces its REQs, ADRs, MODs, TASKs, REVIEWs, and other artifacts under EVERY mode. Modes differ only in HITL approval frequency. Auto-approvals in compressed mode are recorded in approvals.log with source: mode-compressed -- never silently. Mid-project mode change requires a CHG event documenting the transition. This ADR explicitly ratifies the resolution of IDEA-001's ambiguity about what Compressed Mode skips (answer: only HITL approval, never artifact production).
+alternatives_considered:
+  - option: Per-IDEA mode override only with no global default
+    rationale: |
+      rejected: founding teams want a default; per-IDEA stays available as an override but is not the configuration shape.
+  - option: Compressed mode skips entire gates including artifacts
+    rationale: |
+      rejected: breaks the audit-trail invariant that powers the compounding-learning thesis from IDEA-001.
+  - option: Hard-pinned mode (no mid-project change)
+    rationale: |
+      rejected: 2-person teams grow to 6; mode dial must move.
+consequences:
+  - Every command that branches on mode reads stack.yaml.crux_mode.
+  - Auto-approvals create slightly noisier approvals.log in compressed mode (intentional and audit-friendly).
+  - The audit-trail invariant is now contractually testable (REQ-CRUX-008 AC#4).
+  - 'IDEA-001 narrative ambiguity about "Compressed = 3 HITL gates" is resolved here authoritatively.'
+resolves:
+  - GRILL-CRUX-006
+satisfies:
+  - REQ-CRUX-008
+constrains:
+  - MOD-CRUX-001
+  - MOD-CRUX-003
+revisit_when: |
+  Usage data shows users frequently overriding per-IDEA (would push toward per-IDEA-default); OR a new mode is added (e.g., regulated) with fundamentally different artifact semantics.
+validated_by:
+  - same-input-different-mode artifact-set equality test (REQ-CRUX-008 AC#4)
+  - 'auto-approval audit-log assertion: every mode-compressed approval is logged (REQ-CRUX-008 AC#5)'

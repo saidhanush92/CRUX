@@ -1,0 +1,100 @@
+# arch-critic output for the Phase 7.6 ADR set.
+# Resolution pass on 2026-05-05 (post fix-all directive): all 4 concerns
+# addressed inline. ADR set is no longer blocked by this artifact.
+
+noted_at: 2026-05-05T00:00:00Z
+resolved_at: 2026-05-05T00:00:00Z
+artifacts_reviewed:
+  adrs: docs/sdlc/adr/ADR-CRUX-001.yaml .. ADR-CRUX-010.yaml
+  prd: docs/sdlc/prd/PRD.md
+  reqs: docs/sdlc/prd/REQ-CRUX-*.yaml
+  mods: docs/sdlc/modules/MOD-CRUX-*.yaml
+  stack: docs/sdlc/stack/stack.yaml
+
+critiques:
+
+  - id: ARCH-CRIT-001
+    category: hidden-compounding
+    severity: medium
+    target: [ADR-CRUX-002, ADR-CRUX-009]
+    finding: |
+      ADR-002 + ADR-009 hidden compounding: cost log CSV vs trace cache
+      SQLite, neither names where the cost log eventually lives.
+    suggests: |
+      (Original.) Add a clause to one of the ADRs scoping the cost log
+      explicitly.
+    resolution: |
+      ADR-CRUX-009 amended with a "Storage scope" clause: cost ledger
+      stays in CSV form at v1.0; trace cache is scoped to the trace
+      graph only; lifting cost ledger to SQLite is a v1.1+ consideration
+      gated on observed query-time pain. New consequence captured: cost
+      ledger format and trace cache format are intentionally separate
+      at v1.0; cross-query joins are not v1.0 functionality.
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: ARCH-CRIT-002
+    category: missing-validation
+    severity: medium
+    target: [ADR-CRUX-003]
+    finding: |
+      ADR-003's validated_by relies on a v1.1+ second adapter for the
+      load-bearing abstraction-quality check.
+    suggests: |
+      (Original.) Add a v1.0 deliverable: paper-only second-adapter spec.
+    resolution: |
+      ADR-CRUX-003 amended with a new validated_by entry: a paper-only
+      second-adapter spec at docs/sdlc/architecture/adapter-second-spec.md
+      ships at v1.0. Each of the 17 functions is marked feasible |
+      needs-redesign | unknown for a chosen paper adapter (Cursor,
+      Aider, or raw Anthropic SDK). If any function is needs-redesign,
+      ADR-CRUX-003 is reopened pre-v1.0 release. Converts the
+      abstraction-quality check from a v1.1 deferral into a v1.0
+      deliverable.
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: ARCH-CRIT-003
+    category: 3q-failure
+    severity: low
+    target: [ADR-CRUX-007]
+    finding: |
+      ADR-007's third question (reversal cost) is borderline; the ADR
+      slightly oversells the lock-in.
+    suggests: |
+      (Original.) Either acknowledge "scope-anchor" posture in the body,
+      or split the ADR.
+    resolution: |
+      ADR-CRUX-007 amended with a "Posture" clause acknowledging this is
+      a SCOPE-ANCHOR ADR, not a hard architectural lock. The 3-question
+      test passes on (1) and (2) but is borderline on (3). Architect
+      should treat the DAG shape as revisable in any v1.x line if real
+      usage demands it, without a heavyweight CHG event for the
+      orchestration choice itself. ADR keeps the Ruflo credit and
+      pattern-attribution function intact.
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: ARCH-CRIT-004
+    category: implicit-decision
+    severity: low
+    target: [stack.yaml]
+    finding: |
+      stack.yaml.constraints contains 5 items; 2 are templated defaults
+      with no ADR backing; future readers may treat them as authoritative.
+    suggests: |
+      (Original.) Reduce to ADR-backed only OR add provenance tags.
+    resolution: |
+      stack.yaml.constraints converted to a structured list. Each entry
+      now carries a `text` field and a `source` field naming its
+      provenance: ADR-CRUX-003, ADR-CRUX-006, capabilities-registry-design,
+      or stack-template-default. Future readers can see at a glance
+      which constraints are ADR-pinned and which are template defaults.
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+
+# Summary: 4 of 4 concerns resolved.

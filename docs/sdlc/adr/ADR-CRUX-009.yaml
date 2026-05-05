@@ -1,0 +1,43 @@
+id: ADR-CRUX-009
+title: 'Per-task cost halt contract: 1.0x soft warn, 2.0x hard halt'
+status: proposed
+decision: |
+  /crux-task enforces a per-task cost halt. Soft warn at 1.0x TASK.estimated_cost_usd; HARD HALT at 2.0x. The 2.0x multiplier is configurable via stack.yaml.cost_halt_multiplier. Halt requires explicit user confirmation before the cycle continues. /crux-status surfaces 7-day burn totals and the top-3 most expensive task ids. Cost-log threshold is pinned at wall_seconds >= 60 per agent invocation per REQ-CRUX-012 (formerly the ambiguous "multi-minute" phrase). No per-session aggregate cap at v1.0.
+
+  Halt-rebase policy (added per pre-mortem PM-CRUX-003): on user confirmation to continue past a hard halt, the ceiling is raised by exactly 1.0x of the original TASK.estimated_cost_usd (additive step). First confirmation extends the ceiling to 3.0x. Second to 4.0x. The halt does NOT re-fire immediately on the next cost increment; it re-fires only when the new ceiling is itself crossed. After three consecutive confirmations on the same task (ceiling reaches 5.0x), /crux-task hard-stops the cycle WITHOUT further prompts and emits a CHG event recommending the user revise estimated_cost_usd or split the task. This bounds runaway spend while letting the user recover from a single underestimate.
+
+  Storage scope (added per arch-critique ARCH-CRIT-001): the cost ledger stays in CSV form at docs/sdlc/costs/log.csv at v1.0; it is NOT migrated into the SQLite trace cache from ADR-CRUX-002. The trace cache is scoped to the trace graph only. Lifting the cost ledger to SQLite for query performance is a v1.1+ consideration, gated on observed query-time pain.
+alternatives_considered:
+  - option: Soft-warn-only (no hard halt)
+    rationale: |
+      rejected: doesn't catch the Looplog $14 spike scenario from IDEA-001.
+  - option: Per-session aggregate cap
+    rationale: |
+      rejected at v1: adds complexity without a clear pain point at founding-team scale; reconsider at v1.1 if telemetry shows users consistently blowing past per-task halts.
+  - option: Hard halt at exactly 1.0x
+    rationale: |
+      rejected: 1.0x is a planner estimate, not a precise budget; too aggressive in practice.
+  - option: Variable threshold by risk level
+    rationale: |
+      rejected at v1: the configurable multiplier already covers it; risk-tiered budgets add config surface without measurable benefit.
+consequences:
+  - Cost ledger CSV and halt logic both live in MOD-CRUX-001 and are surfaced through MOD-CRUX-003.
+  - Users need to set realistic estimated_cost_usd values; tasks with poor estimates halt frequently until the user adjusts (intentional feedback loop).
+  - 60-second wall-time threshold is precise and unit-testable.
+  - Three-strike auto-stop bounds maximum per-task spend at 5.0x estimated cost without further user prompts (predictable upper bound).
+  - Cost ledger format (CSV) and trace cache format (SQLite) are intentionally separate at v1.0; cross-query joins are not v1.0 functionality.
+resolves:
+  - GRILL-CRUX-008
+satisfies:
+  - REQ-CRUX-011
+  - REQ-CRUX-012
+constrains:
+  - MOD-CRUX-001
+  - MOD-CRUX-003
+revisit_when: |
+  Usage data shows per-task halts are too frequent (multiplier should rise) or too rare (multiplier should fall); OR a session-aggregate budget becomes useful.
+validated_by:
+  - 60s threshold unit test (REQ-CRUX-012 AC#3)
+  - 2.0x halt integration test
+  - /crux-status 7-day burn snapshot end-to-end test
+  - 'halt-rebase ladder test: synthetic task overruns to 2.5x (halt 1), confirms, runs to 3.5x (halt 2), confirms, runs to 4.5x (halt 3), confirms, runs to 5.0x (auto-stop + CHG event); addresses PM-CRUX-003'

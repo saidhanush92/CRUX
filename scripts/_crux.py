@@ -80,12 +80,13 @@ def all_artifacts() -> list[Path]:
 
 def parse_id(p: Path) -> str | None:
     name = p.name
-    m = re.match(r'(IDEA|GRILL|REQ|MOD|ADR|TASK|CHG|INC|AMD)-\d+', name)
+    # Match PREFIX-([SUFFIX-]*)NNN. Suffix tokens (e.g. "CRUX") are uppercase
+    # alphanumeric segments separated by dashes; final segment is digits.
+    m = re.match(r'((?:IDEA|GRILL|REQ|MOD|ADR|TASK|CHG|INC|AMD)(?:-[A-Z0-9]+)*-\d+)', name)
     if m:
-        return m.group(0)
+        return m.group(1)
     if name == 'TASK.yaml':
-        # task id is the parent dir name
-        return p.parent.name if re.match(r'TASK-\d+', p.parent.name) else None
+        return p.parent.name if re.match(r'TASK(?:-[A-Z0-9]+)*-\d+', p.parent.name) else None
     return None
 
 
@@ -196,16 +197,16 @@ def cmd_trace(args: argparse.Namespace) -> int:
         return 1
     print('UPSTREAM')
     for depth, aid, summary in walk_upstream(artifact_id):
-        print(f'{"  " * depth}└── {aid}  {summary}')
+        print(f'{"  " * depth}|-- {aid}  {summary}')
     print()
     print('DOWNSTREAM')
     down = walk_downstream(artifact_id)
     if not down:
-        print(f'└── {artifact_id}  (no downstream references)')
+        print(f'|-- {artifact_id}  (no downstream references)')
     else:
-        print(f'└── {artifact_id}')
+        print(f'|-- {artifact_id}')
         for _, aid, summary in down:
-            print(f'    └── {aid}  {summary}')
+            print(f'    |-- {aid}  {summary}')
     return 0
 
 

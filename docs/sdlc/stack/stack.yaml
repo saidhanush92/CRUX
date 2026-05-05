@@ -1,0 +1,60 @@
+# Crux v1.0 stack manifest. Single source of truth for the install contract.
+# Amended by ADRs (each amended field carries `# pinned by ADR-CRUX-NNN`).
+# Gate 5 harness installer treats this as the binding install contract.
+
+language: typescript                    # pinned by ADR-CRUX-001
+
+runtime:
+  node: ">=20.10 <23"
+  os: [linux, macos, windows]
+
+package_manager:
+  name: pnpm                            # pinned by ADR-CRUX-001
+  version: "9"
+
+frameworks:
+  test_runner:
+    - name: vitest
+      version: "^2"
+  e2e: []                               # audit-site Astro deferred per REQ-CRUX-019; no e2e at v1.0
+  app: []                               # audit-site Astro deferred per REQ-CRUX-019
+
+data:
+  storage: sqlite                       # pinned by ADR-CRUX-002 (derived cache only; markdown is canonical)
+  cache_path: .crux/trace.db            # gitignored (see .gitignore)
+  schema_dir: packages/core/schema
+
+testing:
+  unit: vitest
+  integration: vitest
+  e2e: null                             # no e2e at v1.0 (audit-site deferred)
+  coverage_target: 80
+
+ops:
+  ci: github-actions
+  release: manual                       # gate 8 deploy automation deferred per REQ-CRUX-001
+  docs_site: null                       # audit-site Astro deferred per REQ-CRUX-019
+
+crux_mode: compressed                   # pinned by ADR-CRUX-006 (greenfield default; brownfield overrides to standard)
+cost_halt_multiplier: 2.0               # pinned by ADR-CRUX-009 (per-task halt threshold; soft warn at 1.0x)
+
+constraints:
+  # Each constraint carries a provenance tag so future readers can see why
+  # it is binding (provenance added per arch-critique ARCH-CRIT-004).
+  - text: "no runtime dependency may be added unless declared here first"
+    source: stack-template-default          # imported from templates/STACK.yaml.tmpl; no ADR backing
+  - text: "no skill may be installed whose declared capability is absent from capabilities/registry.v1.yaml"
+    source: capabilities-registry-design    # follows from capabilities/README.md and the registry's purpose; no specific ADR
+  - text: "hooks are deterministically generated from this file by Gate 5"
+    source: stack-template-default          # imported from templates/STACK.yaml.tmpl; no ADR backing yet (will be ADR-able if Gate 5 build phase reveals friction)
+  - text: "the runtime adapter interface is fixed at 17 functions across 7 concern groups; changes require a CHG event"
+    source: ADR-CRUX-003
+  - text: "every gate produces its artifacts under every crux_mode; modes only differ in HITL frequency"
+    source: ADR-CRUX-006
+
+quality_gates:
+  typecheck: pnpm tsc --noEmit
+  lint: pnpm eslint .
+  format_check: pnpm prettier --check .
+  unit: pnpm vitest run
+  e2e: null                             # no e2e at v1.0

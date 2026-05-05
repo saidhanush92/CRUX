@@ -1,0 +1,199 @@
+# pre-mortem output for the Phase 7.6 ADR set.
+# Single prompt: "Imagine this architecture is in production and an
+# incident is unfolding. What is the most likely root cause?"
+# Answered 7 times across the ADR surface.
+#
+# Resolution pass on 2026-05-05 (post fix-all directive): 3 of 3
+# route-to-ADR-clause failure modes addressed. 2 route-to-test queued
+# for gate 7. 2 accept-as-known-risk logged to approvals.log.
+
+generated_at: 2026-05-05T00:00:00Z
+resolved_at: 2026-05-05T00:00:00Z
+adrs_reviewed: [ADR-CRUX-001, ADR-CRUX-002, ADR-CRUX-003, ADR-CRUX-004, ADR-CRUX-005, ADR-CRUX-006, ADR-CRUX-007, ADR-CRUX-008, ADR-CRUX-009, ADR-CRUX-010]
+
+failure_modes:
+
+  - id: PM-CRUX-001
+    title: |
+      The SQLite trace cache returns stale ancestors for newly-written
+      artifacts under sustained write load; users running /crux-trace
+      see incomplete chains; the audit-trail invariant silently breaks.
+    root_cause_hypothesis: |
+      ADR-CRUX-002 specifies mtime + sha256 invalidation but does not
+      bound the indexer's queue depth or define behavior when an artifact
+      file is written while the indexer is mid-rebuild. A common race:
+      user runs /crux-grill which writes 5 GRILL files in a tight loop;
+      indexer sees the first file's mtime change, starts rebuild, second
+      file is written before rebuild commits; the rebuild commits without
+      the second file's row.
+    blast_radius: |
+      Users running /crux-trace on recent artifacts get incomplete
+      chains. Audit-site (when v1.1+ ships) shows missing edges.
+      Detection requires a post-write read; users who only write rarely
+      see this.
+    classification: route-to-ADR-clause
+    routing_target: ADR-CRUX-002
+    test_idea: null
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+    resolution: |
+      ADR-CRUX-002 amended with a "Concurrent-write semantics" clause:
+      single-threaded indexer with 100ms debounce, process-local mutex
+      serializing passes, follow-up pass enqueued on writes during a
+      run, atomic temp-file-fsync-rename commit, and per-read sha256
+      verification. New validated_by entry adds a concurrent-write race
+      test (10 GRILLs in tight loop; assertion that every artifact is
+      reachable via /crux-trace within 200ms of last write).
+
+  - id: PM-CRUX-002
+    title: |
+      The 17-function adapter interface bloats to 22 within v1.x because
+      a new concern emerges (e.g., observability, telemetry) and slips
+      in as a one-off function rather than going through a CHG event.
+    root_cause_hypothesis: |
+      ADR-CRUX-003's revisit_when names a second-adapter milestone but
+      does not specify what happens BETWEEN v1.0 and v1.1 if a new
+      function is needed. The arch-critic check (ADR-CRUX-005 AC#3)
+      catches concern-group expansion but not function-count growth
+      within an existing group.
+    blast_radius: |
+      Runtime-neutrality claim erodes silently; second adapter at v1.1
+      finds the interface harder to port than expected.
+    classification: route-to-test
+    routing_target: null
+    test_idea: |
+      A CI check that reads packages/core's adapter interface module,
+      counts exported function names, and fails if the count differs
+      from the binding number (17). Add the test alongside the adapter
+      implementation tests; failing test forces a CHG event for any
+      addition.
+
+  - id: PM-CRUX-003
+    title: |
+      A user runs /crux-task and the cost halt fires at 2.0x just as
+      the reviewer is mid-cycle; the user confirms continuation; the
+      reviewer hits the halt again 10 seconds later because cost
+      accrual continues.
+    root_cause_hypothesis: |
+      ADR-CRUX-009 says the halt requires user confirmation to continue
+      but does not specify whether the multiplier rebases after
+      confirmation (e.g., new ceiling becomes 3.0x) or whether the
+      halt re-fires immediately on next cost increment.
+    blast_radius: |
+      User experience degrades sharply on long reviewer cycles; user
+      learns to set artificially-high estimates to dodge the halt,
+      defeating the contract.
+    classification: route-to-ADR-clause
+    routing_target: ADR-CRUX-009
+    test_idea: null
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+    resolution: |
+      ADR-CRUX-009 amended with a "Halt-rebase policy" clause: on user
+      confirmation, ceiling rises by 1.0x of original estimate (3.0x,
+      4.0x, ...). Halt does not re-fire until the new ceiling is
+      crossed. Three confirmations cap the spend at 5.0x and trigger
+      automatic stop + CHG event. New validated_by entry adds a
+      halt-rebase ladder integration test.
+
+  - id: PM-CRUX-004
+    title: |
+      Amendments accumulate over months; a single skill (e.g.,
+      tdd-workflow) accrues 25 amendments; subagent briefs grow long
+      enough to push out the actual task context.
+    root_cause_hypothesis: |
+      ADR-CRUX-005 says revisit_when fires at "amendment count for any
+      single skill exceeds ~20" but defines no automatic mechanism --
+      the threshold is enforcement-by-vibe.
+    blast_radius: |
+      Subagent quality drops as briefs balloon. Cost-per-task rises
+      because more tokens are spent on amendment context. Users notice
+      "Crux feels slower over time."
+    classification: route-to-test
+    routing_target: null
+    test_idea: |
+      A /crux-status warning when any skill's amendment count exceeds
+      15 (warn) or 20 (block until consolidated). Implement as a check
+      in MOD-CRUX-001 alongside the orphan check.
+
+  - id: PM-CRUX-005
+    title: |
+      A hook collision is detected during /crux-init's harness install;
+      user resolves manually; subsequent /crux-init re-run misses the
+      resolution because the user edited .claude/settings.json directly,
+      not the upstream skill, and stack.yaml remained unchanged.
+    root_cause_hypothesis: |
+      ADR-CRUX-008 says manual resolution is acceptable but does not
+      specify where the resolution should be RECORDED to survive
+      re-installs. settings.json is the runtime artifact; harness.lock
+      is the audit record. The resolution might end up only in
+      settings.json, fragile to a re-run.
+    blast_radius: |
+      Re-installing the harness undoes the resolution silently; the
+      collision halt fires again; user loses trust that "their fix
+      stuck."
+    classification: route-to-ADR-clause
+    routing_target: ADR-CRUX-008
+    test_idea: null
+    resolved: true
+    resolved_by: architect
+    resolved_at: 2026-05-05T00:00:00Z
+    resolution: |
+      ADR-CRUX-008 amended with a "Resolution recording" clause: every
+      manual collision resolution must be recorded in
+      harness.lock.collision_resolutions with the resolved (event,
+      matcher) pair, command list with priorities, source skills, and
+      sha256 of the settings.json fragment. On re-install the harness
+      installer reads collision_resolutions first and re-applies them
+      automatically. settings.json edits absent from the lock are
+      flagged but not auto-removed. New validated_by entry adds a
+      resolution-persistence integration test.
+
+  - id: PM-CRUX-006
+    title: |
+      A user runs /crux-task on Windows; the test-writer subagent passes
+      tests; coder passes; reviewer approves; PR_DESCRIPTION.md is
+      written but with CRLF line endings; user pastes into GitHub PR
+      body which renders the trace block oddly.
+    root_cause_hypothesis: |
+      ADR-CRUX-010 says PR_DESCRIPTION.md is markdown but does not
+      specify line-ending policy. The user's editor (or git's
+      autocrlf=true) may CRLF the file. GitHub's markdown renderer
+      handles this fine, but copy/paste from some editors mangles the
+      block.
+    blast_radius: |
+      Cosmetic only. Trace block readability degrades; no audit data
+      is lost. User-visible papercut.
+    classification: accept-as-known-risk
+    routing_target: null
+    test_idea: null
+
+  - id: PM-CRUX-007
+    title: |
+      Two compressed-mode auto-approvals fire in the same /crux-task run
+      (PRD step skipped, modules step skipped); both write to
+      approvals.log; the file ordering is non-deterministic on parallel
+      writes.
+    root_cause_hypothesis: |
+      ADR-CRUX-006 says auto-approvals must be logged "never silently"
+      but does not require atomic appends. If MOD-CRUX-003 ever
+      parallelizes auto-approval writes (currently it doesn't, but
+      nothing prevents it), the log can race.
+    blast_radius: |
+      approvals.log entries appear out of chronological order; trace
+      walks that depend on log ordering surface confused reasoning.
+    classification: accept-as-known-risk
+    routing_target: null
+    test_idea: null
+
+# Summary by classification:
+#   route-to-ADR-clause:   3  (PM-001 -> ADR-002, PM-003 -> ADR-009, PM-005 -> ADR-008)
+#   route-to-test:         2  (PM-002, PM-004)
+#   accept-as-known-risk:  2  (PM-006, PM-007)
+#
+# 3 route-to-ADR-clause failure modes BLOCK architect HITL approval per
+# the agent contract. The architect must amend the named ADRs (or write
+# new clauses) before /crux-approve ADR-CRUX-NNN can flip status to
+# accepted on the affected ADRs.

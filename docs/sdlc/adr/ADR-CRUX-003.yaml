@@ -1,0 +1,44 @@
+id: ADR-CRUX-003
+title: 'Runtime adapter interface: 17 functions in 7 concern groups'
+status: proposed
+decision: |
+  The runtime adapter interface is exactly 17 functions, organized into 7 concern groups. The interface lives in packages/core as TypeScript types and a reference contract; adapters implement against this. Function list:
+  
+  Lifecycle (3): session_start, session_end, capabilities_supported
+  Subagents (2): spawn_subagent, await_subagent
+  Skills (3): install_skill, uninstall_skill, list_skills
+  Hooks (2): install_hook, list_hooks
+  Slash commands (1): run_command
+  Filesystem and shell (3): read_file, write_file, run_shell
+  Trace and capability (3): emit_event, resolve_capability, invoke_skill
+alternatives_considered:
+  - option: 16 functions (no uninstall_skill)
+    rationale: |
+      rejected at fork A2: uninstall is needed for clean test isolation when integration tests install transient skills.
+  - option: 18 functions (also uninstall_hook)
+    rationale: |
+      rejected: hook removal can be modeled as install-with-empty-content or noop; one fewer fn keeps the surface tight and matches the IDEA-001 "small interface" claim.
+  - option: Out-of-process plugin model with IPC
+    rationale: |
+      rejected at v1: too heavy for the founding-team cost target; subagent-isolation already gives most of the benefit (ADR-CRUX-004).
+consequences:
+  - Every new adapter must implement all 17 functions.
+  - The interface is provisional per REQ-CRUX-007 (revisit_when names a second-adapter milestone) until at least one second adapter exists.
+  - Adding or renaming a function pre-v1.1 is a breaking change requiring a CHG event.
+  - Concern-group expansion is forbidden by REQ-CRUX-005 AC#3 (arch-critic verifies).
+resolves:
+  - GRILL-CRUX-004
+satisfies:
+  - REQ-CRUX-005
+  - REQ-CRUX-006
+constrains:
+  - MOD-CRUX-001
+  - MOD-CRUX-002
+  - MOD-CRUX-003
+revisit_when: |
+  A second adapter implementation (Cursor, Aider, raw SDK) surfaces concerns; OR the function count drifts above 18; OR a new concern group becomes load-bearing.
+validated_by:
+  - adapter implementation test suite in packages/adapter-claude-code/
+  - arch-critic concern-group expansion check (per REQ-CRUX-005 AC#3)
+  - A printed function list ships in this ADR (above)
+  - 'paper-only second-adapter spec at docs/sdlc/architecture/adapter-second-spec.md ships at v1.0 (added per arch-critique ARCH-CRIT-002): each of the 17 functions is marked feasible | needs-redesign | unknown for a chosen paper adapter (Cursor, Aider, or raw Anthropic SDK). If any function is needs-redesign, ADR-CRUX-003 is reopened pre-v1.0 release. Converts the abstraction-quality check from v1.1 deferral into a v1.0 deliverable.'

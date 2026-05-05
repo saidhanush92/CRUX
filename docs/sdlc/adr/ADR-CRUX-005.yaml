@@ -1,0 +1,32 @@
+id: ADR-CRUX-005
+title: 'Amendment layering: separate AMD files, runtime merge by orchestrator'
+status: proposed
+decision: |
+  Amendments live as separate AMD-<n>.yaml files under docs/sdlc/amendments/. The amendment-writer subagent never modifies any .claude/skills/<name>/SKILL.md byte. At runtime, when an anchored subagent invokes its canonical skill, the orchestrator (a function in MOD-CRUX-001 named resolveAmendmentsForSkill) reads SKILL.md, scans docs/sdlc/amendments/ for matching target_skill, and assembles the runtime brief by appending matching amendment rules under "## Active amendments" after the skill body. severity: high amendments render as "BLOCKING".
+alternatives_considered:
+  - option: Inline edit of SKILL.md
+    rationale: |
+      rejected: destroys upstream-sync property; Pocock and ECC updates can no longer be rebased.
+  - option: Hook injection (amendments fire as PostToolUse hooks)
+    rationale: |
+      rejected: invisible to a human reading the agent's assembled behavior; debugging gets opaque.
+  - option: Per-skill versioned forks (skill@1.0.0+amd-007 directory)
+    rationale: |
+      rejected: combinatorial growth; loses the layered semantics.
+consequences:
+  - Upstream Pocock / ECC SKILL.md updates remain mergeable.
+  - Runtime brief assembly cost is small (<10ms grep).
+  - The amendment-merge function lives in MOD-CRUX-001's public surface.
+  - '"## Active amendments" section in subagent briefs is a contract observable by users.'
+resolves:
+  - GRILL-CRUX-014
+satisfies:
+  - REQ-CRUX-018
+constrains:
+  - MOD-CRUX-001
+  - MOD-CRUX-002
+revisit_when: |
+  Amendment count for any single skill exceeds ~20 (signal that the skill itself needs revision rather than more amendments); OR amendment-merge overhead becomes measurable in critical-path latency.
+validated_by:
+  - 'integration test: /crux-incident produces AMD; subsequent /crux-task brief contains amendment text'
+  - 'integration test: SKILL.md byte-content unchanged after amendment-writer run'

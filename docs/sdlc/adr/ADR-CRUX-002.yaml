@@ -1,0 +1,37 @@
+id: ADR-CRUX-002
+title: 'Trace graph storage: markdown canonical + derived SQLite cache'
+status: proposed
+decision: |
+  Markdown / YAML files under docs/sdlc/ are the canonical source of truth for the trace graph. SQLite at .crux/trace.db is a derived cache, regenerated entirely from markdown on demand. Cache invalidation: per-file mtime + sha256 content hash. On any disagreement between markdown and the cache, markdown wins; the cache is rebuilt, never written back to markdown.
+
+  Concurrent-write semantics (added per pre-mortem PM-CRUX-001): the indexer is single-threaded with a 100ms debounce window. A trace-write into docs/sdlc/ enqueues an indexer pass; passes are serialized by a process-local mutex. If a write arrives while a pass is running, a follow-up pass is enqueued to run after the current pass commits. The indexer commits each pass atomically (write to a temp file, fsync, rename) so reads against .crux/trace.db never observe a partial state. Reads ALWAYS check the file's current sha256 against the indexed hash before returning a row; on mismatch, the stale row is recomputed inline, ensuring no stale ancestors are ever returned even if the debounce missed a write.
+alternatives_considered:
+  - option: SQLite-canonical with markdown export
+    rationale: |
+      rejected: violates the IDEA-001 portability claim that the audit "lives in your repo as plain text".
+  - option: markdown-only with no cache (pure ripgrep)
+    rationale: |
+      rejected at v1.0 per fork B1: latency on >~500 artifact corpora exceeds the soft 200ms target; SQLite buys the headroom for ~1 week of work.
+  - option: git-backed key-value store
+    rationale: |
+      rejected: complicates the switch-tools-tomorrow story; adds a tooling dependency for cold reads.
+consequences:
+  - Deleting .crux/trace.db is non-destructive; the indexer rebuilds.
+  - 'The IDEA-001 "switch tools tomorrow and the audit survives" promise is contractually testable.'
+  - SQLite schema becomes part of MOD-CRUX-001's public surface; schema migrations need their own ADR if they happen.
+  - Cold-start cache rebuild adds ~100ms on small repos; bounded.
+  - Per-write 100ms debounce introduces a soft latency floor between artifact write and indexer-visible state.
+  - Read-time sha256 check adds a per-read filesystem stat; benchmarked acceptable (<1ms per artifact).
+resolves:
+  - GRILL-CRUX-003
+satisfies:
+  - REQ-CRUX-003
+  - REQ-CRUX-004
+constrains:
+  - MOD-CRUX-001
+revisit_when: |
+  Corpus exceeds ~10k artifacts AND ripgrep-baseline latency stays under 200ms (would let us drop SQLite); OR trace-query patterns require non-trivial joins (would push us toward stronger storage).
+validated_by:
+  - cache_rebuild_lossless CI check (delete cache, rebuild, diff against pre-delete query results)
+  - markdown-mutation-vs-cache-stale unit test (REQ-CRUX-004 AC#1)
+  - concurrent-write race test (synthetic harness writes 10 GRILLs in tight loop; assertion every artifact reachable via /crux-trace within 200ms of the last write; addresses PM-CRUX-001)

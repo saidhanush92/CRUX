@@ -1,3 +1,5 @@
 # Crux approvals log. Append-only. One line per approval event.
 # Format:  <ISO-8601-timestamp>  /crux-approve  <artifact-id>  approved-by=<user>  [extras...]
 2026-05-05T00:00:00Z  /crux-approve  PRD-CRUX  approved-by=Dhanush Sai  reqs=23  spec-critique=resolved
+2026-05-05T00:00:00Z  pre-mortem  PM-CRUX-006  kind=accepted-risk  source=ADR-CRUX-010  note=CRLF line endings on Windows-authored PR_DESCRIPTION.md (cosmetic only)
+2026-05-05T00:00:00Z  pre-mortem  PM-CRUX-007  kind=accepted-risk  source=ADR-CRUX-006  note=approvals.log non-atomic-append race (only material if MOD-CRUX-003 ever parallelizes auto-approvals; currently sequential)

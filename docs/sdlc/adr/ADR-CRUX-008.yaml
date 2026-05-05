@@ -1,0 +1,38 @@
+id: ADR-CRUX-008
+title: 'Hook collision policy: matcher+event halt, manual resolution'
+status: proposed
+decision: |
+  A hook collision is two or more hooks with the same event (PreToolUse / PostToolUse / Stop) AND the same matcher regex AND none of them carries an explicit priority field. Multiple commands at the same matcher / event pair ARE allowed when the harness installer assigns each an explicit priority (ascending order of execution). When a collision is detected during /crux-init's harness-install path, halt before writing harness.lock. Surface the colliding entries with the source skill of each. User resolves manually by editing one skill out of the install set OR adding explicit priority fields to the offending hooks. Re-run /crux-init until clean. Skill-declared conflicts_with field and interactive resolution prompts are v1.1+ enhancements.
+
+  Resolution recording (added per pre-mortem PM-CRUX-005): every manual collision resolution MUST be recorded in harness.lock under a top-level collision_resolutions block. Each entry contains the colliding (event, matcher) pair, the resolved command list with explicit priorities, the source skills of each command, and a sha256 of the resolved settings.json fragment. On re-install, the harness installer reads collision_resolutions FIRST and re-applies them automatically before running the collision detector; entries that would re-collide are silently kept as resolved. settings.json edits made by the user that are NOT in harness.lock are flagged on the next /crux-init run as "manual edit not captured in lock" but are not auto-removed. This makes resolutions durable across re-installs and gives the user a single canonical place to review what was decided.
+alternatives_considered:
+  - option: Auto-merge by hard-coded priority heuristic (e.g., format-then-lint)
+    rationale: |
+      rejected at v1.0: opaque to the user; hard to debug when wrong.
+  - option: Looser collision (matcher + event + command must all match)
+    rationale: |
+      rejected: misses semantically conflicting commands at the same hook point.
+  - option: Stricter collision (any glob overlap between matchers)
+    rationale: |
+      rejected: too aggressive; false positives on different-named hooks that share a wildcard.
+  - option: Skill-declared conflicts_with field at v1.0
+    rationale: |
+      rejected: requires every imported skill to opt in; deferred to v1.1.
+consequences:
+  - Harness install can halt mid-run; user does manual resolution at install time.
+  - harness.lock is byte-clean; never written while a collision is unresolved.
+  - Founding-team persona tolerates the manual resolution; would not scale to 50+ hooks.
+  - Resolutions persist across re-installs via harness.lock.collision_resolutions; user does not re-resolve the same collision twice.
+  - Manual settings.json edits not captured in harness.lock are flagged but not auto-reverted (preserves user agency, surfaces drift).
+resolves:
+  - GRILL-CRUX-018
+satisfies:
+  - REQ-CRUX-022
+constrains:
+  - MOD-CRUX-003
+revisit_when: |
+  Real-world install runs show users repeatedly hitting the same collisions (motivates conflicts_with); OR a stack with >50 hooks emerges and manual resolution becomes the user's main pain point.
+validated_by:
+  - collision-detection unit test on a synthetic two-hook fixture
+  - install-halt integration test (REQ-CRUX-022 AC#1)
+  - 'resolution-persistence test: collision detected, manually resolved, harness.lock written, install re-run; resolution applied automatically without re-prompting; addresses PM-CRUX-005'

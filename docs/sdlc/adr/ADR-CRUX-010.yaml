@@ -1,0 +1,31 @@
+id: ADR-CRUX-010
+title: 'PR_DESCRIPTION.md generation; manual `gh pr create` at v1.0'
+status: proposed
+decision: |
+  After reviewer (and design-reviewer when applicable) approval, /crux-task writes docs/sdlc/tasks/<task-id>/PR_DESCRIPTION.md containing the full structured trace block per REQ-CRUX-023: task id, module, mode, satisfied REQs (with one-line summaries), honored ADRs (with titles), upstream GRILL ids, review verdict and cycle count, cost summary, and diff stats. /crux-task does NOT invoke gh pr create at v1.0; the user runs `gh pr create --body-file <path>` (or equivalent for their git host) themselves. v1.1 may add /crux-pr that automates PR creation.
+alternatives_considered:
+  - option: Inline the trace block in the PR body via gh CLI invocation
+    rationale: |
+      rejected at v1: depends on gh installed; couples Crux to GitHub.
+  - option: Persist the trace block as a YAML file rather than markdown
+    rationale: |
+      rejected: PR descriptions are markdown by convention; YAML adds a render step at PR-creation time.
+  - option: Autotemplate via a git pre-push hook
+    rationale: |
+      rejected: invisible to the user; brittle across hosts.
+consequences:
+  - Users run `gh pr create --body-file ...` (or paste) themselves at v1.0.
+  - Trace block survives independent of the git host.
+  - 'v1.1 PR-creation automation is additive: same PR_DESCRIPTION.md feeds into it.'
+  - Audit trail lives on disk, not in a git host's PR comment field.
+resolves:
+  - GRILL-CRUX-019
+satisfies:
+  - REQ-CRUX-023
+constrains:
+  - MOD-CRUX-003
+revisit_when: |
+  v1.1 PR-creation automation lands; OR a non-GitHub git host (GitLab, Gitea, Bitbucket) needs first-class PR template support.
+validated_by:
+  - PR_DESCRIPTION.md generation unit test
+  - trace-block field-completeness assertion (every required field present)

@@ -1,0 +1,34 @@
+id: ADR-CRUX-007
+title: 'Orchestration model: DAG subagent pipeline + structural Ruflo absorption'
+status: proposed
+decision: |
+  The /crux-task pipeline is a small acyclic DAG with explicit hand-off contracts: test-writer -> coder -> reviewer (plus design-reviewer in parallel for UI tasks). Each node is a separate subagent invocation per ADR-CRUX-004. Hand-off contracts are named in the agent system prompts and enforced by /crux-task. **Pattern attribution:** the orchestration shape (slash-command + subagent + hook conventions, DAG-batched task pipeline) is structurally absorbed from the Ruflo project. No Ruflo file is imported into .claude/skills, .claude/agents, or .claude/commands at v1.0. This ADR records the structural influence and credits the source.
+
+  Posture (added per arch-critique ARCH-CRIT-003): this is a SCOPE-ANCHOR ADR, not a hard architectural lock. The 3-question test passes on (1) constrains future work and (2) credible alternative being rejected, but the third question (reversal cost expensive) is borderline -- moving to a different orchestration shape is ~1-2 weeks of work, not multi-month. The ADR exists to anchor v1.0 scope and credit Ruflo for posterity; the architect should treat the DAG shape as revisable in any v1.x line if real usage demands it, without needing a heavyweight CHG event for the orchestration choice itself.
+alternatives_considered:
+  - option: Single-agent loop (one context does everything)
+    rationale: |
+      rejected: violates ADR-CRUX-004 isolation contract.
+  - option: Push-based event bus / actor system
+    rationale: |
+      rejected at v1: too much infrastructure for a 2-3 person team's needs; reconsider at v1.x if multi-team coordination layers ship.
+  - option: Fork the Ruflo codebase directly
+    rationale: |
+      rejected: pattern absorption keeps Crux runtime-neutral; forking would couple Crux to Ruflo's release cadence.
+consequences:
+  - 'Pipeline is debuggable: each subagent invocation has its own transcript.'
+  - Ruflo's pattern source is acknowledged for future readers.
+  - 'If Ruflo ships a new pattern (e.g., a formal "monitor" role), v1.1 may absorb it without forking.'
+  - The DAG is small enough to live entirely in /crux-task.md command body plus MOD-CRUX-003 orchestration code; no separate workflow engine.
+resolves:
+  - GRILL-CRUX-010
+satisfies:
+  - REQ-CRUX-014
+constrains:
+  - MOD-CRUX-002
+  - MOD-CRUX-003
+revisit_when: |
+  A different orchestration model (event bus, actor system) materially outperforms in real-world Crux usage; OR a specific Ruflo artifact (skill or hook recipe) becomes worth importing rather than absorbing.
+validated_by:
+  - pipeline integration test exercising the test-writer -> coder -> reviewer DAG
+  - this ADR's Decision section contains the explicit Ruflo credit (REQ-CRUX-014 AC#1)

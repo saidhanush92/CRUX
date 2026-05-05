@@ -1,0 +1,35 @@
+id: ADR-CRUX-004
+title: 'Subagent invocation isolation + model assignment rule'
+status: proposed
+decision: |
+  In /crux-task, the test-writer, coder, and reviewer phases run as three separate Task tool invocations with no shared transcript context. Each subagent receives only the orchestrator-supplied brief plus the artifacts it explicitly reads. Reviewer cannot lazy-share the coder's reasoning trace. Model-assignment rule: the highest-reasoning role gets model: opus; all other roles default to model: sonnet. Specific agent file frontmatter (e.g. architect=opus, reviewer=sonnet) is editable per deployment without a CHG event; only the rule itself is binding via this ADR.
+alternatives_considered:
+  - option: 'Single-context role-prompting ("now act as the reviewer")'
+    rationale: |
+      rejected: violates the trust contract behind "different agent identity" in IDEA-001; cheaper but loses the independence claim.
+  - option: Out-of-process separation (separate processes or accounts)
+    rationale: |
+      rejected: heavyweight without security gain at the v1.0 trust boundary.
+  - option: Lock specific agent-to-model assignments via ADR (fork E1)
+    rationale: |
+      rejected at fork E2: agent-file frontmatter stays editable; only the assignment rule is ADR-binding.
+  - option: Cross-model assignment by role (coder=Sonnet, reviewer=Opus)
+    rationale: |
+      rejected at v1.0: per GRILL-CRUX-013, single Claude Code installation and per-agent model field is sufficient.
+consequences:
+  - Each /crux-task run incurs ~3x context+token cost vs single-session.
+  - The cost halt contract (ADR-CRUX-009) is sized accordingly.
+  - Reviewer findings cannot reference coder's internal reasoning; the diff and the briefs are the contract.
+  - Adapters without a subagent-isolation primitive cannot be Crux adapters at v1.0.
+resolves:
+  - GRILL-CRUX-013
+satisfies:
+  - REQ-CRUX-017
+constrains:
+  - MOD-CRUX-002
+  - MOD-CRUX-003
+revisit_when: |
+  Cost-per-task data shows isolation cost dominates over context-leakage risk; OR an adapter without a subagent-isolation primitive must be supported.
+validated_by:
+  - integration test asserting reviewer subagent cannot read test-writer's transcript
+  - three distinct Task tool invocations visible in /crux-task execution trace
