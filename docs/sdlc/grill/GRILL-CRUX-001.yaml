@@ -1,0 +1,31 @@
+id: GRILL-CRUX-001
+idea: IDEA-001
+gate: 2
+question: |
+  What is the literal scope of Crux v1.0? Which of the 8 gates must execute
+  end-to-end on a real user project for v1.0 to ship, vs. which gates are
+  explicitly v1.x or v2 deferrals? Use shipped/skipped/stub for each gate.
+answer: |
+  v1.0 ships gates 1 through 7 end-to-end. Gate 8 (release / CI-CD deploy
+  automation) and Loop 9 (the always-on production feedback channel) are
+  explicit v1.x or v2 deferrals.
+
+  Per-gate:
+    1 input         shipped
+    2 PRD + grill   shipped
+    3 modules       shipped
+    4 architecture  shipped (incl. design ADRs at 4.5 when UI work)
+    5 harness       shipped
+    6 design        shipped (fires only for UI-heavy work)
+    7 build         shipped (test-writer / coder / reviewer pipeline)
+    8 release       skipped (CI-CD deploy automation deferred)
+    Loop 9 feedback skipped (always-on production listener deferred)
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: high
+supersedes: null

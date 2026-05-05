@@ -1,0 +1,17 @@
+id: REQ-CRUX-003
+text: |
+  The trace graph must be canonically stored as plain markdown and YAML files under docs/sdlc/. Any other representation (e.g., a SQLite index) must be a derived cache that can be regenerated entirely from the markdown source.
+derived_from:
+  - GRILL-CRUX-003
+acceptance_criteria:
+  - Deleting the SQLite cache and re-running the indexer produces an identical trace graph.
+  - Every trace edge present in the SQLite index is also recoverable by parsing the markdown / YAML files.
+  - No data exists only in the SQLite cache.
+health_signals:
+  - metric: cache_rebuild_lossless
+    source: ci
+    threshold: 1
+    breach_action: open_incident
+priority: must
+gate: 4
+blast_radius: high

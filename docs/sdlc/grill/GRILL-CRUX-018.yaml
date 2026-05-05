@@ -1,0 +1,49 @@
+id: GRILL-CRUX-018
+idea: IDEA-001
+gate: 5
+question: |
+  What counts as a hook collision at v1.0, and what happens when one is
+  found? Same matcher + event (a), same matcher + event + command (b),
+  overlapping globs (c), or skill-declared conflicts_with (d)?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 5
+defer_reason: |
+  Collision policy is a Gate 5 harness-installer concern; best decided
+  when the harness install pipeline is implemented in earnest.
+default_assumption: |
+  Definition: a collision is two hooks with the SAME `event`
+  (PreToolUse / PostToolUse / Stop) AND the same `matcher` regex AND no
+  explicit ordering between them. Multiple commands at the same
+  matcher/event ARE allowed if the harness installer assigns them an
+  explicit `priority` (e.g., format=10, lint=20, typecheck=30 -- runs
+  ascending).
+
+  Detection at v1.0:
+    - Phase 8.10's collision check (already in TODO) parses
+      .claude/settings.json after install.
+    - For each (event, matcher) pair, count the hook entries.
+    - If count > 1 and any of the entries lacks a `priority` field, the
+      pair is flagged as a collision.
+
+  Resolution at v1.0: HARD HALT only. Specifically:
+    - /crux-init's harness-install path halts before writing harness.lock.
+    - The user is shown a rendered list of colliding entries with the
+      skill that produced each.
+    - The user resolves manually by either:
+        * Editing one skill out of the install (remove from the
+          install-set passed back to /crux-init).
+        * Editing .claude/settings.json to assign explicit priorities.
+        * Adjusting stack.yaml so the install set produces a different
+          shape.
+    - Re-running /crux-init re-checks. Loop until clean.
+
+  Skill-declared `conflicts_with` (option d) and interactive resolution
+  prompts are both v1.1+ enhancements -- they would reduce friction but
+  are not load-bearing for v1.0 with the founding-team persona, who can
+  tolerate manual resolution at install time.
+blast_radius: low
+supersedes: null

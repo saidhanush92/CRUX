@@ -1,0 +1,36 @@
+id: GRILL-CRUX-007
+idea: IDEA-001
+gate: 4
+question: |
+  What does v1.0 give a user instead of Loop 9 to make incident-driven
+  amendments work, given Loop 9 itself is deferred?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Choice between fully-manual, half-Loop-9, and stub-only shapes the
+  package surface (whether v1 needs a "watcher" module at all). Architect
+  pass at gate 4 should commit via ADR.
+default_assumption: |
+  Option (a) -- fully manual /crux-incident report only. v1.0 ships:
+    - The /crux-incident report slash command (already in Phase 2).
+    - The amendment-writer subagent (already in Phase 3).
+    - INC, CHG, and AMD artifacts and templates (already in Phase 1).
+    - The cascade pipeline INC -> CHG -> AMD wired end-to-end.
+  v1.0 does NOT ship:
+    - Any background listener or watcher process.
+    - Any production-telemetry integration.
+    - Any CI-failure auto-detector.
+
+  v1.1 first Loop 9 source will be CI-failure detection (cheapest signal,
+  already inside the harness boundary). v1.2 adds production telemetry and
+  user-feedback channels.
+
+  This matches the founding-team persona (per GRILL-CRUX-002) -- a 2-3
+  person team is fine opening incidents manually and gets full value from
+  the amendment-writer cascade without a daemon.
+blast_radius: medium
+supersedes: null

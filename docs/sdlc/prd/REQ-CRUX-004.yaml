@@ -1,0 +1,12 @@
+id: REQ-CRUX-004
+text: |
+  When the markdown source and the SQLite cache disagree on any field, the markdown source must win. Cache invalidation must use per-file mtime plus sha256 content hash.
+derived_from:
+  - GRILL-CRUX-003
+acceptance_criteria:
+  - A test that mutates a markdown file out-of-band and reads from the cache returns the new value, not the stale cache value.
+  - The cache stores a sha256 hash per indexed file and re-reads the file when the hash changes.
+health_signals: []
+priority: must
+gate: 4
+blast_radius: medium

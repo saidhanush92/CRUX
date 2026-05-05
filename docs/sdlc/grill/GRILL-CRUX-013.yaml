@@ -1,0 +1,46 @@
+id: GRILL-CRUX-013
+idea: IDEA-001
+gate: 7
+question: |
+  What runtime guarantee does v1.0 give that the test-writer / coder /
+  reviewer subagent calls are actually independent?
+answer: |
+  Option (a): three GENUINELY SEPARATE Claude Code subagent invocations
+  with no shared transcript context.
+
+  Concretely:
+    - /crux-task invokes test-writer via Task(subagent_type=test-writer).
+      The subagent runs in its own context window with the brief assembled
+      by /crux-task.
+    - When test-writer returns, the orchestrator (/crux-task) starts a
+      separate Task(subagent_type=coder) invocation. The coder subagent
+      receives only the orchestrator-supplied brief plus the artifacts it
+      needs to read; it does NOT inherit the test-writer's transcript.
+    - Same separation for reviewer.
+
+  This is the load-bearing mechanism behind "different agent identity."
+  v1.0 commits to this as the trust contract.
+
+  Out of scope at v1.0:
+    - Cross-model separation (e.g., coder = Sonnet, reviewer = Opus). The
+      reference adapter uses a single Claude Code installation; model
+      assignment happens via the model: field in each agent's frontmatter
+      (already populated in Phase 3). The user can override per-agent;
+      Crux v1.0 does not auto-assign by role.
+    - Out-of-process separation (separate OS processes / accounts). The
+      separation is at the subagent-invocation boundary, not the process
+      boundary.
+
+  The adapter interface from GRILL-CRUX-004 default already includes
+  spawn_subagent / await_subagent functions; this answer locks in that
+  those are mandatory to be independent invocations, not in-context
+  role-prompts.
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: high
+supersedes: null

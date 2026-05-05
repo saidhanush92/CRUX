@@ -1,0 +1,45 @@
+id: GRILL-CRUX-009
+idea: IDEA-001
+gate: 1
+question: |
+  Is Gate 0 a real gate at v1.0, or is brownfield support folded into
+  Gate 1?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 1
+defer_reason: |
+  Touches the slash-command surface (whether a separate /crux-gate0 exists)
+  and the docs/sdlc/ layout. Best decided alongside the gate 1 input flow.
+default_assumption: |
+  Gate 0 is a real gate conceptually but is FOLDED INTO /crux-init at v1.0.
+  No separate slash command. Specifically:
+
+    - /crux-init's brownfield path (already in Phase 2) executes the Gate 0
+      work: repo scan, ADR archaeology, gap report, mode pick.
+    - Gap report lands at docs/sdlc/gate0/gap-report.md.
+    - ADR archaeology output lands as proposed-status ADRs in
+      docs/sdlc/adr/, each with origin: archaeology and a comment block
+      pointing to the code location they were inferred from.
+    - Mode pick writes stack.yaml.crux_mode (per GRILL-CRUX-006 default).
+
+    - The gap report is ADVISORY at v1.0, not binding. It surfaces issues
+      ("no CI", "32% test coverage", "no ADRs for storage") but does not
+      block any subsequent gate. The user can act on it or ignore it; if
+      they ignore it, the gaps reappear in /crux-status as info-level
+      warnings.
+
+    - Brownfield projects DO NOT skip the IDEA file. /crux-init's brownfield
+      path auto-generates a starter IDEA-001.md from the gap report (with
+      classification: research_note, depth: medium) so the trace-graph root
+      exists. The user is expected to edit it before /crux-grill, just as
+      they would a hand-written brief.
+
+  This default keeps the slash-command surface at the 11 commands already
+  written, and keeps Gate 0 from inflating into its own subsystem.
+  Reconsider for v1.1 if "the gap report alone is sellable" pans out and
+  brownfield audit becomes a standalone product surface.
+blast_radius: medium
+supersedes: null

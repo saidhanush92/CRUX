@@ -1,0 +1,51 @@
+id: GRILL-CRUX-010
+idea: IDEA-001
+gate: 4
+question: |
+  Why is Ruflo conspicuously absent from the imported skill set when the
+  IDEA names it as one of three open-source sources for the Claude Code
+  adapter?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Ruflo's role shapes the orchestration ADR (DAG batching, hook conventions)
+  and the architect should explicitly accept or reject the absorbed-only
+  approach before any code in packages/cli or packages/adapter-claude-code
+  is written.
+default_assumption: |
+  Option (a) -- Ruflo's patterns are absorbed STRUCTURALLY, not imported
+  as artifacts. The IDEA's phrasing supports this: "Crux ports the patterns,
+  doesn't fork the codebase."
+
+  What that looks like concretely:
+
+    - Slash-command shape (Phase 2): the 11 commands already follow the
+      Ruflo convention of "frontmatter + instruction body + halt-on-HITL"
+      rather than imperative scripts. No file copied; pattern internalized.
+
+    - DAG batching (relevant to /crux-task and /crux-architect): the
+      test-writer / coder / reviewer pipeline is shaped as a small DAG
+      with explicit hand-off contracts, mirroring Ruflo's
+      planner -> executor -> reviewer flow. No file copied; pattern
+      internalized.
+
+    - Hook conventions (relevant to Phase 8 harness install): the
+      deterministic hook generation rule "stack.yaml drives hook config,
+      no manual hook editing" is the Ruflo posture. Phase 8 will install
+      hooks following this pattern.
+
+  No Ruflo file (skill, agent, command) is imported into .claude/skills/
+  at v1.0. The bootstrap commit log already credits Ruflo implicitly via
+  the pattern citations in the agent and command bodies. ADR for the
+  orchestration model (gate 4) should make the credit explicit, with a
+  reference back to the Ruflo project for posterity.
+
+  Reconsider in v1.1 only if a specific Ruflo artifact (skill or hook
+  recipe) materially outperforms what we have built; until then,
+  structural absorption is enough.
+blast_radius: low
+supersedes: null

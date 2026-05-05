@@ -1,0 +1,15 @@
+id: REQ-CRUX-002
+text: |
+  Crux v1.0 must name the small founding-team workflow (2-3 people: PM + 1-2 developers) as its primary persona. Any v1.0 ADR or REQ that introduces a material trade-off between the primary persona and a second-tier persona (regulated-industry teams, design-conscious DTC teams) must explicitly name which persona is favored and the rationale, and arch-critic must flag any persona-conflicting decision that omits this declaration.
+derived_from:
+  - GRILL-CRUX-002
+acceptance_criteria:
+  - Compressed Mode is the default crux_mode for greenfield /crux-init.
+  - docs/sdlc/PERSONA.md exists and names the founding-team persona as primary plus the two second-tier personas with their priority order.
+  - v1.0 release notes name the founding-team persona as the design target.
+  - arch-critic checks every ADR for a persona_trade_off field and flags any decision plausibly affecting personas that omits it.
+  - No v1.0 deferred-to-v1.1 item primarily serves the founding-team persona (i.e. nothing critical to the primary persona is pushed out).
+health_signals: []
+priority: must
+gate: 2
+blast_radius: high

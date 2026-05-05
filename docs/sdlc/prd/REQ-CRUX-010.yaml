@@ -1,0 +1,12 @@
+id: REQ-CRUX-010
+text: |
+  The INC -> CHG -> AMD cascade must function end-to-end at v1.0 via manual /crux-incident report. The cascade may not depend on any background listener or watcher process.
+derived_from:
+  - GRILL-CRUX-007
+acceptance_criteria:
+  - Running /crux-incident report and answering its prompts produces an INC file, at least one CHG file, and at least one AMD file (when amendment-writer finds a target skill).
+  - The cascade succeeds with no daemon, scheduled job, or background process running.
+health_signals: []
+priority: must
+gate: 4
+blast_radius: medium

@@ -1,0 +1,13 @@
+id: REQ-CRUX-024
+text: |
+  Crux v1.0 must ship a release-readiness check accessible to the user (either as a /crux-release-check command or as a /crux-status --release-check flag). The check must run an 8-item checklist: gates 1 to 7 closed; check-orphans clean; no proposed ADRs; no escalated reviews; no tasks at cycle >= 3; harness.lock present and verification all-pass; spec-critique and arch-critique and pre-mortem resolved; no INC with open CHG events. The verdict is logged to approvals.log; no REL artifact is produced at v1.0.
+derived_from:
+  - GRILL-CRUX-020
+acceptance_criteria:
+  - Running the release-readiness check on a clean repo emits "release-ready".
+  - Each of the 8 checklist items can independently fail and is reported by name.
+  - A successful run appends a line to approvals.log; no docs/sdlc/releases/REL-*.yaml file is created at v1.0.
+health_signals: []
+priority: must
+gate: 8
+blast_radius: medium

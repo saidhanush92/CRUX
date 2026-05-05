@@ -1,0 +1,16 @@
+id: REQ-CRUX-008
+text: |
+  The active gate-mode must be configurable via a top-level crux_mode field in stack.yaml. Allowed values: compressed, standard, strict, solo, observation. The default is compressed for greenfield, standard for brownfield. Artifact production must be invariant across all gate-modes: every gate produces its REQs, ADRs, MODs, TASKs, REVIEWs and other artifacts under every mode; only the frequency of HITL approval differs. The orchestration ADR must explicitly ratify this invariant and document the difference between "skipped HITL" and "skipped artifact" so future readers cannot reasonably misread Compressed mode as "skips artifacts".
+derived_from:
+  - GRILL-CRUX-006
+acceptance_criteria:
+  - stack.yaml.crux_mode is read by every command that branches on mode.
+  - '/crux-init writes crux_mode: compressed to a new greenfield stack.yaml; crux_mode: standard for brownfield.'
+  - Setting crux_mode to an invalid value causes /crux-status to halt with a clear error.
+  - Running the same input through compressed and standard modes produces the same set of artifact files (modulo approvals.log entries).
+  - 'Auto-approvals in compressed mode are recorded in approvals.log with source: mode-compressed; never silently.'
+  - The orchestration ADR contains an explicit clause ratifying the artifact-invariance rule and naming the GRILL-CRUX-006 source.
+health_signals: []
+priority: must
+gate: 1
+blast_radius: medium

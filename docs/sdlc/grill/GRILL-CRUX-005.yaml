@@ -1,0 +1,29 @@
+id: GRILL-CRUX-005
+idea: IDEA-001
+gate: 4
+question: |
+  How will v1 prove the adapter abstraction is correct given only one
+  implementation (Claude Code)?
+answer: |
+  Option (b): accept that v1 is provisional. Bake "interface may change in
+  v1.1" into the foundational adapter ADR. The Claude Code adapter is the
+  reference implementation; the interface is committed at v1 but explicitly
+  marked unstable until at least one second adapter (Cursor, Aider, or raw
+  Anthropic SDK) is implemented and passes the harness verification suite.
+
+  Implications:
+    - ADR-001 (or equivalent) for the adapter interface MUST include a
+      revisit_when clause naming the second-adapter milestone.
+    - v1.0 release notes must state the runtime-neutrality claim is
+      aspirational at v1 and contractually firm only at v1.1+.
+    - No external API consumer should depend on adapter interface stability
+      until a v1.1 stability statement ships.
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: medium
+supersedes: null

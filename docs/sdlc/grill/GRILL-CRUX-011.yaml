@@ -1,0 +1,34 @@
+id: GRILL-CRUX-011
+idea: IDEA-001
+gate: 2
+question: |
+  Does Gate 4.5 (Design) fire by default at v1.0, or is it opt-in per
+  project? How does Crux know a feature is "UI-heavy"?
+answer: |
+  Gate 4.5 is OPT-IN per project at v1.0. The grill-interviewer raises a
+  Gate-1/2 question during /crux-grill asking "does this work include
+  meaningful UI / visual design surface?" The user's answer determines
+  whether Gate 4.5 will fire downstream.
+
+  Mechanism:
+    - The grill records the answer as a top-level YAML field on the IDEA
+      file (or the PRD): design_gate_enabled: true | false.
+    - When false: Gate 4.5 is skipped entirely; no DESIGN_BRIEF or TOKENS
+      artifacts are required; the design-reviewer subagent is not invoked
+      at gate 7 even for modules tagged surface: ui.
+    - When true: Gate 4.5 runs in full; DESIGN_BRIEF and TOKENS are
+      required artifacts; the design-reviewer fires on every UI task.
+
+  Default if the user does not answer the question: design_gate_enabled =
+  false. This matches the founding-team / dev-led persona (per
+  GRILL-CRUX-002). UI-heavy projects must opt in; the friction discourages
+  cargo-culted design rituals.
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: medium
+supersedes: null

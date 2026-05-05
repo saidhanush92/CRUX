@@ -1,0 +1,39 @@
+id: GRILL-CRUX-017
+idea: IDEA-001
+gate: 3
+question: |
+  At v1.0, when a depends_on cycle is detected in the module graph, what
+  does the system do?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Cycle-handling policy informs whether packages/core needs a topological-
+  sort module at v1.0. Architect should commit the choice via ADR.
+default_assumption: |
+  Hybrid (write-then-halt). Specifically:
+
+    - /crux-modules runs cycle detection inline using a simple DFS over
+      the depends_on edges.
+    - If a cycle is found:
+        1. The MOD-<n>.yaml files ARE still written (so the user can
+           inspect what the planner produced).
+        2. /crux-modules emits a CRITICAL error naming the cycle edges,
+           e.g. "cycle: MOD-002 -> MOD-005 -> MOD-002".
+        3. Gate 3 stays OPEN. /crux-status reports the cycle as a HITL
+           block.
+        4. The user resolves by either editing the MOD files manually
+           (removing or redirecting a depends_on edge) or re-invoking
+           /crux-modules with hint guidance.
+    - No automatic edge-breaking. Crux never silently restructures the
+      decomposition.
+
+  Implementation cost is small: cycle detection is ~30 lines of DFS in
+  packages/core. No general-purpose topological-sort module needed at
+  v1.0; if downstream commands need ordered modules, they can call the
+  same DFS to produce a topological order at use-time.
+blast_radius: low
+supersedes: null

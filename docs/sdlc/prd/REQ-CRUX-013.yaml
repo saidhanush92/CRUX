@@ -1,0 +1,15 @@
+id: REQ-CRUX-013
+text: |
+  /crux-init in brownfield mode must produce a gap report at docs/sdlc/gate0/gap-report.md, an ADR archaeology pass, and auto-generate a starter IDEA-001.md from the gap report. Directory creation must be idempotent across operating systems and tolerate a pre-existing docs/sdlc/gate0/.
+derived_from:
+  - GRILL-CRUX-009
+acceptance_criteria:
+  - Running /crux-init in brownfield mode on a real repository creates docs/sdlc/gate0/gap-report.md.
+  - 'The brownfield path emits at least one proposed-status ADR with origin: archaeology when it detects an implicit decision in the codebase.'
+  - The brownfield path writes docs/sdlc/input/IDEA-001.md if no IDEA exists yet.
+  - Re-running /crux-init brownfield on a repo that already has docs/sdlc/gate0/ does not error; the existing gap report is overwritten in place and the directory is reused.
+  - The brownfield code path uses an idempotent mkdir (e.g., mkdir -p semantics) and handles Windows / POSIX permissions paths uniformly.
+health_signals: []
+priority: must
+gate: 1
+blast_radius: medium

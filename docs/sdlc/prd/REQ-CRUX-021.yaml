@@ -1,0 +1,13 @@
+id: REQ-CRUX-021
+text: |
+  /crux-modules must detect cycles in the depends_on graph. When a cycle is detected, /crux-modules must still write the MOD-<n>.yaml files (so the user can inspect them) but must halt Gate 3 closure with a CRITICAL error naming the cycle edges. Crux must never auto-break a module-graph edge.
+derived_from:
+  - GRILL-CRUX-017
+acceptance_criteria:
+  - 'A test scenario in which the planner produces a cycle results in: (a) MOD files written, (b) /crux-modules exits non-zero, (c) the cycle edges are named in the error output.'
+  - Gate 3 stays open in /crux-status until the cycle is resolved.
+  - No /crux-modules code path silently removes a depends_on edge.
+health_signals: []
+priority: must
+gate: 3
+blast_radius: low

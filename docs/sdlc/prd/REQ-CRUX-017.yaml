@@ -1,0 +1,13 @@
+id: REQ-CRUX-017
+text: |
+  In /crux-task, the test-writer, coder, and reviewer phases must run as three separate subagent invocations. The three invocations must not share transcript context.
+derived_from:
+  - GRILL-CRUX-013
+acceptance_criteria:
+  - The /crux-task implementation issues three distinct Task tool calls, one per subagent_type.
+  - No subagent receives the prior subagent's prompt or response in its own context window.
+  - The reviewer subagent's brief contains only the orchestrator-supplied context (REQs, ADRs, diff), not the coder's reasoning trace.
+health_signals: []
+priority: must
+gate: 7
+blast_radius: high

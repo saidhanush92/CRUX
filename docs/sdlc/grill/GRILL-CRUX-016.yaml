@@ -1,0 +1,39 @@
+id: GRILL-CRUX-016
+idea: IDEA-001
+gate: 1
+question: |
+  What is the binding policy at v1.0 for under-thin inputs? Refuse and
+  demand more (a), proceed with shortened grill + low-input-confidence
+  flag (b), or always run 20-30 questions regardless (c)?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 1
+defer_reason: |
+  Touches /crux-grill behaviour and the IDEA frontmatter schema. Best
+  resolved alongside the gate 1 input flow.
+default_assumption: |
+  Option (b): scaled grill with input-confidence flag. Specifically:
+
+    - /crux-idea ingests the file and computes word count.
+    - /crux-grill picks question budget by input depth:
+        * < 50 words      -> the grill agent's "too thin to grill"
+                            message fires; user is asked to supply more
+                            input. If user insists, 5-7 questions only.
+        * 50 - 300 words  -> "surface" depth: 8-12 grill questions.
+        * 300 - 2000      -> "medium" depth: 15-20 grill questions.
+        * > 2000          -> "deep" depth: 20-30 grill questions.
+    - Whatever depth was chosen is recorded on the PRD as
+      input_confidence: low | medium | high. PRDs derived from
+      "low" inputs carry an explicit warning at the top of PRD.md.
+    - The user can always opt to expand the IDEA file and re-run
+      /crux-grill; questions cumulate (existing GRILL files are
+      not deleted, new ones append).
+
+  This protects the founding-team persona: a 4-line Jira ticket is a
+  legitimate input, but it produces a smaller grill so as not to
+  manufacture artificial depth.
+blast_radius: low
+supersedes: null

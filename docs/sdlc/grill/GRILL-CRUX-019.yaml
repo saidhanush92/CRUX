@@ -1,0 +1,61 @@
+id: GRILL-CRUX-019
+idea: IDEA-001
+gate: 7
+question: |
+  What is the literal shape of the trace block at v1.0? Where does it
+  live, what does it list, and what generates it?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Shapes whether packages/cli needs an open-PR function at v1.0 or
+  whether users hand-author PRs and only the trace block is templated.
+  Architect should commit at gate 4.
+default_assumption: |
+  Layout, lifecycle, and contents at v1.0:
+
+  Where it lives:
+    - The trace block is the TOP section of the PR description (the body
+      a user pastes when opening the PR), before any human-authored
+      summary.
+    - It is also persisted to disk at
+      docs/sdlc/tasks/<task-id>/PR_DESCRIPTION.md so it is auditable
+      independent of the git host.
+
+  Who generates it:
+    - /crux-task generates PR_DESCRIPTION.md as its final stage, AFTER
+      reviewer (and design-reviewer if applicable) has approved.
+    - /crux-task does NOT open the PR itself at v1.0. The user runs
+      `gh pr create --body-file docs/sdlc/tasks/<id>/PR_DESCRIPTION.md`
+      (or equivalent). v1.1 will likely add a /crux-pr command that
+      automates this, deferred for v1.0.
+
+  Literal shape:
+    ## Crux trace
+
+    **Task:** TASK-007 -- Implement gate state machine in core
+    **Module:** MOD-001 (core)
+    **Mode:** standard      # or compressed / strict / etc.
+    **Satisfies:**
+      - REQ-001 -- every artifact must expose its upstream chain in <200ms
+      - REQ-004 -- gate transitions must be total and deterministic
+    **Honors ADRs:**
+      - ADR-001 -- TypeScript monorepo with pnpm workspaces
+      - ADR-005 -- Gate state machine error-handling contract
+    **Upstream grill:**
+      - GRILL-CRUX-001, GRILL-CRUX-013
+    **Review:** approved on cycle 1 (reviewer + design-reviewer if UI)
+    **Cost:** $1.10 LLM, 14m wall, 2 cycles
+    **Diff:**  +312 / -47   over 5 files in packages/core/src/gate/
+    ---
+    (human-authored summary follows below)
+
+  This block is parseable: the audit-site (when it ships at v1.1+) and
+  the trace-lint CI workflow can both extract structured data from it.
+  At v1.0 it is read by humans only, but the structure is forward-
+  compatible.
+blast_radius: medium
+supersedes: null

@@ -1,0 +1,57 @@
+id: GRILL-CRUX-020
+idea: IDEA-001
+gate: 8
+question: |
+  Given Gate 8 deploy automation is deferred (per GRILL-CRUX-001), how
+  does a v1.0 user know their feature is "release-ready"?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Decides whether the slash-command surface needs an additional command
+  (/crux-release-check) and whether the releases/ artifact format ships
+  at v1.0. Architect ratifies at gate 4.
+default_assumption: |
+  Option (b) lite: a thin /crux-release-check slash command is added to
+  the v1.0 surface. It runs a checklist and emits a verdict, but does
+  NOT generate any new persisted artifact at v1.0 (the REL.yaml format
+  ships at v1.1 alongside actual deploy automation).
+
+  Checklist run by /crux-release-check at v1.0:
+    1. Gates 1-7 closed for the release scope.
+    2. scripts/check-orphans.sh returns clean.
+    3. No ADR is in `proposed` state; every ADR is `accepted` or
+       `superseded`.
+    4. No TASK has an open REVIEW with verdict: escalate.
+    5. No TASK has cycle_number >= 3 outstanding.
+    6. harness.lock present and `verification` block all-pass.
+    7. spec-critique.yaml, arch-critique.yaml, pre-mortem.yaml all
+       resolved (waived or critiques: []).
+    8. No INC file with chg_events_opened still containing CHG ids that
+       have no resolving TASK.
+
+  Verdict:
+    - All pass: emit "release-ready" with the version label, log to
+      docs/sdlc/approvals.log as
+      `<ts>  /crux-release-check  release-ready  version=<X>`.
+      User then ships using whatever deploy mechanism their team uses
+      (Crux v1.0 is intentionally outside the deploy step).
+    - Any fail: list the failing checks and exit non-zero.
+
+  Downstream consequences (architect should ratify at gate 4):
+    - Adds one slash command to the Phase 2 surface (originally 11,
+      becomes 12). Architect can choose to fold this into /crux-status
+      with a --release-check flag to keep the surface at 11.
+    - The packages/core checklist module is small; reuses the orphan
+      check, harness.lock parser, and approvals.log walker that already
+      exist or are planned.
+    - Releases/ directory created in Phase 0 stays as a placeholder at
+      v1.0 (no REL files); a stub README explains v1.1 plan.
+
+  This default keeps the audit narrative honest at v1.0 ("you closed all
+  the gates that exist") without claiming Crux owns the deploy.
+blast_radius: medium
+supersedes: null

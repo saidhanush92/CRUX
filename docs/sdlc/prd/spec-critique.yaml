@@ -1,0 +1,209 @@
+# spec-critic output for the Phase 7.3 PRD.
+# Generated against PRD.md + REQ-CRUX-001 .. REQ-CRUX-024 + GRILL-CRUX-001 .. -020.
+# Critic identity: distinct from the PRD generator (different read).
+# A non-empty critique soft-blocks /crux-approve PRD-CRUX.
+#
+# Resolution pass on 2026-05-05 (post-fix-all directive): all 8 concerns
+# addressed inline in the REQ files and PRD.md. No critique entry remains
+# unresolved. PRD is no longer soft-blocked by this artifact.
+
+noted_at: 2026-05-05T00:00:00Z
+resolved_at: 2026-05-05T00:00:00Z
+artifacts_reviewed:
+  prd: docs/sdlc/prd/PRD.md
+  reqs:
+    - docs/sdlc/prd/REQ-CRUX-001.yaml .. REQ-CRUX-024.yaml
+  grills:
+    - docs/sdlc/grill/GRILL-CRUX-001.yaml .. GRILL-CRUX-020.yaml
+
+critiques:
+
+  - id: SPEC-CRIT-001
+    category: vague
+    severity: high
+    target: [REQ-CRUX-002]
+    finding: |
+      REQ-CRUX-002 said "favor founding team on conflict" -- not directly
+      testable. Two reasonable implementations could both pass the
+      acceptance criteria yet make systematically different trade-off
+      calls in practice.
+    suggests: |
+      (Original.) Move the rule to PRD narrative; add a procedural REQ
+      forcing persona-conflicting decisions to declare which persona
+      they favor; or accept the looseness as a value-statement.
+    resolution: |
+      REQ-CRUX-002 rewritten. The vague "favor" clause is replaced by a
+      procedural rule: any v1.0 ADR or REQ introducing a material
+      persona trade-off must explicitly name which persona is favored
+      and the rationale; arch-critic enforces this. Acceptance criteria
+      are now operational (PERSONA.md exists, release notes name the
+      persona, arch-critic checks every ADR for a persona_trade_off
+      field, no v1.0 deferred-to-v1.1 item primarily serves the primary
+      persona).
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-002
+    category: vague
+    severity: high
+    target: [REQ-CRUX-012]
+    finding: |
+      REQ-CRUX-012 said costs/log.csv must record "every multi-minute LLM
+      invocation" without defining "multi-minute".
+    suggests: |
+      (Original.) Pick a numeric threshold (10s per call, 60s wall, 60s
+      summed) and commit.
+    resolution: |
+      REQ-CRUX-012 now pins the threshold to wall_seconds >= 60 per
+      agent invocation. A unit-test acceptance criterion was added:
+      59.9s -> no row, 60.1s -> exactly one row. The phrase
+      "multi-minute" is retired from the binding text.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-003
+    category: vague
+    severity: medium
+    target: [REQ-CRUX-005]
+    finding: |
+      REQ-CRUX-005 used a 15-20 function range -- 33% spread on the
+      load-bearing claim of the runtime-neutrality thesis.
+    suggests: |
+      (Original.) Tighten to e.g. 16-18, or commit a single integer at
+      gate 4 ADR time.
+    resolution: |
+      REQ-CRUX-005 tightened to 16-18 functions. Once the architect
+      commits a specific count via ADR, that count becomes binding for
+      v1.0; widening it later is a v1.1+ change. New acceptance
+      criterion: arch-critic verifies no concern group has been
+      silently expanded.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-004
+    category: missing-coverage
+    severity: medium
+    target: [REQ-CRUX-009]
+    finding: |
+      Compressed-mode artifact-invariance resolves an IDEA ambiguity
+      (whether Compressed "skips a gate" or only its approval) without
+      the resolution being cross-referenced anywhere.
+    suggests: |
+      (Original.) Architect should produce an explicit ADR ratifying
+      GRILL-CRUX-006 and amend the IDEA narrative or add a note to
+      PRD.md.
+    resolution: |
+      Addressed by merge of REQ-CRUX-009 into REQ-CRUX-008 (per
+      SPEC-CRIT-005 consolidation). The merged REQ-CRUX-008 now carries
+      an explicit acceptance criterion: "the orchestration ADR contains
+      an explicit clause ratifying the artifact-invariance rule and
+      naming the GRILL-CRUX-006 source." This forces the architect to
+      cross-reference the ambiguity resolution in the ADR.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-005
+    category: priority-pressure
+    severity: medium
+    target: [PRD]
+    finding: |
+      23 must REQs and 1 should REQ -- well above the 5-15 typical
+      band. Every REQ is a release blocker, inflating the v1.0 ship
+      surface.
+    suggests: |
+      (Original.) Re-walk the must list; downgrade or consolidate.
+      Candidates: REQ-CRUX-007 (release-notes wording -> should),
+      REQ-CRUX-019 (audit-site non-goal could fold into non-goals
+      section), REQ-CRUX-008 + REQ-CRUX-009 could merge.
+    resolution: |
+      Three actions taken:
+        1. REQ-CRUX-007 demoted from must to should (release-notes
+           wording is documentation hygiene, not a release blocker).
+        2. REQ-CRUX-008 and REQ-CRUX-009 merged into a single
+           REQ-CRUX-008 covering both mode configurability and
+           artifact invariance. ID 009 is retired (gap preserved in
+           the monotonic numbering as an audit signal).
+        3. REQ-CRUX-019 kept as must but tightened with a concrete AC
+           about the stub README.
+      New count: 21 must, 2 should (down from 23/1). Still above the
+      5-15 typical band; flagged here as an acknowledged trait of a
+      foundational platform PRD where many constraints are genuinely
+      load-bearing. Architect at gate 4 may consolidate further if
+      arch-critic finds additional hidden compounding.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-006
+    category: orphan
+    severity: low
+    target: [REQ-CRUX-013]
+    finding: |
+      REQ-CRUX-013 references docs/sdlc/gate0/ but the directory is
+      not in the Phase 0 directory tree; risk of silent-fallback
+      failure on Windows.
+    suggests: |
+      (Original.) Add an AC explicitly checking directory creation
+      idempotence and OS-uniform handling.
+    resolution: |
+      REQ-CRUX-013 amended. Two new acceptance criteria added: (a) a
+      re-run on a repo that already has docs/sdlc/gate0/ does not
+      error -- the existing gap report is overwritten, the directory
+      reused; (b) the brownfield code path uses idempotent mkdir
+      (mkdir -p semantics) and handles Windows / POSIX permissions
+      uniformly. The REQ text now explicitly says "directory creation
+      must be idempotent across operating systems and tolerate a
+      pre-existing docs/sdlc/gate0/."
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-007
+    category: orphan
+    severity: low
+    target: [REQ-CRUX-019]
+    finding: |
+      No task in the bootstrap TODO is currently scoped to write the
+      packages/audit-site/README.md stub that REQ-CRUX-019 implicitly
+      requires.
+    suggests: |
+      (Original.) The planner at gate 3 should ensure a task is
+      scoped to write the stub README.
+    resolution: |
+      REQ-CRUX-019 amended with an explicit acceptance criterion
+      naming a build-phase task scoped to write the stub README, plus
+      a stricter AC requiring no Astro / Storybook / Chromatic
+      configuration files in packages/audit-site at v1.0. The planner
+      at gate 3 will pick up this AC when decomposing tasks; absence
+      of such a task will surface in spec-critique on the next pass.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+  - id: SPEC-CRIT-008
+    category: vague
+    severity: low
+    target: [REQ-CRUX-001]
+    finding: |
+      REQ-CRUX-001's AC "without missing-feature errors" is subjective.
+    suggests: |
+      (Original.) Replace with a concrete checklist (every slash command
+      exits 0, no "not implemented" to stderr, etc.).
+    resolution: |
+      REQ-CRUX-001 acceptance criteria rewritten as five concrete checks:
+      (1) every slash command exits with code 0 in the end-to-end test
+      scenario; (2) no slash command emits "not implemented" or "TODO"
+      to stderr; (3) no Loop 9 listener / scheduled job exists; (4) no
+      deploy-automation slash command ships; (5) docs/sdlc/ contains
+      every artifact type produced by gates 1-7 after the scenario.
+    resolved: true
+    resolved_by: prd-generator
+    resolved_at: 2026-05-05T00:00:00Z
+
+# Summary: 8 of 8 concerns resolved. PRD is no longer soft-blocked by
+# this artifact. Architect at gate 4 will run arch-critic + pre-mortem
+# for the deeper adversarial pass.

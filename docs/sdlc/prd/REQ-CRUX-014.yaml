@@ -1,0 +1,12 @@
+id: REQ-CRUX-014
+text: |
+  The orchestration-model ADR must explicitly credit and reference the Ruflo project as the source of the absorbed patterns (slash-command shape, DAG batching, hook conventions).
+derived_from:
+  - GRILL-CRUX-010
+acceptance_criteria:
+  - The orchestration-model ADR contains a section or block crediting Ruflo by name.
+  - No Ruflo file is copied into .claude/skills/, .claude/agents/, or .claude/commands/ at v1.0.
+health_signals: []
+priority: should
+gate: 4
+blast_radius: low

@@ -1,0 +1,12 @@
+id: REQ-CRUX-020
+text: |
+  /crux-grill must scale its question count by input depth. Word-count thresholds: under 50 words triggers a "too thin to grill" warning and at most 7 questions; 50 to 300 words triggers 8 to 12 questions; 300 to 2000 words triggers 15 to 20 questions; over 2000 words triggers 20 to 30 questions. PRDs derived from low-input-confidence IDEAs must carry an explicit warning at the top of PRD.md.
+derived_from:
+  - GRILL-CRUX-016
+acceptance_criteria:
+  - A 30-word IDEA produces a grill of at most 7 questions and an explicit "input too thin" message.
+  - 'A PRD derived from a low-confidence IDEA contains an "input_confidence: low" warning block at the top.'
+health_signals: []
+priority: must
+gate: 1
+blast_radius: low

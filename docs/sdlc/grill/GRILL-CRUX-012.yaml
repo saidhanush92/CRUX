@@ -1,0 +1,41 @@
+id: GRILL-CRUX-012
+idea: IDEA-001
+gate: 5
+question: |
+  In v1.0, when a real user runs Gate 5, is the install deterministic or
+  advisory?
+answer: |
+  ADVISORY at v1.0. Gate 5 proposes the harness install; the user reviews
+  and accepts, edits, or declines individual items. Specifically:
+
+    - The harness installer reads stack.yaml and proposes a concrete plan:
+      which skills, hooks, CI workflows, and quality gates to install.
+    - Each proposal item is surfaced to the user with rationale and source
+      (which skill or rule produced it).
+    - The user can accept all, accept some, edit individual items, or
+      decline.
+    - harness.lock records exactly what was accepted, including any user
+      edits, with a "user_edited: true" flag where applicable.
+
+  Determinism is explicitly NOT a v1.0 guarantee. The same stack.yaml +
+  same skill versions may produce different harness.lock outputs across
+  different users because the user is part of the loop.
+
+  Trade-offs accepted:
+    - Cross-team reproducibility of the harness is weaker. Two teams with
+      identical stack.yaml may end up with different hooks if they made
+      different choices during install.
+    - Audit trail still works -- harness.lock captures what was actually
+      installed, so a re-run on the same machine is reproducible from the
+      lock.
+    - Determinism is a v1.1+ goal; revisit when the persona expands beyond
+      founding teams (per GRILL-CRUX-002 second-tier personas).
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: medium
+supersedes: null

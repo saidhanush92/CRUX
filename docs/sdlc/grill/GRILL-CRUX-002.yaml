@@ -1,0 +1,30 @@
+id: GRILL-CRUX-002
+idea: IDEA-001
+gate: 2
+question: |
+  Which single persona is v1.0 designed to delight, and which two are
+  explicitly second-tier "they get value but we will not trade off for them"?
+answer: |
+  Primary persona: small founding team in the shape of the Looplog example --
+  roughly PM + developer (2-3 people). Crux v1.0 is designed to delight this
+  team. Compressed Mode (3 HITL gates: PRD, PRs, Release) is the implicit
+  default mode; Solo and Standard modes still work but are not the design
+  target.
+
+  Second-tier (value but not the v1 trade-off pivot):
+    - Regulated-industry teams (healthtech / finance) -- audit trail is real
+      to them, and they will get it, but Crux v1.0 will not bend its UX or
+      gate design to satisfy compliance-heavy workflows.
+    - Design-conscious teams (DTC / brand-led) -- the design-reviewer agent
+      and TOKENS / DESIGN_BRIEF artifacts work, but the design gate (4.5)
+      will not be optimized for design-led organizations at the expense of
+      the dev-led founding-team flow.
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: high
+supersedes: null

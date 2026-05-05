@@ -1,0 +1,12 @@
+id: REQ-CRUX-006
+text: |
+  The Claude Code reference adapter must implement the full adapter interface defined in REQ-CRUX-005 at v1.0.
+derived_from:
+  - GRILL-CRUX-004
+acceptance_criteria:
+  - Every function in the adapter interface has a working implementation in packages/adapter-claude-code/.
+  - The adapter passes the harness verification suite without any "not implemented" stubs.
+health_signals: []
+priority: must
+gate: 4
+blast_radius: high

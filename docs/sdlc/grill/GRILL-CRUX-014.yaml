@@ -1,0 +1,49 @@
+id: GRILL-CRUX-014
+idea: IDEA-001
+gate: 7
+question: |
+  Where do amendments live and how does the next agent invocation pick
+  them up? Inline edit of SKILL.md (a), layered separate files (b), or
+  hook injection (c)?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Architect should commit via ADR -- this shapes how subagents assemble
+  their runtime prompts and is load-bearing for the "compounding learning
+  system" claim. Best resolved at gate 4.
+default_assumption: |
+  Option (b): LAYERED separate files. Specifically:
+
+    - Amendments live as docs/sdlc/amendments/AMD-<n>.yaml files (already
+      in Phase 1 template + Phase 2 /crux-incident pipeline).
+    - Each amendment names its target_skill (e.g., tdd-workflow,
+      code-review). The underlying .claude/skills/<name>/SKILL.md is
+      NEVER edited; upstream sync remains clean.
+    - At runtime, when /crux-task (or any command) invokes a subagent
+      whose Canonical Methodology block references skill X:
+        1. The orchestrator reads .claude/skills/X/SKILL.md.
+        2. The orchestrator greps docs/sdlc/amendments/ for any AMD with
+           target_skill: X.
+        3. The orchestrator assembles the subagent brief by appending
+           the matching amendment rules under a "## Active amendments"
+           section AFTER the skill body.
+        4. severity: high amendments are highlighted as "BLOCKING" rules;
+           medium / low as advisory.
+
+  Why option (b) over (a) or (c):
+    - (a) inline edit destroys the upstream-sync property. Pocock and ECC
+      ship updates to skills; we lose the ability to rebase.
+    - (c) hook injection is too clever -- amendments would be invisible
+      to a human reading the agent's behaviour. Separate files preserve
+      auditability.
+
+  Implementation note for gate 4 architect: the amendment-merge step is
+  a small piece of /crux-task and any other slash command that invokes
+  an anchored subagent. Likely lives in packages/core as a
+  resolveAmendmentsForSkill(skillName) -> list[Amendment] function.
+blast_radius: high
+supersedes: null

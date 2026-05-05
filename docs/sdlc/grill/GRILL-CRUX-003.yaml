@@ -1,0 +1,36 @@
+id: GRILL-CRUX-003
+idea: IDEA-001
+gate: 4
+question: |
+  What is the canonical source of truth for the trace graph -- the
+  markdown/YAML files in docs/sdlc/, or the SQLite index? (a) cache
+  invalidation rules if SQLite is a cache; (b) what "plain markdown in your
+  repo" means if SQLite is authoritative; (c) tie-breaker on disagreement.
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Foundational architecture decision; user accepted a working default until
+  the /crux-architect pass at gate 4 produces a binding ADR.
+default_assumption: |
+  Markdown / YAML files under docs/sdlc/ are the canonical source of truth.
+  SQLite is a derived cache index, regenerated from the markdown on demand.
+
+  (a) Cache invalidation: per-file mtime + sha256 content hash. The indexer
+      stores the hash with each row; on read, if the file's hash differs
+      from the indexed hash, the row is recomputed before being returned.
+  (b) "Plain markdown / YAML in your repo" remains literally true -- a user
+      who deletes the SQLite cache and re-runs the indexer gets back the
+      same trace graph, because all data lives in version-controlled text.
+  (c) On any disagreement between markdown and SQLite, the markdown wins.
+      The cache is rebuilt; the markdown is never overwritten by the cache.
+
+  This default preserves the IDEA's portability claim ("switch tools tomorrow
+  and the audit survives") and makes SQLite a pure performance optimization,
+  not an authoritative store. Architect should challenge this default at
+  gate 4 if scale or query complexity argues otherwise.
+blast_radius: high
+supersedes: null

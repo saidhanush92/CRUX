@@ -1,0 +1,42 @@
+id: GRILL-CRUX-008
+idea: IDEA-001
+gate: 7
+question: |
+  At v1.0 release, what is the binding cost-tracking contract? CSV-only,
+  per-task budget hard halt, per-session aggregate cap, or something else?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 7
+defer_reason: |
+  Cost subsystem shape decides whether we need a dedicated module in
+  packages/core or piggyback on the existing trace-graph store. Best
+  resolved when /crux-task is being implemented in earnest (gate 7).
+default_assumption: |
+  Hybrid (CSV log + per-task soft warn + per-task hard halt). Specifically:
+
+    - The CSV log at docs/sdlc/costs/log.csv (per TODO operating rule 10)
+      is the authoritative cost record. Every multi-minute LLM invocation
+      writes a row: task_id, agent, tokens_estimated, wall_seconds, notes.
+
+    - Each TASK.yaml carries estimated_cost_usd (already in the template).
+      During /crux-task execution:
+        * At 1.0x estimated_cost: emit a soft warning to the user.
+        * At 2.0x estimated_cost: HARD HALT. Surface to user, require
+          explicit confirmation before continuing the cycle.
+      The 2.0x multiplier is configurable via stack.yaml.cost_halt_multiplier.
+
+    - /crux-status surfaces 7-day burn totals and the top-3 most expensive
+      task ids (already in the command spec).
+
+    - No per-session aggregate cap at v1.0 -- adds complexity without a
+      clear pain point given the founding-team persona. Reconsider at v1.1
+      if telemetry shows users consistently blowing past per-task halts.
+
+  The Looplog example's $14 task spike maps directly to this contract:
+  $14 would have triggered the hard halt at the 2.0x boundary if the task
+  estimate was ~$7, prompting the founder's budget-cap retrospective.
+blast_radius: medium
+supersedes: null

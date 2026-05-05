@@ -1,0 +1,13 @@
+id: REQ-CRUX-015
+text: |
+  /crux-grill must ask the user whether the work has meaningful UI / visual-design surface. The answer must be recorded as design_gate_enabled (true | false) on the IDEA file, and Gate 4.5 must fire only when design_gate_enabled is true. The default when the user does not answer the question is false.
+derived_from:
+  - GRILL-CRUX-011
+acceptance_criteria:
+  - 'A grill run on an IDEA without UI scope produces design_gate_enabled: false on the IDEA frontmatter.'
+  - /crux-architect skips the Gate 4.5 sub-flow when design_gate_enabled is false.
+  - When design_gate_enabled is true, DESIGN_BRIEF.yaml and TOKENS.yaml become required artifacts.
+health_signals: []
+priority: must
+gate: 2
+blast_radius: medium

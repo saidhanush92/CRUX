@@ -1,0 +1,13 @@
+id: REQ-CRUX-022
+text: |
+  Gate 5 harness install must detect hook collisions, defined as two or more hooks with the same event and matcher and no explicit priority field, and halt before writing harness.lock until every collision is resolved.
+derived_from:
+  - GRILL-CRUX-018
+acceptance_criteria:
+  - 'An install run with two skills both wanting PostToolUse: Write|Edit on the same matcher (no priority) halts and lists both colliders.'
+  - Adding explicit priority fields to either hook lets the install proceed.
+  - harness.lock is never written while at least one collision is unresolved.
+health_signals: []
+priority: must
+gate: 5
+blast_radius: medium

@@ -1,0 +1,15 @@
+id: REQ-CRUX-001
+text: |
+  At v1.0, gates 1 through 7 of the Crux pipeline (input, PRD, modules, architecture, harness, design, build) must execute end-to-end on a real user project. Gate 8 (release / deploy automation) and Loop 9 (the always-on production-feedback channel) are explicit non-goals at v1.0.
+derived_from:
+  - GRILL-CRUX-001
+acceptance_criteria:
+  - Every slash command listed in .claude/commands/ exits with code 0 when run against the prepared end-to-end test scenario.
+  - No slash command emits the string "not implemented" or "TODO" to stderr during the end-to-end scenario.
+  - A v1.0 build artifact contains no Loop 9 listener process and no scheduled job referencing Loop 9.
+  - No deploy-automation slash command (e.g. /crux-deploy) ships in .claude/commands/ at v1.0.
+  - docs/sdlc/ contains every artifact type produced by gates 1 through 7 after the end-to-end scenario completes.
+health_signals: []
+priority: must
+gate: 2
+blast_radius: high

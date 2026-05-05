@@ -1,0 +1,13 @@
+id: REQ-CRUX-018
+text: |
+  Amendments must live as separate AMD-<n>.yaml files under docs/sdlc/amendments/. The amendment-writer subagent must never modify any .claude/skills/<name>/SKILL.md file. When an anchored subagent runs, the orchestrator must merge every amendment whose target_skill matches the subagent's canonical skill into the runtime brief.
+derived_from:
+  - GRILL-CRUX-014
+acceptance_criteria:
+  - Running /crux-incident report on a test scenario produces an AMD file but does not change any SKILL.md byte.
+  - A subsequent /crux-task invocation that triggers the amended skill includes the amendment's rule in its assembled brief.
+  - 'severity: high amendments are flagged as "BLOCKING" in the rendered brief.'
+health_signals: []
+priority: must
+gate: 4
+blast_radius: high

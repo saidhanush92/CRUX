@@ -1,0 +1,38 @@
+id: GRILL-CRUX-006
+idea: IDEA-001
+gate: 1
+question: |
+  Where is the gate-mode dial actually configured, and when? (a) /crux-init
+  time vs. per-feature; (b) can it change mid-project; (c) does Compressed
+  skip artifact production or only HITL approval?
+answer: null
+confidence: high
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Mode dial shape ties to stack.yaml schema and to /crux-init / /crux-status
+  command behaviour. User accepted a working default until the gate 4
+  architect pass produces a binding ADR.
+default_assumption: |
+  (a) Mode is set at /crux-init time as a top-level field in stack.yaml
+      (e.g. crux_mode: compressed). Per-IDEA override is allowed via the
+      IDEA file's frontmatter (crux_mode_override: standard) but is the
+      exception, not the norm. Default for greenfield: compressed. Default
+      for brownfield: standard, on the assumption that brownfield teams
+      adopting Crux usually want more rigour, not less.
+
+  (b) Mode CAN change mid-project. The transition is a stack.yaml edit plus
+      a CHG event documenting the change (classification: new_scope) so the
+      audit trail records why the dial moved. No automatic re-grilling of
+      previously-skipped gates -- past artifacts stay as they were.
+
+  (c) Compressed mode skips HITL approval but NEVER skips artifact
+      production. Every gate still produces its REQs, ADRs, MODs, etc.;
+      the difference is that /crux-approve is implicit (auto-approved with
+      source: mode-compressed in approvals.log) for the gates that
+      Compressed Mode collapses. The audit trail is invariant across modes
+      -- this is load-bearing for the "compounding learning system" claim.
+blast_radius: medium
+supersedes: null

@@ -1,0 +1,12 @@
+id: REQ-CRUX-007
+text: |
+  The ADR for the adapter interface should include a non-empty revisit_when clause naming the second-adapter milestone, and v1.0 release notes should explicitly state that the runtime-neutrality claim is provisional until at least one second adapter exists. (Demoted from must to should per spec-critic SPEC-CRIT-005: this is documentation hygiene, not a release-blocking constraint.)
+derived_from:
+  - GRILL-CRUX-005
+acceptance_criteria:
+  - The adapter interface ADR has a non-empty revisit_when field referencing a second-adapter implementation.
+  - v1.0 release notes contain a statement that runtime neutrality is aspirational at v1.0.
+health_signals: []
+priority: should
+gate: 4
+blast_radius: medium

@@ -1,0 +1,15 @@
+id: REQ-CRUX-019
+text: |
+  At v1.0, the audit consumption surface must consist of: (a) markdown / YAML files under docs/sdlc/ browsable in any editor or on GitHub; (b) /crux-trace; (c) /crux-status; (d) scripts/render-graph.sh. The audit-site Astro package is a non-goal at v1.0; the packages/audit-site directory must contain a stub README explaining the v1.1 deferral.
+derived_from:
+  - GRILL-CRUX-015
+acceptance_criteria:
+  - A user can navigate the trace graph using only the four surfaces named above.
+  - packages/audit-site/README.md exists at v1.0 release and explains that the Astro audit-site is deferred to v1.1 plus the rationale.
+  - packages/audit-site contains no Astro / Storybook / Chromatic configuration files or build scripts at v1.0.
+  - No audit-site-deploy.yml CI workflow exists at v1.0.
+  - A specific build-phase task is scoped to write packages/audit-site/README.md (planner ensures coverage at gate 3).
+health_signals: []
+priority: must
+gate: 8
+blast_radius: medium

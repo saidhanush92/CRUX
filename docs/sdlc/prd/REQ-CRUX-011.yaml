@@ -1,0 +1,17 @@
+id: REQ-CRUX-011
+text: |
+  /crux-task must enforce a per-task cost halt. The halt fires when accrued cost exceeds a configurable multiplier (default 2.0x) of TASK.estimated_cost_usd. The multiplier is configurable via stack.yaml.cost_halt_multiplier.
+derived_from:
+  - GRILL-CRUX-008
+acceptance_criteria:
+  - 'A task with estimated_cost_usd: 1.00 halts at $2.00 with the default multiplier.'
+  - 'Setting cost_halt_multiplier: 1.5 in stack.yaml causes the same task to halt at $1.50.'
+  - A halt requires explicit user confirmation before /crux-task continues.
+health_signals:
+  - metric: task_overrun_pct
+    source: log
+    threshold: 200
+    breach_action: warn
+priority: must
+gate: 7
+blast_radius: medium

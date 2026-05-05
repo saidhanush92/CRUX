@@ -1,0 +1,58 @@
+id: GRILL-CRUX-004
+idea: IDEA-001
+gate: 4
+question: |
+  What are the ~15 functions of the runtime adapter interface, named?
+answer: null
+confidence: medium
+source: deferred
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: 4
+defer_reason: |
+  Highest-leverage architectural decision in the project; deserves a full
+  /crux-architect pass with self-grill and arch-critic. User accepted a
+  working default until then.
+default_assumption: |
+  Provisional adapter interface (~15 functions) -- subject to revision in
+  the gate 4 ADR pass. Grouped by concern:
+
+  Lifecycle (3):
+    - session_start(project_root) -> SessionHandle
+    - session_end(handle) -> bool
+    - capabilities_supported() -> list[capability_id]
+
+  Subagents (2):
+    - spawn_subagent(name, brief, allowed_tools) -> AgentHandle
+    - await_subagent(handle, timeout) -> AgentResult
+
+  Skills (3):
+    - install_skill(skill_spec) -> SkillRecord
+    - list_skills() -> list[SkillRecord]
+    - invoke_skill(name, args) -> SkillResult
+
+  Hooks (2):
+    - install_hook(hook_spec) -> HookRecord
+    - list_hooks() -> list[HookRecord]
+
+  Slash commands (1):
+    - run_command(name, args) -> CommandResult
+
+  Filesystem and shell (3):
+    - read_file(path) -> bytes
+    - write_file(path, bytes, mode) -> bool
+    - run_shell(cmd, env, cwd, timeout) -> (exit_code, stdout, stderr)
+
+  Trace and capability resolution (2):
+    - emit_event(name, payload) -> bool
+    - resolve_capability(cap_id) -> skill_name | None
+
+  Total: 16. Architect MAY add or remove up to ~3 without breaking the
+  "small interface" claim; anything beyond ~20 invalidates the runtime-
+  neutrality thesis and requires re-grilling GRILL-CRUX-005.
+
+  Open sub-question for gate 4: are uninstall_skill / uninstall_hook part of
+  the interface or out-of-scope (managed by the user via plugin commands)?
+  Default: out-of-scope at v1.
+blast_radius: high
+supersedes: null

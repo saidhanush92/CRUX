@@ -1,0 +1,13 @@
+id: REQ-CRUX-016
+text: |
+  Gate 5 harness install must be advisory at v1.0: each proposal item is surfaced to the user with rationale and source skill before being applied; the user may accept, edit, or decline each item. harness.lock must record items the user edited with a user_edited: true flag.
+derived_from:
+  - GRILL-CRUX-012
+acceptance_criteria:
+  - A harness-install run pauses for user input on at least each non-trivial item (skill, hook, CI workflow).
+  - 'harness.lock entries that the user modified during install carry user_edited: true.'
+  - A non-interactive install run requires an explicit --accept-defaults flag (no implicit auto-accept).
+health_signals: []
+priority: must
+gate: 5
+blast_radius: medium

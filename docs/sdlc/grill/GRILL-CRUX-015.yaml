@@ -1,0 +1,45 @@
+id: GRILL-CRUX-015
+idea: IDEA-001
+gate: 8
+question: |
+  At v1.0, what is the audit consumption surface? Markdown-only (a),
+  slash commands + render-graph script (b), or full audit-site Astro
+  package (c)?
+answer: |
+  Option (a): MARKDOWN-ONLY at v1.0. Users browse docs/sdlc/ directly in
+  their editor or on the GitHub web UI. The trace graph is consumable
+  through:
+
+    - /crux-trace <id> -- walks upstream and downstream from any artifact.
+    - /crux-status -- gate state and recent events.
+    - scripts/render-graph.sh -- emits Mermaid or DOT for embedding in
+      PRs / issues / docs.
+
+  Explicitly NOT shipped at v1.0:
+    - The audit-site Astro package as a hosted, browseable site.
+    - GitHub Pages deployment (matches GRILL-CRUX-001's deferral of
+      Gate 8 CI/CD).
+    - Any web-based filtering, search, or dashboard surface.
+
+  Downstream consequences (architect should ratify at gate 4):
+    - The packages/audit-site directory created in Phase 0 stays as a
+      placeholder package at v1.0. It may contain a stub README explaining
+      the v1.1 plan, but no Astro app, no Storybook, no build pipeline.
+    - Phase 8 task 8.8 must be revised: audit-site-deploy.yml CI workflow
+      is dropped from v1.0 scope. ci.yml and trace-lint.yml remain.
+    - The Phase 8 install removes Astro and Storybook from the dev-deps
+      list (or scopes them to "v1.1 prep, do not install yet").
+
+  This default protects the founding-team persona's MVP velocity (per
+  GRILL-CRUX-002) and keeps v1.0 honest about what is shipped vs.
+  promised. The audit-site is the obvious v1.1 deliverable once the
+  trace-graph data model is battle-tested by real markdown consumption.
+confidence: high
+source: user
+asked_by: grill-interviewer
+answered_at: 2026-05-05T00:00:00Z
+defer_to: null
+defer_reason: null
+default_assumption: null
+blast_radius: medium
+supersedes: null

@@ -1,0 +1,14 @@
+id: REQ-CRUX-005
+text: |
+  The runtime adapter interface must consist of 16 to 18 functions, organized into seven concern groups: lifecycle, subagents, skills, hooks, slash commands, filesystem and shell, trace and capability resolution. Once the architect commits a specific count via ADR, that count is binding for v1.0; widening it later is a v1.1+ change.
+derived_from:
+  - GRILL-CRUX-004
+acceptance_criteria:
+  - The adapter interface module declares between 16 and 18 functions inclusive.
+  - Every declared function maps to exactly one of the seven concern groups.
+  - No concern group has been silently expanded to absorb growth that the headline count was meant to cap (arch-critic verifies this).
+  - A printed function list, by group, with the committed count, ships in the adapter interface ADR.
+health_signals: []
+priority: must
+gate: 4
+blast_radius: high

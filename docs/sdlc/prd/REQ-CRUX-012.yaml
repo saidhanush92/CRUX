@@ -1,0 +1,13 @@
+id: REQ-CRUX-012
+text: |
+  docs/sdlc/costs/log.csv must record every LLM agent invocation whose wall_seconds is greater than or equal to 60. (The earlier "multi-minute" phrasing is hereby pinned to a 60-second wall-clock threshold per spec-critic SPEC-CRIT-002.) Required fields: task_id, agent, tokens_estimated, wall_seconds, notes.
+derived_from:
+  - GRILL-CRUX-008
+acceptance_criteria:
+  - After running /crux-task on any task whose total wall-time on a single agent invocation is at least 60 seconds, costs/log.csv contains a row referencing that task id.
+  - The CSV is append-only; existing rows are never rewritten.
+  - 'A unit test verifies the 60-second threshold: a 59.9s synthetic invocation produces no row; a 60.1s synthetic invocation produces exactly one row.'
+health_signals: []
+priority: must
+gate: 7
+blast_radius: low

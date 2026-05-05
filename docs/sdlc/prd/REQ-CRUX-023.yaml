@@ -1,0 +1,13 @@
+id: REQ-CRUX-023
+text: |
+  After reviewer (and design-reviewer when applicable) approval, /crux-task must produce docs/sdlc/tasks/<task-id>/PR_DESCRIPTION.md containing a structured trace block. The block must include task id, module, mode, satisfied REQ ids and one-line summaries, honored ADR ids and titles, the upstream GRILL ids, review verdict and cycle count, and cost summary.
+derived_from:
+  - GRILL-CRUX-019
+acceptance_criteria:
+  - Running /crux-task to completion produces PR_DESCRIPTION.md at the documented path.
+  - The trace block contains every required field.
+  - No PR-creation step is invoked by /crux-task at v1.0; the user runs gh pr create themselves.
+health_signals: []
+priority: must
+gate: 7
+blast_radius: medium
