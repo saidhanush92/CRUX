@@ -113,6 +113,6 @@ The arch-critic and pre-mortem subagents will also run at gate 4; their findings
 
 ## Approval
 
-- Approved by: _pending_
-- Approved at: _pending_
-- Approval log entry: `docs/sdlc/approvals.log` (entry will be created by `/crux-approve PRD-CRUX`)
+- Approved by: Dhanush Sai
+- Approved at: 2026-05-05T00:00:00Z
+- Approval log entry: `docs/sdlc/approvals.log` (line 1)

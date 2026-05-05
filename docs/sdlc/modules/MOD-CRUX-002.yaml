@@ -1,0 +1,22 @@
+id: MOD-CRUX-002
+name: adapter-claude-code
+responsibility: |
+  Reference implementation of the runtime adapter interface (16-18
+  functions across 7 concern groups) against Claude Code. Owns:
+  subagent-invocation isolation (genuine separate Task calls with no
+  shared transcript, per REQ-CRUX-017), skill and hook install via
+  Claude Code's plugin and settings.json mechanisms, slash-command
+  execution dispatch, filesystem and shell pass-through, trace-event
+  emission, and capability resolution. Imports core for type
+  declarations and the capability registry; does not import cli.
+  This module exists to PROVE the adapter interface boundary by
+  implementing it once; the interface itself is owned by core.
+surface: headless
+depends_on:
+  - MOD-CRUX-001
+derived_from:
+  - REQ-CRUX-005
+  - REQ-CRUX-006
+  - REQ-CRUX-007
+  - REQ-CRUX-014
+  - REQ-CRUX-017

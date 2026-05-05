@@ -1,0 +1,33 @@
+id: MOD-CRUX-003
+name: cli
+responsibility: |
+  User-facing CLI binary plus the slash-command implementations that the
+  .claude/commands/*.md wrappers delegate to. Orchestrates the gate-1-
+  to-gate-7 pipeline end-to-end (REQ-CRUX-001), owns the persona-
+  conflict procedural rule plumbing (REQ-CRUX-002), the brownfield
+  Gate-0 path with idempotent gap-report generation (REQ-CRUX-013), the
+  design_gate_enabled flag flow (REQ-CRUX-015), the advisory harness-
+  install loop with hook-collision halt (REQ-CRUX-016, REQ-CRUX-022),
+  the audit consumption surface (markdown + /crux-trace + /crux-status
+  + render-graph: REQ-CRUX-019), the input-depth-scaled grill
+  (REQ-CRUX-020), the PR_DESCRIPTION.md generation after reviewer
+  approval (REQ-CRUX-023), and the release-readiness check
+  (REQ-CRUX-024). Also owns writing stub READMEs into
+  packages/audit-site and packages/extension-vscode for v1.0 (the
+  "v1.1 deferred" placeholder text), since neither of those package
+  directories ships as its own v1.0 module.
+surface: headless
+depends_on:
+  - MOD-CRUX-001
+  - MOD-CRUX-002
+derived_from:
+  - REQ-CRUX-001
+  - REQ-CRUX-002
+  - REQ-CRUX-013
+  - REQ-CRUX-015
+  - REQ-CRUX-016
+  - REQ-CRUX-019
+  - REQ-CRUX-020
+  - REQ-CRUX-022
+  - REQ-CRUX-023
+  - REQ-CRUX-024

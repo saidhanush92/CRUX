@@ -1,0 +1,3 @@
+# Crux approvals log. Append-only. One line per approval event.
+# Format:  <ISO-8601-timestamp>  /crux-approve  <artifact-id>  approved-by=<user>  [extras...]
+2026-05-05T00:00:00Z  /crux-approve  PRD-CRUX  approved-by=Dhanush Sai  reqs=23  spec-critique=resolved

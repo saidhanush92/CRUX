@@ -1,0 +1,22 @@
+id: MOD-CRUX-001
+name: core
+responsibility: |
+  Runtime-neutral data model and engine. Owns the gate state machine,
+  the trace graph (canonical markdown/YAML reader plus derived SQLite
+  cache index with mtime+sha256 invalidation), the capability registry
+  resolver, the amendment merge logic that layers AMD files onto
+  imported skills at runtime, the per-task cost-tracking ledger and
+  halt-multiplier enforcement, and the depends_on cycle detector used
+  by /crux-modules. No UI; no Claude Code coupling; no slash-command
+  surface. Other modules import core; core imports nothing from them.
+surface: headless
+depends_on: []
+derived_from:
+  - REQ-CRUX-003
+  - REQ-CRUX-004
+  - REQ-CRUX-008
+  - REQ-CRUX-010
+  - REQ-CRUX-011
+  - REQ-CRUX-012
+  - REQ-CRUX-018
+  - REQ-CRUX-021
