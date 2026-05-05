@@ -10,12 +10,25 @@ runtime:
 
 package_manager:
   name: pnpm                            # pinned by ADR-CRUX-001
-  version: "9"
+  version: "10.33.2"                    # pinned in Phase 8.1 to match installed; replaces the original "9" placeholder
 
 frameworks:
   test_runner:
     - name: vitest
-      version: "^2"
+      version: "^2.1"                   # pinned in Phase 8.1 (current stable line)
+  language:
+    - name: typescript
+      version: "^5.6"                   # pinned in Phase 8.1
+  lint:
+    - name: eslint
+      version: "^9.13"                  # pinned in Phase 8.1 (flat config era)
+    - name: '@typescript-eslint/parser'
+      version: "^8.12"
+    - name: '@typescript-eslint/eslint-plugin'
+      version: "^8.12"
+  format:
+    - name: prettier
+      version: "^3.3"                   # pinned in Phase 8.1
   e2e: []                               # audit-site Astro deferred per REQ-CRUX-019; no e2e at v1.0
   app: []                               # audit-site Astro deferred per REQ-CRUX-019
 

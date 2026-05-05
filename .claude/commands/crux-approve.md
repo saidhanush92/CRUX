@@ -1,7 +1,7 @@
 ---
 description: Mark an artifact as user-approved. Append approval metadata and log the event.
 allowed-tools: Read, Write, Edit, Glob, Grep
-argument-hint: "<artifact-id>"
+argument-hint: '<artifact-id>'
 ---
 
 You are running `/crux-approve` with id: $ARGUMENTS
@@ -17,22 +17,24 @@ You are running `/crux-approve` with id: $ARGUMENTS
    - `DESIGN_BRIEF.yaml`, `TOKENS.yaml` — approvable.
    - `TASK-*` — NOT approvable here; tasks are approved via `/crux-task` review verdict.
    - `CHG-*`, `INC-*`, `AMD-*` — NOT approvable; these are events, not decisions.
-   If the type is not approvable, halt with the explanation.
+     If the type is not approvable, halt with the explanation.
 
 ## Apply approval
 
 1. Append (or set) two fields on the artifact:
    - `approved_by: <user>` — derive from environment (`git config user.name`) or from the calling user.
    - `approved_at: <ISO-8601 timestamp>`.
-   For YAML artifacts, place these as top-level keys. For PRD.md, append to the `## Approval` section per the template.
+     For YAML artifacts, place these as top-level keys. For PRD.md, append to the `## Approval` section per the template.
 2. For `ADR-*` only: also flip `status` from `proposed` to `accepted`. Refuse if status was already `superseded`; tell the user to open a CHG event instead.
 
 ## Log
 
 Append a line to `docs/sdlc/approvals.log`:
+
 ```
 <ISO-8601 timestamp>  /crux-approve  <artifact-id>  approved-by=<user>
 ```
+
 Create the file with a header comment if missing.
 
 ## Output

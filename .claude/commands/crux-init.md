@@ -1,7 +1,7 @@
 ---
 description: Bootstrap a new Crux project — detect or declare stack, write stack.yaml.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash
-argument-hint: "[--greenfield | --brownfield]"
+argument-hint: '[--greenfield | --brownfield]'
 ---
 
 You are running `/crux-init` for the Crux project. The user has invoked this in either a greenfield (empty repo) or brownfield (existing code) context.

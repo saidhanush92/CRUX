@@ -39,9 +39,9 @@ Write `docs/sdlc/prd/spec-critique.yaml` with one entry per concern:
 ```yaml
 critiques:
   - id: SPEC-CRIT-001
-    category: contradiction          # contradiction | untestable | vague | orphan | missing-coverage | health-signal
-    severity: critical               # critical | high | medium | low
-    target: [REQ-004, REQ-007]       # one or more artifact ids
+    category: contradiction # contradiction | untestable | vague | orphan | missing-coverage | health-signal
+    severity: critical # critical | high | medium | low
+    target: [REQ-004, REQ-007] # one or more artifact ids
     finding: |
       <plain-language explanation>
     suggests: |

@@ -1,7 +1,7 @@
 ---
 description: Run the per-task pipeline — test-writer, then coder, then reviewer. Three subagent invocations.
 allowed-tools: Read, Write, Edit, Glob, Grep, Bash, Task
-argument-hint: "<task-id>"
+argument-hint: '<task-id>'
 ---
 
 You are running `/crux-task` with task id: $ARGUMENTS
@@ -20,17 +20,19 @@ You are running `/crux-task` with task id: $ARGUMENTS
 ## Stage 1: test-writer
 
 Invoke the **test-writer** subagent. Brief:
+
 - Apply `.claude/skills/tdd-workflow/SKILL.md` as your canonical methodology. Read it first; its RED → GREEN → REFACTOR loop governs every test you produce.
 - Read all loaded REQs and ADRs.
 - Produce `docs/sdlc/tasks/$ARGUMENTS/TEST_PLAN.yaml` matching the template.
 - Write failing tests under the test paths specified in TEST_PLAN. Tests must target paths inside `touches_files`.
-- Run the test runner (`pnpm vitest run` or stack-equivalent). Confirm the tests fail for the *right reason* (not import errors, not typos — actual missing implementation).
+- Run the test runner (`pnpm vitest run` or stack-equivalent). Confirm the tests fail for the _right reason_ (not import errors, not typos — actual missing implementation).
 
 Halt if any test passes (false-positive risk) or fails for a syntax/import reason. Surface to user.
 
 ## Stage 2: coder
 
 Invoke the **coder** subagent (a different identity from test-writer). Brief:
+
 - May read tests but may NOT modify them.
 - May only write to paths inside `TASK.touches_files`.
 - May NOT introduce dependencies absent from `stack.yaml`. If a new dep is needed, halt and tell the user to amend stack.yaml first via `/crux-architect`.
@@ -43,6 +45,7 @@ Halt if any quality gate fails after 3 self-correction attempts.
 ## Stage 3: reviewer
 
 Invoke the **reviewer** subagent (a third identity, distinct from coder and test-writer). Brief:
+
 - Apply `.claude/skills/code-review/SKILL.md` and `.claude/skills/silent-failure-hunter/SKILL.md` as your canonical methodology. Read both first; the structured review checklist plus the silent-failure detection patterns govern review depth and finding shape.
 - Read the diff (`git diff`), all loaded REQs/ADRs/MODs, the TEST_PLAN.
 - Check: every acceptance criterion in every linked REQ is verifiably tested. Every `honors_adrs` constraint is honored in the diff.
@@ -50,11 +53,13 @@ Invoke the **reviewer** subagent (a third identity, distinct from coder and test
 - Verdict: `approve` | `request_changes` | `escalate`.
 
 If `request_changes`:
+
 - Cycle counter increments.
 - Loop back to Stage 2 with the reviewer's concerns. Coder addresses. Reviewer re-runs.
 - On `cycle >= 3`, set `escalation_target: human` and halt for HITL judgment.
 
 If `escalate`:
+
 - Halt immediately. Surface concerns to user.
 
 ## Stage 4 (UI tasks only): design-reviewer

@@ -34,6 +34,7 @@ These two together are authoritative for review depth and finding-shape. Run the
 A single `REVIEW-<cycle>.yaml` saved at `docs/sdlc/tasks/<task-id>/REVIEW-<cycle>.yaml`, matching `templates/REVIEW.yaml.tmpl`.
 
 Verdict is one of:
+
 - `approve` — every concern resolved or trivial; ship it.
 - `request_changes` — concrete blocking issues exist; coder must address.
 - `escalate` — issue is outside the coder's authority (e.g., reveals an ADR is wrong); halt the loop, surface to human.

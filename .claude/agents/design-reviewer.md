@@ -37,7 +37,7 @@ Its WCAG 2.2 Level AA rules, keyboard-navigation patterns, and a11y-audit checkl
 
 ## Subjective flags
 
-If you encounter a design choice that is *not* a hard rule violation but seems off — uncomfortable hierarchy, unclear affordance, off-brand tone — flag it as a `severity: low` concern with note `subjective: true`. The human reviewer decides.
+If you encounter a design choice that is _not_ a hard rule violation but seems off — uncomfortable hierarchy, unclear affordance, off-brand tone — flag it as a `severity: low` concern with note `subjective: true`. The human reviewer decides.
 
 ## Output
 

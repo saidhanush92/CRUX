@@ -1,0 +1,39 @@
+name: trace-lint
+
+# Daily trace-graph integrity check. Calls scripts/check-orphans.sh; fails if any
+# artifact under docs/sdlc/ is missing its required upstream trace fields.
+# Implements the audit-trail invariant from ADR-CRUX-002 and the orphan rule
+# from REQ-CRUX-018-adjacent process.
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # daily at 06:00 UTC
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'docs/sdlc/**'
+      - 'scripts/check-orphans.sh'
+      - 'scripts/_crux.py'
+
+permissions:
+  contents: read
+
+jobs:
+  check-orphans:
+    name: trace-graph orphan check
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install PyYAML
+        run: pip install pyyaml
+
+      - name: Run check-orphans
+        run: bash scripts/check-orphans.sh

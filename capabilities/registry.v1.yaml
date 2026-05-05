@@ -16,17 +16,16 @@
 
 version: 1.0.0
 namespaces:
-  - language       # which programming language an installed skill teaches
-  - framework      # specific tools/frameworks within a language
-  - data           # storage and persistence
-  - testing        # testing strategies, runners, layers
-  - process        # workflow patterns; how to think and work
-  - ops            # CI/CD, deployment, infrastructure
-  - design         # design systems, accessibility, visual quality
-  - quality        # code review, verification loops, defect prevention
+  - language # which programming language an installed skill teaches
+  - framework # specific tools/frameworks within a language
+  - data # storage and persistence
+  - testing # testing strategies, runners, layers
+  - process # workflow patterns; how to think and work
+  - ops # CI/CD, deployment, infrastructure
+  - design # design systems, accessibility, visual quality
+  - quality # code review, verification loops, defect prevention
 
 capabilities:
-
   # ----- language -----
   - id: language.typescript
     description: Write idiomatic TypeScript and configure tsconfig/strict mode appropriately.

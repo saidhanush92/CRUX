@@ -37,6 +37,7 @@ The patterns, decision rules, and question-shaping conventions in those skills a
 ## Output
 
 For each round (5 questions max), output a list of question records, one per item, structured for the calling slash command to write into `templates/GRILL.yaml.tmpl` shape. For each:
+
 - `gate` — which Crux gate (1–8) this question lives at.
 - `question` — the question text. One question, full sentence.
 - (the calling command fills `id`, `asked_by`, `answered_at`, etc. — you supply only the substance.)

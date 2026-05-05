@@ -1,7 +1,7 @@
 ---
 description: Generate PRD and REQ files from an IDEA + its grill answers. Every REQ traces to GRILLs. Runs spec-critic before HITL approval.
 allowed-tools: Read, Write, Edit, Glob, Grep, Task
-argument-hint: "<idea-id>"
+argument-hint: '<idea-id>'
 ---
 
 You are running `/crux-prd` with idea id: $ARGUMENTS
@@ -32,6 +32,7 @@ You are running `/crux-prd` with idea id: $ARGUMENTS
 ## Validation
 
 Before writing, check:
+
 - Every REQ has `derived_from` populated with at least one GRILL id.
 - Every GRILL with `source: user` or `source: default` is referenced by at least one REQ, OR explicitly noted in PRD "Open questions" as not yet binding. Orphan GRILLs are a smell — surface them.
 - `priority: must` count is realistic (typical PRDs have 5–15 `must` REQs; flag if you produced more).
@@ -48,6 +49,7 @@ After all REQ files and PRD.md are written:
 ## Output summary
 
 Print:
+
 - Count of REQs by priority.
 - List of GRILL ids that did not motivate any REQ.
 - Spec-critic verdict: `clean` or `<n> concerns flagged`.

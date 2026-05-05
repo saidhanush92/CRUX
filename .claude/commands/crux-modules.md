@@ -1,7 +1,7 @@
 ---
 description: Decompose an approved PRD into modules. Output MOD-<n>.yaml files.
 allowed-tools: Read, Write, Glob, Grep
-argument-hint: "<prd-id>"
+argument-hint: '<prd-id>'
 ---
 
 You are running `/crux-modules` with PRD id: $ARGUMENTS (typically `PRD` for the singleton).

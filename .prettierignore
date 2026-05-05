@@ -1,0 +1,20 @@
+# Generated / managed files Prettier should not touch.
+node_modules/
+dist/
+coverage/
+.astro/
+playwright-report/
+pnpm-lock.yaml
+
+# Crux artifact files — managed by /crux-* commands; keep their YAML / markdown
+# shape exactly as the artifact templates produce them.
+docs/sdlc/**/*.yaml
+docs/sdlc/**/*.md
+docs/sdlc/approvals.log
+
+# Skill files — imported verbatim from upstream sources, with augmented
+# frontmatter only. Don't reformat.
+.claude/skills/**
+
+# Template files use specific YAML / markdown structure.
+templates/*.tmpl

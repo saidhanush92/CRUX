@@ -10,6 +10,7 @@ You are running `/crux-architect`. This is the heaviest gate — ADRs constrain 
 ### 1. Context load
 
 Invoke the **architect** subagent (Task) with this brief:
+
 - Apply `.claude/skills/architecture-decision-records/SKILL.md` as your canonical methodology. Read it first; its ADR-authoring conventions govern every decision record you produce.
 - Read `docs/sdlc/prd/PRD.md`, every `REQ-*.yaml`, every `MOD-*.yaml`, current `docs/sdlc/stack/stack.yaml`.
 - Scan the codebase: `git ls-files`, identify package boundaries, configuration files, existing decisions encoded in code.
@@ -22,18 +23,21 @@ The architect drafts a strawman: a coherent architectural proposal covering stor
 ### 3. Self-grill
 
 The architect runs an adversarial self-review against the strawman:
+
 - For every choice, ask: what's the credible alternative? what breaks if we pick wrong? what's the reversal cost?
 - Surface forks where the architect cannot decide alone. A fork is a question requiring human judgment (e.g., "audit site as embedded in the CLI vs. separate Astro deployment").
 
 ### 4. Surface forks to human
 
 Print the fork list. Halt and wait for user resolution. Do NOT auto-pick. For each fork:
+
 - Print the question, the options, and the architect's recommendation with rationale.
 - User responds with a chosen option (or asks for more info).
 
 ### 5. Apply the 3-question ADR test
 
 For each candidate decision, apply the test embedded in `templates/ADR.yaml.tmpl`:
+
 1. Does this constrain future work non-trivially?
 2. Is at least one credible alternative being rejected?
 3. Is reversal expensive?
@@ -43,6 +47,7 @@ If all three answer "yes", produce an ADR. Otherwise, capture as a code comment 
 ### 6. Generate ADR files
 
 For each surviving decision:
+
 - Write `docs/sdlc/adr/ADR-<n>.yaml` matching the template.
 - Status starts as `proposed`. Transition to `accepted` only after `/crux-approve`.
 - Populate `resolves` (GRILL ids), `satisfies` (REQ ids), `constrains` (MOD ids), `revisit_when`, `validated_by`.
@@ -64,6 +69,7 @@ Read both output files. Surface their findings:
 - Print pre-mortem failure modes grouped by classification.
 
 Routing actions:
+
 - `route-to-test` items are queued for the Gate 6 / Gate 7 task DAG (record their ids; planner picks them up later).
 - `route-to-ADR-clause` items return to the architect: surface to the human, ask whether to amend the affected ADR or write a new one. Looping back to step 5 is acceptable.
 - `accept-as-known-risk` items are logged into `docs/sdlc/approvals.log` with `kind=accepted-risk` and the failure-mode id, and remain visible via `/crux-trace` from the relevant ADR.

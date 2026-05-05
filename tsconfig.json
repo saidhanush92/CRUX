@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "composite": false
+  },
+  "files": [],
+  "include": [],
+  "exclude": ["node_modules", "dist", "coverage", ".astro", "playwright-report"]
+}

@@ -43,6 +43,7 @@ You MUST execute these steps in order. Skipping any step is a process violation;
 ### 4. Apply the 3-question ADR test
 
 For each candidate decision that survives self-grill, apply the gating test from `templates/ADR.yaml.tmpl`:
+
 1. Does this decision constrain future work non-trivially?
 2. Is at least one credible alternative being rejected?
 3. Is reversal expensive?
@@ -52,6 +53,7 @@ If any answer is "no", the decision is NOT an ADR. It belongs in a code comment,
 ### 5. Generate ADR files
 
 For each surviving decision:
+
 - Write `docs/sdlc/adr/ADR-<n>.yaml` matching the template.
 - Status starts as `proposed`. You MAY NOT mark your own ADR `accepted`.
 - Populate `resolves` (GRILL ids), `satisfies` (REQ ids), `constrains` (MOD ids), `revisit_when`, `validated_by`. Empty fields are a smell — investigate before omitting.

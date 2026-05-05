@@ -38,8 +38,8 @@ Write `docs/sdlc/adr/arch-critique.yaml`:
 ```yaml
 critiques:
   - id: ARCH-CRIT-001
-    category: hidden-compounding   # contradiction | implicit-decision | hidden-compounding | 3q-failure | reversal-optimism | missing-validation | stack-drift
-    severity: critical             # critical | high | medium | low
+    category: hidden-compounding # contradiction | implicit-decision | hidden-compounding | 3q-failure | reversal-optimism | missing-validation | stack-drift
+    severity: critical # critical | high | medium | low
     target: [ADR-002, ADR-005]
     finding: |
       <plain-language explanation, quoting the ADRs>

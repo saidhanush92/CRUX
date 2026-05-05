@@ -26,15 +26,15 @@ Each capability has three fields:
 
 ## Namespaces
 
-| Namespace | Scope |
-|-----------|-------|
-| `language`  | Which language a skill teaches |
-| `framework` | Specific tools or libraries within a language |
-| `data`      | Storage and persistence patterns |
-| `testing`   | Test strategy, runners, layers |
-| `process`   | Workflow patterns; how to think and work |
-| `ops`       | CI/CD, deployment, infrastructure |
-| `design`    | Design systems, accessibility, visual quality |
+| Namespace   | Scope                                              |
+| ----------- | -------------------------------------------------- |
+| `language`  | Which language a skill teaches                     |
+| `framework` | Specific tools or libraries within a language      |
+| `data`      | Storage and persistence patterns                   |
+| `testing`   | Test strategy, runners, layers                     |
+| `process`   | Workflow patterns; how to think and work           |
+| `ops`       | CI/CD, deployment, infrastructure                  |
+| `design`    | Design systems, accessibility, visual quality      |
 | `quality`   | Code review, verification loops, defect prevention |
 
 ## Semver rules

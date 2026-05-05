@@ -1,7 +1,7 @@
 ---
 description: Walk the trace graph for any artifact id — upstream toward input, downstream toward code.
 allowed-tools: Read, Glob, Grep, Bash
-argument-hint: "<artifact-id>"
+argument-hint: '<artifact-id>'
 ---
 
 You are running `/crux-trace` with id: $ARGUMENTS
@@ -15,6 +15,7 @@ You are running `/crux-trace` with id: $ARGUMENTS
 ## Walk upstream (toward the original input)
 
 Recursively follow the trace fields by artifact type:
+
 - `IDEA` → root (no upstream).
 - `GRILL` → its `idea` field (extension), or the IDEA referenced in `defer_to` chain.
 - `REQ` → all `derived_from` GRILL ids; AND any spec-critique entry whose `target` includes this REQ (mark with `⚠`); AND any `triggered_by_critique` link if the REQ was rewritten in response to a critique.
@@ -30,13 +31,15 @@ Render as an indented tree. For each node, print: id, type, one-line summary (ex
 ## Walk downstream (toward production code)
 
 Inverse direction. For each artifact type, find every artifact that references this one in its trace fields:
+
 - `grep -r "$ARGUMENTS" docs/sdlc/` — quick first pass.
-- For each match, parse the YAML and confirm the id appears in a *trace field* (not in a comment or unrelated string).
+- For each match, parse the YAML and confirm the id appears in a _trace field_ (not in a comment or unrelated string).
 - For TASKs, also list the files in `touches_files` — these are the production-code endpoints of the chain.
 
 ### Critique inclusion
 
 For REQ and ADR ids specifically, also surface any associated critique entries:
+
 - `docs/sdlc/prd/spec-critique.yaml` — list every entry whose `target` includes a REQ being walked.
 - `docs/sdlc/adr/arch-critique.yaml` — list every entry whose `target` includes an ADR being walked.
 - `docs/sdlc/adr/pre-mortem.yaml` — list every failure mode whose `routing_target` matches an ADR being walked.
@@ -59,6 +62,7 @@ DOWNSTREAM
 ```
 
 End with:
+
 - Total nodes visited.
 - Any orphan markers (artifacts whose claimed parent does not exist) — these are integrity violations.
 

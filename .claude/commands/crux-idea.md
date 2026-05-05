@@ -1,7 +1,7 @@
 ---
 description: Ingest a brief, ticket, or concept note. Classify depth, detect claims and unknowns.
 allowed-tools: Read, Write, Glob, Grep
-argument-hint: "<input-file>"
+argument-hint: '<input-file>'
 ---
 
 You are running `/crux-idea` with input file: $ARGUMENTS
@@ -11,6 +11,7 @@ You are running `/crux-idea` with input file: $ARGUMENTS
 1. Read the input file. If `$ARGUMENTS` is empty, halt and ask the user to pass a path or paste the content into a file under `docs/sdlc/input/`.
 2. Determine the next monotonic id by listing `docs/sdlc/input/IDEA-*.md` and incrementing.
 3. Copy the input into `docs/sdlc/input/IDEA-<n>.md` verbatim. Prepend a frontmatter block:
+
    ```yaml
    ---
    id: IDEA-<n>
@@ -20,11 +21,13 @@ You are running `/crux-idea` with input file: $ARGUMENTS
    depth: <one of: surface | medium | deep>
    ---
    ```
+
    - **Brief** = under 200 words, marketing/intent-shaped.
    - **Ticket** = bug or single-feature framing with acceptance criteria.
    - **Concept note** = multi-page narrative arguing for a product or system.
    - **Research note** = exploratory analysis, no commitment yet.
    - Depth = surface (≤300 words), medium (300–2000), deep (>2000).
+
 4. Scan the body for:
    - **Claims** — statements asserted as true that have no citation. List them under `## Claims (unverified)`.
    - **Unknowns** — explicit "TBD", "?", "we don't know", or hedged future-tense verbs. List them under `## Unknowns`.

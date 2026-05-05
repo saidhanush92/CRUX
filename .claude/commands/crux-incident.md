@@ -1,7 +1,7 @@
 ---
 description: Open an incident. Cascade to CHG events and amendments via amendment-writer.
 allowed-tools: Read, Write, Edit, Glob, Grep, Task
-argument-hint: "report"
+argument-hint: 'report'
 ---
 
 You are running `/crux-incident $ARGUMENTS`. The only supported subcommand at v1 is `report`.
@@ -13,6 +13,7 @@ You are running `/crux-incident $ARGUMENTS`. The only supported subcommand at v1
 ## Gather facts
 
 Prompt the user for:
+
 1. **Title** — one line, present-tense, describing what was observed.
 2. **Observed behavior** — what happened, with timestamps if known. Free-form, multi-line.
 3. **Suspected violated artifact** — the REQ id and/or ADR id whose contract was broken. The user may say "unknown" — in that case, prompt with the most-relevant `must`-priority REQs and let them pick.
@@ -33,6 +34,7 @@ After the INC file is written:
 ### Open CHG event(s)
 
 For each violated REQ/ADR, draft a CHG event:
+
 - `id: CHG-<n>`, `trigger_event: "INC-<n>: <title>"`, `classification: bug` (default — flag for human re-classification if reqs may be misaligned).
 - `superseded_artifacts: []` — populate later when fix is known.
 - `affected_artifacts: <violated REQ/ADR + dependent TASKs>`.
@@ -42,6 +44,7 @@ For each violated REQ/ADR, draft a CHG event:
 ### Invoke amendment-writer
 
 Invoke the **amendment-writer** subagent (Task) with brief:
+
 - Apply `.claude/skills/verification-loop/SKILL.md` as your canonical methodology. Read it first; every amendment you author must be enforceable inside the verification loop.
 - Read the INC file and any CHG events just opened.
 - Determine which curated skill the failure pattern maps to (e.g., a missing test → `tdd-workflow`; a silent fallback → `silent-failure-hunter`).
@@ -52,6 +55,7 @@ Invoke the **amendment-writer** subagent (Task) with brief:
 ### Prevention tasks
 
 For each cascade, propose a prevention TASK:
+
 - `id: TASK-<n>`, `title: "Prevent recurrence of INC-<n>"`, `risk: medium`, `satisfies: <violated REQ id>`.
 - Save the TASK file but do NOT auto-run `/crux-task`. Wait for human to prioritize.
 - Add the TASK id to `INC-<n>.yaml` `prevention_tasks`.

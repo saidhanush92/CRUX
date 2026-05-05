@@ -1,7 +1,7 @@
 ---
 description: Run the grill-interviewer subagent against an idea. Save Q&A as GRILL-<n>.yaml files.
 allowed-tools: Read, Write, Glob, Grep, Task
-argument-hint: "<idea-id>"
+argument-hint: '<idea-id>'
 ---
 
 You are running `/crux-grill` with idea id: $ARGUMENTS
@@ -35,6 +35,7 @@ Repeat until either (a) the agent reports no more questions or (b) the user type
 ## End of pass
 
 When all batches are processed:
+
 1. Print a deferral summary: list every GRILL with `source: deferred`, grouped by `defer_to` gate. This is the human's "still owed" list.
 2. Print a confidence summary: count of `high`/`medium`/`low` answers.
 3. Append to `docs/sdlc/approvals.log`: `<timestamp>  /crux-grill  IDEA-<n>  <total> questions  <deferred> deferred`.
