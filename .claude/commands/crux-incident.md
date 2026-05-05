@@ -42,6 +42,7 @@ For each violated REQ/ADR, draft a CHG event:
 ### Invoke amendment-writer
 
 Invoke the **amendment-writer** subagent (Task) with brief:
+- Apply `.claude/skills/verification-loop/SKILL.md` as your canonical methodology. Read it first; every amendment you author must be enforceable inside the verification loop.
 - Read the INC file and any CHG events just opened.
 - Determine which curated skill the failure pattern maps to (e.g., a missing test → `tdd-workflow`; a silent fallback → `silent-failure-hunter`).
 - For each pattern, draft `docs/sdlc/amendments/AMD-<n>.yaml` matching the template.

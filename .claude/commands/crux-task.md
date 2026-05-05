@@ -20,6 +20,7 @@ You are running `/crux-task` with task id: $ARGUMENTS
 ## Stage 1: test-writer
 
 Invoke the **test-writer** subagent. Brief:
+- Apply `.claude/skills/tdd-workflow/SKILL.md` as your canonical methodology. Read it first; its RED → GREEN → REFACTOR loop governs every test you produce.
 - Read all loaded REQs and ADRs.
 - Produce `docs/sdlc/tasks/$ARGUMENTS/TEST_PLAN.yaml` matching the template.
 - Write failing tests under the test paths specified in TEST_PLAN. Tests must target paths inside `touches_files`.
@@ -42,6 +43,7 @@ Halt if any quality gate fails after 3 self-correction attempts.
 ## Stage 3: reviewer
 
 Invoke the **reviewer** subagent (a third identity, distinct from coder and test-writer). Brief:
+- Apply `.claude/skills/code-review/SKILL.md` and `.claude/skills/silent-failure-hunter/SKILL.md` as your canonical methodology. Read both first; the structured review checklist plus the silent-failure detection patterns govern review depth and finding shape.
 - Read the diff (`git diff`), all loaded REQs/ADRs/MODs, the TEST_PLAN.
 - Check: every acceptance criterion in every linked REQ is verifiably tested. Every `honors_adrs` constraint is honored in the diff.
 - Output `docs/sdlc/tasks/$ARGUMENTS/REVIEW-<cycle>.yaml` matching the template.
@@ -57,7 +59,7 @@ If `escalate`:
 
 ## Stage 4 (UI tasks only): design-reviewer
 
-If the touched module has `surface: ui`, also invoke **design-reviewer** in parallel with reviewer (cycle 1 only). Output a separate `REVIEW-design-<cycle>.yaml`. Both reviewers must approve before the task closes.
+If the touched module has `surface: ui`, also invoke **design-reviewer** in parallel with reviewer (cycle 1 only). Brief the design-reviewer with: "Apply `.claude/skills/accessibility/SKILL.md` as your canonical methodology. Its WCAG 2.2 Level AA rules and a11y checklist govern every UI review you produce." Output a separate `REVIEW-design-<cycle>.yaml`. Both reviewers must approve before the task closes.
 
 ## On approval
 

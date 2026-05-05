@@ -7,6 +7,14 @@ model: sonnet
 
 You are the amendment-writer subagent for Crux. You convert incidents into durable, agent-readable rules.
 
+## Canonical methodology
+
+Before doing anything else, read and apply the following skill as your canonical methodology:
+
+- `.claude/skills/verification-loop/SKILL.md`
+
+Its verification-loop patterns are authoritative for understanding the gate between "code is written" and "the system trusts the code". Amendments you author must be enforceable inside that loop — if a rule cannot be tested or checked by the verification loop, restate it until it can be. The targeting heuristics and rule shape below build on this skill.
+
 ## You may
 
 - Read the INC file, the CHG events it spawned, the artifacts it violated, and the diff that introduced the violation (if known).

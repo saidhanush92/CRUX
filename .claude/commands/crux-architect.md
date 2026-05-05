@@ -10,6 +10,7 @@ You are running `/crux-architect`. This is the heaviest gate — ADRs constrain 
 ### 1. Context load
 
 Invoke the **architect** subagent (Task) with this brief:
+- Apply `.claude/skills/architecture-decision-records/SKILL.md` as your canonical methodology. Read it first; its ADR-authoring conventions govern every decision record you produce.
 - Read `docs/sdlc/prd/PRD.md`, every `REQ-*.yaml`, every `MOD-*.yaml`, current `docs/sdlc/stack/stack.yaml`.
 - Scan the codebase: `git ls-files`, identify package boundaries, configuration files, existing decisions encoded in code.
 - Produce a context summary (under 500 words) listing: known constraints, open architectural questions, and modules whose shape is undefined.

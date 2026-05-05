@@ -11,6 +11,7 @@ You are running `/crux-grill` with idea id: $ARGUMENTS
 1. Resolve `$ARGUMENTS` to a file at `docs/sdlc/input/$ARGUMENTS.md`. If missing, halt and ask the user to run `/crux-idea` first.
 2. Read `templates/GRILL.yaml.tmpl` to confirm the schema you must emit.
 3. Invoke the **grill-interviewer** subagent (Task tool, `subagent_type: grill-interviewer`) with this brief:
+   - Apply `.claude/skills/grill-me/SKILL.md` and `.claude/skills/grill-with-docs/SKILL.md` as your canonical methodology. Read them first; their patterns govern question shape and tone.
    - Read the IDEA file in full, including its `## Crux annotations` section.
    - Generate 20–30 questions across the 8 gates, batched in **rounds of ~5 questions** so the human can answer one round before the next is posed.
    - For each question: surface gaps, assumptions, decision-points, and unresolved trade-offs. Avoid yes/no questions where an open-ended question would force more thought.
