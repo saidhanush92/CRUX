@@ -1,0 +1,129 @@
+task: TASK-CRUX-005
+test_layers:
+  unit:
+    - covers: LedgerRow type accepts all five required fields
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: shouldLog returns false for wall_seconds below 60 (REQ-CRUX-012 AC#3)
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: shouldLog returns false at 59.9s, true at 60.0s, true at 60.1s (exact boundary)
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow creates docs/sdlc/costs/log.csv with header row when file does not exist
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow creates intermediate directories automatically
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow does not write a second header when appending to an existing file (REQ-CRUX-012 AC#2)
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow preserves all prior rows (append-only, REQ-CRUX-012 AC#2)
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow serialises notes containing commas per RFC 4180
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow serialises notes containing newlines per RFC 4180
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: appendLedgerRow serialises notes containing double-quotes per RFC 4180
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: readLedger returns empty array when file does not exist
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: readLedger returns empty array for header-only file
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: readLedger returns rows in append order
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: tokens_estimated and wall_seconds round-trip as numbers through readLedger
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: concurrent parallel appendLedgerRow calls produce correct row count without interleaving
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: concurrent parallel appends do not produce a duplicate header row
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: full 60-second threshold integration — 59.9s produces no CSV row; 60.1s produces exactly one row (REQ-CRUX-012 AC#3)
+      file: packages/core/test/cost/ledger.test.ts
+
+    - covers: createHaltLadder is callable and returns object with accrue, confirm, currentCeiling, currentCost
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: initial ceiling equals multiplier * estimatedCost (default 2.0x, REQ-CRUX-011 AC#1)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: initial ceiling is 1.5x when multiplier configured to 1.5 (REQ-CRUX-011 AC#2)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: accrue accumulates cost across multiple calls
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: accrue returns halt false and autoStop false when below ceiling
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: accrue emits softWarn true on first crossing of 1.0x estimatedCost (ADR-CRUX-009)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: softWarn is false before the 1.0x crossing and does not repeat after first emission
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: softWarn crossing does not trigger halt (soft-warn is advisory only)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: accrue returns halt true and ceilingCrossed=2.0 when crossing 2.0x (REQ-CRUX-011 AC#1)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: first halt returns autoStop false (user confirmation still possible)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: halt does not re-fire on the next small increment after confirm raises ceiling
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: multiplier=1.5 causes halt at 1.5x ceiling (REQ-CRUX-011 AC#2)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: confirm raises ceiling by 1.0x estimatedCost (additive step, ADR-CRUX-009)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: confirm increments ceilingsConfirmedCount to 1 after first confirmation
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: confirm raises ceiling from 3.0x to 4.0x and 4.0x to 5.0x on subsequent confirmations
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: full ADR-CRUX-009 ladder — halt at $2.00 (1st), $3.00 (2nd), $4.00 (3rd), auto-stop at $5.00
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: auto-stop AccrueResult includes recommendedAction revise-estimate-or-split
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: non-autoStop halts do not carry recommendedAction field
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: third confirm returns autoStop true signalling cycle should hard-stop (ADR-CRUX-009)
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: currentCeiling getter reflects updated value after each confirmation
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+    - covers: currentCost getter returns sum of all accrued amounts
+      file: packages/core/test/cost/halt-ladder.test.ts
+
+  integration: []
+
+  e2e: []
+
+coverage_target: 80
+
+out_of_scope:
+  - CHG event file writing (owned by TASK-CRUX-006 INC/CHG/AMD plumbing)
+  - /crux-status 7-day burn aggregation (owned by MOD-CRUX-003)
+  - SQLite cost ledger migration (v1.1+ per ADR-CRUX-009)
+  - Per-session aggregate cost cap (v1.1+ per ADR-CRUX-009)
+  - Cross-platform path separator edge cases (covered by a dedicated task)

@@ -1,0 +1,41 @@
+task: TASK-CRUX-002
+reviewer: reviewer
+verdict: approve
+cycle_number: 2
+escalation_target: null
+
+concerns: []
+
+quality_gates:
+  vitest: PASS   # 187/187 tests pass (81 trace + 106 adapter/gate/mode)
+  tsc: PASS      # pnpm tsc --noEmit exits 0, no type errors
+  eslint: PASS   # pnpm eslint packages/core/src/ exits 0, no lint errors
+  prettier: PASS # pnpm prettier --check packages/core/ — all files clean
+
+summary: |
+  All four cycle-1 medium concerns and both low concerns are fully resolved.
+
+  Med #1 (DRY): stripDoubledDrivePrefix extracted at markdown.ts:257-267;
+    normaliseFilePath (line 270) and normaliseRepoRoot (line 350) both
+    delegate to it. Single source of truth confirmed.
+
+  Med #2 (test REPO_ROOT): markdown.test.ts:25 imports fileURLToPath from
+    node:url; line 42 uses fileURLToPath(import.meta.url) directly.
+    The test constant no longer relies on the production normaliser.
+
+  Med #3 (walk silent failures): readdirSync catch (lines 379-384) returns
+    only on ENOENT; all other codes rethrow with context. readArtifact catch
+    inside walk (lines 416-419) now rethrows with a descriptive message
+    instead of silently continuing.
+
+  Med #4 (tmp cleanup): renameSync wrapped in try/catch (lines 567-576);
+    unlinkSync(tmpPath) called before rethrowing renameErr. Best-effort
+    secondary unlink failure silently ignored — correct per the suggestion.
+
+  Low (prettier): pnpm prettier --check packages/core/ exits 0 clean.
+  Low (index.ts scope): accepted as low; not re-raised.
+
+  No ADR-CRUX-002 constraints violated. No files outside touches_files
+  modified. No new dependencies outside stack.yaml. No hardcoded secrets
+  or debug statements. 187 tests pass; TypeScript, ESLint, and Prettier
+  all clean.

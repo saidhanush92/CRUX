@@ -1,0 +1,77 @@
+# REVIEW artifact — verdict from the reviewer subagent.
+# Task: TASK-CRUX-010 — Paper-only second-adapter spec (Cursor / raw SDK)
+# Cycle: 1
+
+task: TASK-CRUX-010
+reviewer: reviewer
+verdict: approve
+concerns: []
+cycle_number: 1
+escalation_target: null
+
+# ---------------------------------------------------------------------------
+# Gate results
+# ---------------------------------------------------------------------------
+gates:
+  vitest_architecture: pass      # 12/12 tests green
+  prettier_spec_doc: pass        # All matched files use Prettier code style
+
+# ---------------------------------------------------------------------------
+# REQ-CRUX-007 acceptance criteria
+# ---------------------------------------------------------------------------
+req_crux_007_coverage:
+  ac1_revisit_when_non_empty: |
+    SATISFIED. ADR-CRUX-003.revisit_when is non-empty and explicitly names
+    the second-adapter milestone: "A second adapter implementation (Cursor,
+    Aider, raw SDK) surfaces concerns; OR the function count drifts above 18;
+    OR a new concern group becomes load-bearing."
+  ac2_release_notes_provisional: |
+    OUT OF SCOPE for this task. TASK-CRUX-010 touches only
+    docs/sdlc/architecture/adapter-second-spec.md. AC#2 requires v1.0 release
+    notes — a separate deliverable. REQ-CRUX-007 is priority: should (not must),
+    so partial satisfaction does not block this task.
+
+# ---------------------------------------------------------------------------
+# ADR-CRUX-003 validated_by clause
+# ---------------------------------------------------------------------------
+adr_crux_003_validated_by:
+  all_17_functions_verdicted: true
+  needs_redesign_count: 0
+  adr_reopen_required: false
+  feasible_count: 11
+  unknown_count: 6
+  conclusion_count_consistent: true   # 11 + 6 + 0 = 17; matches table
+
+# ---------------------------------------------------------------------------
+# Manifest name spelling check (doc table vs ADAPTER_INTERFACE_MANIFEST)
+# ---------------------------------------------------------------------------
+manifest_spelling_check:
+  all_17_names_exact_match: true
+  concern_groups_attributed_correctly: true
+  # SlashCommands label in doc matches manifest key; ADR prose says
+  # "Slash commands (1)" but the canonical key is SlashCommands — correct.
+
+# ---------------------------------------------------------------------------
+# Touches-files scope check
+# ---------------------------------------------------------------------------
+scope_check:
+  files_outside_touches_files_modified_by_coder: false
+  # Note: packages/core/test/architecture/adapter-second-spec.test.ts is
+  # untracked but was authored by the test-writer subagent (pre-coder step),
+  # not by the coder. No scope violation.
+
+# ---------------------------------------------------------------------------
+# Quality checks
+# ---------------------------------------------------------------------------
+quality:
+  magic_numbers: none
+  console_log_in_production: not_applicable   # doc-only task
+  hardcoded_secrets: none
+  functions_over_50_lines: not_applicable
+  files_over_800_lines: not_applicable
+  paper_target_choice_sound: |
+    "raw Anthropic SDK" is a valid paper target per ADR-CRUX-003 revisit_when
+    and the TEST_PLAN allowed targets list. The feasibility rationale for each
+    function is coherent: SDK-level functions (session, subagents, fs, shell,
+    events) map cleanly; skill/hook functions are host-defined with no SDK
+    equivalent, appropriately marked unknown rather than needs-redesign.

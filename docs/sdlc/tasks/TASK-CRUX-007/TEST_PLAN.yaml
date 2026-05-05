@@ -1,0 +1,63 @@
+# TEST_PLAN artifact — written BEFORE implementation by the test-writer subagent.
+# Task: TASK-CRUX-007  Title: Adapter interface declaration: 17 fns, 7 concern groups
+
+task: TASK-CRUX-007
+test_layers:
+  unit:
+    - covers: ADAPTER_INTERFACE_MANIFEST is exported from the adapter interface module
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: ADAPTER_INTERFACE_MANIFEST contains exactly 7 concern-group keys
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: concern-group keys match ADR-CRUX-003 exactly (Lifecycle, Subagents, Skills, Hooks, SlashCommands, FilesystemShell, TraceCapability)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: Lifecycle group contains exactly 3 functions (session_start, session_end, capabilities_supported)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: Subagents group contains exactly 2 functions (spawn_subagent, await_subagent)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: Skills group contains exactly 3 functions (install_skill, uninstall_skill, list_skills)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: Hooks group contains exactly 2 functions (install_hook, list_hooks)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: SlashCommands group contains exactly 1 function (run_command)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: FilesystemShell group contains exactly 3 functions (read_file, write_file, run_shell)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: TraceCapability group contains exactly 3 functions (emit_event, resolve_capability, invoke_skill)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: total function count across all groups is exactly 17 (REQ-CRUX-005 AC#1)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: no function name appears in more than one concern group (REQ-CRUX-005 AC#2)
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: no function name is duplicated within the same concern group
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: all 17 canonical function names from ADR-CRUX-003 are present in the manifest
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: no extra function names beyond the 17 ADR-canonical ones appear in any group
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: ADAPTER_CONCERN_GROUPS is exported and lists the 7 group names as a readonly tuple
+      file: packages/core/test/adapter/interface.test.ts
+
+    - covers: concern-group expansion guard — adding any function name to any group breaks the locked per-group count (REQ-CRUX-005 AC#3 meta-test)
+      file: packages/core/test/adapter/interface.test.ts
+
+coverage_target: 100   # declaration-only module; every export is exercised by the tests above
+out_of_scope:
+  - adapter implementation behavior (runtime correctness of each fn) — covered by TASK-CRUX-008 and TASK-CRUX-009
+  - adapter-claude-code concrete adapter — separate package
+  - performance benchmarks
+  - cross-platform path handling

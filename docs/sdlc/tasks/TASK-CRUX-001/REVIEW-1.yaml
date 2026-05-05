@@ -1,0 +1,87 @@
+task: TASK-CRUX-001
+reviewer: reviewer
+verdict: request_changes
+concerns:
+  - severity: medium
+    location: packages/core/test/mode/crux-mode.test.ts:97-109
+    finding: |
+      The test file fails `pnpm prettier --check`. The writeTmpStackYaml calls at
+      lines 97-106 and 104-109 use multi-line array literals that prettier collapses
+      to single lines. This is a new file introduced by TASK-001 and is not a
+      pre-existing condition. The prettier quality gate explicitly named in
+      docs/sdlc/stack/stack.yaml (format_check: pnpm prettier --check .) fails
+      on this file.
+    suggests: |
+      Run `pnpm prettier --write packages/core/test/mode/crux-mode.test.ts` and
+      commit the result. The fix is mechanical and changes no logic.
+
+  - severity: medium
+    location: packages/core/src/mode/crux-mode.ts:31
+    finding: |
+      CRUX_MODE_PATTERN = /^crux_mode:\s*([a-z_]+)\s*(?:#.*)?$/m uses [a-z_]+
+      which only captures lowercase ASCII letters and underscores. If an operator
+      writes `crux_mode: COMPRESSED` or `crux_mode: Standard` in stack.yaml,
+      the regex returns null and the code throws CruxModeMissingError ("field
+      'crux_mode' not found in ..."). The operator sees "key not found" when the
+      key is present but cased incorrectly — a misleading, actionably wrong error
+      message. The correct error would be CruxModeInvalidValueError naming the
+      exact value and listing valid options (per REQ-CRUX-008 AC#3 and ADR-CRUX-006).
+      No test covers this edge case.
+    suggests: |
+      Widen the capture group to [a-zA-Z_]+ so uppercase values are captured and
+      fed to assertValidCruxMode, which already emits the correct CruxModeInvalidValueError
+      with the full valid-modes list. Add one test:
+        expect(() => readCruxMode(writeTmpStackYaml('crux_mode: COMPRESSED\n')))
+          .toThrowError(/invalid value.*COMPRESSED/i);
+
+  - severity: low
+    location: packages/core/src/gate/state-machine.ts:104-110
+    finding: |
+      skip() does not enforce predecessor ordering. open() requires gate (n-1) to
+      be closed or skipped before gate n may open, but skip() has no such check.
+      A caller may invoke skip(8) on a fresh machine and it succeeds silently.
+      This creates an asymmetry: the path into "skipped" state bypasses the same
+      ordering invariant that the path into "open" enforces. The TEST_PLAN and spec
+      do not explicitly require the guard, so this may be intentional; but the
+      behaviour is undocumented and untested either way.
+    suggests: |
+      Either add the predecessorSatisfied guard to skip() mirroring open(), or
+      add an explicit comment and a test asserting the intentional skip-anywhere
+      behaviour so future readers understand the design choice.
+
+  - severity: low
+    location: packages/core/src/gate/state-machine.ts:49-53 (isValidSnapshot) and 126-134 (deserialize)
+    finding: |
+      isValidSnapshot validates only that snapshot.gates is an Array. It does not
+      validate individual entries. Passing { gates: [null] } or
+      { gates: [{ gate: 99, status: 'bad' }] } bypasses the guard and populates
+      the internal Map with corrupt state (key undefined or invalid GateId) without
+      raising an error. Downstream, all() returns malformed data with no diagnostic.
+      This is a silent-failure pattern per the hunter checklist.
+    suggests: |
+      Add per-entry validation inside deserialize() before clearing the Map: verify
+      each entry has gate in [1..8] and status in ['open','closed','blocked','skipped'].
+      Throw a descriptive error naming the offending entry if validation fails.
+
+gate_results:
+  vitest: pass           # 106/106 tests (43 gate + 34 mode + 29 adapter)
+  tsc_noEmit: pass       # zero errors
+  eslint: pass           # zero violations on packages/core/src/
+  prettier_check: fail   # packages/core/test/mode/crux-mode.test.ts fails --check
+
+req_coverage:
+  REQ-CRUX-008_AC1: covered       # CruxModeFileNotFoundError message includes path
+  REQ-CRUX-008_AC2: covered       # defaultModeFor greenfield=compressed, brownfield=standard
+  REQ-CRUX-008_AC3: partial       # assertValidCruxMode lists valid modes; uppercase value triggers wrong error class (finding 2)
+  REQ-CRUX-008_AC4: out_of_scope  # full-pipeline artifact-equality test; excluded per TEST_PLAN
+  REQ-CRUX-008_AC5: out_of_scope  # approvals.log write belongs to orchestrator task; excluded per TEST_PLAN
+
+adr_compliance:
+  ADR-CRUX-001: honored  # TypeScript monorepo with pnpm workspaces; tsconfig extends base; no monorepo structure violations
+  ADR-CRUX-006: honored  # five valid modes; isAutoApproveMode returns true only for compressed; defaultModeFor maps correctly; no new runtime deps
+
+scope_check:
+  files_outside_touches_files: none  # all new files sit within declared globs
+
+cycle_number: 1
+escalation_target: null

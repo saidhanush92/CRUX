@@ -1,0 +1,161 @@
+task: TASK-CRUX-001
+
+test_layers:
+  unit:
+    # --- Gate state machine (packages/core/src/gate/state-machine.ts) ---
+    - covers: GateId type accepts numeric gate identifiers 1-8
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: GateStatus type represents open, closed, blocked, skipped
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: GateState shape holds gate id, status, optional timestamps, and optional blocker
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: createGateMachine returns object with open, close, block, current, all, serialize, deserialize methods
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(1) succeeds without requiring a predecessor
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(n) records opened_at timestamp
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(n) throws naming gate n-1 when predecessor is not closed or skipped
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(2) succeeds after gate 1 is closed
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(2) succeeds after gate 1 is skipped
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open(n) for gates 3-8 each enforce direct predecessor closed or skipped
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: open throws when gate is already open or already closed
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: close(n) succeeds for an open gate and records closed_at
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: close throws when gate is not open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: block(n, reason) sets status to blocked and stores reason when gate is open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: block throws when gate is not open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: skip(n) marks gate as skipped and satisfies successor predecessor check
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: skip throws when gate is already open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: current() returns empty array when no gates are open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: current() returns only gates with status open
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: all() returns immutable snapshot — mutating returned array does not affect internal state
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: serialize returns JSON-serializable plain object
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: deserialize rehydrates state so all() returns equivalent data
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: serialize→JSON.stringify→JSON.parse→deserialize round-trip is identical
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: mutating serialize output does not affect machine internal state
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: deserialize with empty snapshot resets machine to clean state
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: full 8-gate sequential progression through open+close completes without error
+      file: packages/core/test/gate/state-machine.test.ts
+
+    - covers: skipping a gate in sequence (e.g. opening gate 3 when gate 2 is pending) throws naming gate 2
+      file: packages/core/test/gate/state-machine.test.ts
+
+    # --- crux_mode reader (packages/core/src/mode/crux-mode.ts) ---
+    - covers: CruxMode type permits all five allowed values
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode returns correct CruxMode for each of the 5 valid values
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode reads crux_mode correctly when stack.yaml has multiple fields
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode reads crux_mode correctly when preceded by comment lines
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode throws with path in message when file does not exist (REQ-CRUX-008 AC#1)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode throws on malformed YAML content
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode throws with "crux_mode" in message when key is absent from file
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode throws naming invalid value and listing valid modes when crux_mode is unrecognised
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: assertValidCruxMode does not throw for all 5 valid mode strings (REQ-CRUX-008 AC#3)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: assertValidCruxMode throws for non-string input
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: assertValidCruxMode throws for unrecognised string values
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: assertValidCruxMode error message names all 5 valid modes (REQ-CRUX-008 AC#3)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: defaultModeFor returns compressed for greenfield (ADR-CRUX-006 + REQ-CRUX-008 AC#2)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: defaultModeFor returns standard for brownfield (ADR-CRUX-006 + REQ-CRUX-008 AC#2)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: both defaultModeFor return values pass assertValidCruxMode
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: isAutoApproveMode returns true only for compressed (ADR-CRUX-006)
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: isAutoApproveMode returns false for standard, strict, solo, observation
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: isAutoApproveMode returns boolean for every valid CruxMode
+      file: packages/core/test/mode/crux-mode.test.ts
+
+    - covers: readCruxMode result passes assertValidCruxMode and feeds correctly into isAutoApproveMode
+      file: packages/core/test/mode/crux-mode.test.ts
+
+  integration: []
+
+  e2e: []
+
+coverage_target: 80
+
+out_of_scope:
+  - YAML parsing library choice — coder may implement a regex-based single-field extractor
+    for the crux_mode line or use js-yaml only if /crux-architect adds it to stack.yaml first;
+    tests are library-agnostic and only assert observable return values and error messages.
+  - Performance benchmarks for gate state transitions (tracked separately under benchmarks/).
+  - Cross-platform path handling edge cases (covered by a future task).
+  - approvals.log write verification (REQ-CRUX-008 AC#5) — belongs to the orchestrator task,
+    not to the pure mode-reader module tested here.
+  - Artifact-invariance equality test across modes (REQ-CRUX-008 AC#4) — requires the full
+    pipeline and is out of scope for this isolated module task.
+  - per-IDEA mode override (ADR-CRUX-006 mentions this as possible future shape; not in v1.0).

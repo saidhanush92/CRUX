@@ -1,0 +1,101 @@
+task: TASK-CRUX-005
+reviewer: reviewer
+verdict: approve
+concerns:
+  - severity: low
+    location: packages/core/test/cost/halt-ladder.test.ts
+    finding: |
+      The test file failed `pnpm prettier --check` at review time. The coder left
+      multi-statement chained calls on single lines (e.g. `ladder.accrue(2.5); ladder.confirm();`)
+      that prettier splits to separate lines. This is a formatting-only issue; test
+      logic and behavior are correct. NOTE: the reviewer's `--dry-run` flag was silently
+      ignored by prettier, which rewrote the file during this review cycle. The coder
+      should ensure `pnpm prettier --write` is run before submission.
+    suggests: |
+      Run `pnpm prettier --write packages/core/test/cost/halt-ladder.test.ts` and
+      commit the result. The production sources (`src/cost/`) already pass prettier.
+
+gate_results:
+  vitest: PASS   # 64 cost tests (35 halt-ladder + 29 ledger), 251 total across all modules
+  tsc: PASS      # pnpm tsc --noEmit -p tsconfig.json: clean, zero errors
+  eslint: PASS   # pnpm eslint packages/core/src/cost/: clean
+  prettier: FAIL # packages/core/test/cost/halt-ladder.test.ts fails --check (production src passes)
+
+req_coverage:
+  REQ-CRUX-011:
+    - "AC#1 (1.0x estimate × 2.0 mult → halt at $2.00): covered by 'fires halt at $2.00 on first overrun'"
+    - "AC#2 (1.5 mult → halt at $1.50): covered by 'halts at 1.5x when multiplier is set to 1.5'"
+    - "AC#3 (halt requires user confirmation): covered by confirm() returning newCeiling, which is the signal for the caller to request confirmation before continuing"
+  REQ-CRUX-012:
+    - "AC#1 (log.csv contains row for ≥60s invocation): covered by appendLedgerRow + shouldLog integration test"
+    - "AC#2 (CSV append-only, no row rewrite): covered by 'does NOT write a second header' and 'preserves all prior rows'"
+    - "AC#3 (59.9s → no row, 60.1s → exactly one row): covered by dedicated threshold integration describe block"
+
+adr_coverage:
+  ADR-CRUX-009:
+    - "Soft warn at 1.0x: covered — softWarn flag fires once on first crossing, not on halt"
+    - "Hard halt at 2.0x (configurable): covered — initial ceiling = multiplier × estimatedCost"
+    - "Halt-rebase ladder 2.0x→3.0x→4.0x→5.0x additive step: covered by full ladder scenario"
+    - "Three-strike auto-stop at 5.0x: covered — third confirm arms autoStop, accrue crossing 5.0x returns autoStop=true + recommendedAction"
+    - "CHG event signal: autoStop=true + recommendedAction='revise-estimate-or-split' are emitted; CHG event file writing is correctly deferred to TASK-CRUX-006 per TEST_PLAN out_of_scope"
+    - "CSV storage at docs/sdlc/costs/log.csv (not SQLite): enforced by RELATIVE_LOG_PATH constant"
+
+silent_failure_analysis:
+  mutex_stuck_queue: |
+    CLEAN. The shadow chain stored in mutexMap uses `.then(() => {}, () => {})` — both
+    handlers resolve to undefined. A synchronous throw from fs.openSync/writeSync propagates
+    to the caller (prior.then(fn) rejects), but the mutex chain stored for the next caller
+    always resolves. Verified by code trace and runtime test.
+  split_csv_rows_embedded_newline: |
+    CLEAN. The toggle-based inQuotes approach works correctly for all valid RFC 4180 inputs.
+    Every `""` pair contributes an even number of toggles (net neutral), so embedded newlines
+    inside quoted fields are not mistaken for row separators. Verified for:
+    — simple embedded newline: "line one\nline two"
+    — escaped double-quote + embedded newline: "said ""hello""\nline two"
+    — field starting with escaped quote: """quoted""\nwith newline"
+  read_ledger_missing_file: |
+    CLEAN. readLedger checks fs.existsSync before reading; returns [] for missing file.
+    No throw, no silent error — explicit and correct.
+  create_halt_ladder_soft_warn_once: |
+    CLEAN. softWarnEmitted boolean gate ensures softWarn fires exactly once on first crossing.
+    Both "before crossing" (false) and "after first emission" (false on repeat) are tested.
+  auto_stop_repeated_accrue: |
+    CLEAN. After auto-stop (confirmsCount ≥ MAX_CONFIRMS), every subsequent accrue that
+    crosses the ceiling returns halt=true + autoStop=true. No freeze, no silent failure.
+    Behavior is consistent and deterministic.
+  cross_process_concurrency: |
+    ACKNOWLEDGED LIMITATION. The mutexMap is in-process state only. Concurrent writes
+    from multiple Node.js processes to the same log.csv would not be serialized.
+    The module comment documents "in-process mutex" explicitly. ADR-CRUX-009 does not
+    require cross-process safety at v1.0. This is not a defect at current scope.
+
+scope_check:
+  touches_files_violated: false
+  notes: |
+    The cost module files (packages/core/src/cost/**, packages/core/test/cost/**) are
+    the only new files attributable to TASK-CRUX-005. Other untracked files in git status
+    (packages/core/src/gate/**, src/mode/**, src/trace/**, src/adapter/**, package.json,
+    tsconfig.json) belong to TASK-CRUX-001 and TASK-CRUX-002 per their TASK.yaml
+    touches_files declarations. No out-of-scope modifications by TASK-CRUX-005.
+
+dependency_check:
+  new_dependencies: false
+  notes: |
+    ledger.ts imports only node:fs and node:path (Node.js built-ins, no package.json entry needed).
+    halt-ladder.ts has zero imports. No new entries in package.json or stack.yaml required.
+
+code_quality:
+  no_any: true
+  no_ts_ignore: true
+  no_console_log: true
+  no_hardcoded_secrets: true
+  max_function_lines: |
+    Largest function is parseCsvLine at ~45 lines. All within 50-line limit.
+  max_file_lines: |
+    ledger.ts: 227 lines. halt-ladder.ts: 122 lines. Both within 800-line limit.
+  magic_numbers: |
+    WALL_SECONDS_THRESHOLD=60, MAX_CONFIRMS=3, CEILING_STEP_MULTIPLIER=1.0,
+    SOFT_WARN_MULTIPLIER=1.0 are all named constants. Clean.
+
+cycle_number: 1
+escalation_target: null

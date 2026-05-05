@@ -1,0 +1,132 @@
+task: TASK-CRUX-002
+test_layers:
+  unit:
+    - covers: Artifact / TraceEdge / TraceGraph type shapes export correctly
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: readArtifact infers kind from filename prefix for all 8 kinds
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: readArtifact sets id to filename stem (stem-based), and TASK.yaml uses parent dir name
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: readArtifact populates raw with all scalar and list values from YAML
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: readArtifact throws descriptive error for missing file or unrecognized prefix
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: readArtifact round-trips real REQ / ADR / MOD / GRILL / TASK fixture files
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: writeArtifact produces a file that readArtifact round-trips losslessly (scalars + lists)
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: writeArtifact atomic semantics — no .tmp file left behind, final path correct
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: writeArtifact overwrites existing file without partial state
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: writeArtifact emits canonical key order per kind (REQ id→text→…, ADR id→title→status→…)
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: writeArtifact appends unknown extra fields after canonical keys in alphabetical order
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns derived_from edges (one per list item)
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns satisfies edges for ADR
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns resolves edges for ADR
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns constrains edges for ADR
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns honors_adrs edges for TASK
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns superseded_artifacts and supersedes edges for CHG and GRILL
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges validates validated_by entries against artifact id pattern — only real ids produce edges
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges skips triggered_by keyword values that are not artifact ids
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges returns empty array for artifact with no relational fields
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges does not throw for completely empty raw object
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges on real ADR-CRUX-002 yields resolves, satisfies, constrains edges
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: extractEdges on real REQ-CRUX-003 yields derived_from edge to GRILL-CRUX-003
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph nodes map contains all input artifact ids
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph edges include directed edges from all artifacts
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph places edges with missing targets in dangling, not in edges
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph is idempotent — two calls with same input produce equivalent graphs
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph does not mutate input artifact array
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: computeArtifactHash returns { sha256: hex64, mtime: positiveInt }
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: computeArtifactHash sha256 is stable across repeated calls on unchanged file
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: computeArtifactHash sha256 changes when file content changes
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: computeArtifactHash throws when file does not exist
+      file: packages/core/test/trace/markdown.test.ts
+
+  integration:
+    - covers: scanArtifacts returns REQ / ADR / GRILL / TASK / MOD artifacts from real sdlc tree
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: scanArtifacts produces no duplicate ids across the real sdlc tree
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: scanArtifacts returns empty array when no sdlc subtree exists
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: scanArtifacts handles a synthetic minimal sdlc tree correctly
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: buildGraph on real sdlc corpus does not throw and yields at least one resolves edge
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: REQ-CRUX-003 AC1 — every edge in graph is attributable to a source artifact file
+      file: packages/core/test/trace/markdown.test.ts
+
+    - covers: REQ-CRUX-003 AC2 — every node id originates from a file reachable by scanArtifacts
+      file: packages/core/test/trace/markdown.test.ts
+
+  e2e: []
+
+coverage_target: 80
+
+out_of_scope:
+  - SQLite cache layer (TASK-CRUX-003)
+  - debounce window and process-local mutex (TASK-CRUX-003)
+  - watcher / fsevents integration (TASK-CRUX-003)
+  - full YAML 1.2 spec compliance — coder may use a hand-rolled parser sufficient for artifact templates
+  - cross-platform path separator edge cases (TASK-CRUX-014)
+  - performance / latency benchmarks (tracked under benchmarks/)

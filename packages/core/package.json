@@ -1,0 +1,21 @@
+{
+  "name": "@crux/core",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./gate": "./src/gate/index.ts",
+    "./mode": "./src/mode/index.ts",
+    "./adapter": "./src/adapter/interface.ts",
+    "./trace": "./src/trace/index.ts",
+    "./cost": "./src/cost/index.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "better-sqlite3": "^11.10.0"
+  }
+}

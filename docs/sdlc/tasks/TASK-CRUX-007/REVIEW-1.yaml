@@ -1,0 +1,105 @@
+# REVIEW artifact — verdict from the reviewer subagent.
+# Task: TASK-CRUX-007  Cycle: 1
+
+task: TASK-CRUX-007
+reviewer: reviewer
+verdict: request_changes
+cycle_number: 1
+escalation_target: null
+
+# ---------------------------------------------------------------------------
+# Quality gate results
+# ---------------------------------------------------------------------------
+quality_gates:
+  vitest: pass        # 29/29 tests green
+  tsc_noEmit: pass    # zero type errors
+  eslint: pass        # zero lint violations
+  prettier: pass      # all files formatted
+
+# ---------------------------------------------------------------------------
+# Concerns
+# ---------------------------------------------------------------------------
+concerns:
+
+  - severity: critical
+    location: .claude/settings.json, .claude/settings.local.json
+    finding: |
+      Both files appear in `git diff HEAD` but are NOT listed in
+      TASK.touches_files (which lists only
+        packages/core/src/adapter/interface.ts
+        packages/core/src/adapter/types.ts
+        packages/core/test/adapter/interface.test.ts).
+      Writing outside the declared file scope is a policy violation.
+      Even though the changes are tooling-only (hook format restructuring
+      and allowed-tools additions), any coder edit outside TASK.touches_files
+      is critical per the review checklist.
+    suggests: |
+      Coder must revert changes to .claude/settings.json and
+      .claude/settings.local.json before this task is approved, or the task
+      owner must amend TASK.touches_files to include those files and obtain
+      explicit authorization from the task owner. The simplest fix is:
+        git checkout HEAD -- .claude/settings.json .claude/settings.local.json
+
+  - severity: medium
+    location: packages/core/src/adapter/interface.ts:52-83
+    finding: |
+      The manifest (ADAPTER_INTERFACE_MANIFEST) and the RuntimeAdapter
+      interface are kept in sync only by convention, with no compile-time
+      or test-time enforcement binding the two. The test suite exercises the
+      manifest exclusively; it does not assert that the interface declares
+      the same 17 method names. A future coder could add a method to
+      RuntimeAdapter without touching the manifest (or vice versa) and every
+      existing test would still pass, defeating the single-source-of-truth
+      claim in the file header.
+    suggests: |
+      Add a compile-time guard that derives RuntimeAdapter's method names
+      from the manifest, e.g. a mapped type assertion:
+
+        type _AssertManifestKeysMatchInterface = {
+          [K in keyof RuntimeAdapter]: K extends
+            (typeof ADAPTER_INTERFACE_MANIFEST)[keyof typeof ADAPTER_INTERFACE_MANIFEST][number]
+              ? true : never
+        };
+
+      Alternatively, add a test that uses a TypeScript type-level assertion
+      or a simple runtime check: Object.keys of a mock object implementing
+      RuntimeAdapter must equal allFnsInManifest(ADAPTER_INTERFACE_MANIFEST).
+      Either approach converts the coupling from convention to enforcement.
+
+  - severity: low
+    location: packages/core/src/adapter/types.ts:9-12
+    finding: |
+      SessionId, SubagentHandle, SkillId, and CapabilityId are plain string
+      aliases. TypeScript will silently accept a SkillId where a SessionId is
+      expected, providing no protection against argument-order bugs at call
+      sites. The file comment acknowledges this ("kept as string aliases to
+      avoid runtime overhead") but the ADR and REQ do not explicitly permit
+      this tradeoff, and the types are part of the public contract that
+      adapters implement against.
+    suggests: |
+      Use a branded/nominal type pattern to give each alias structural
+      distinction without runtime cost:
+        declare const _brand: unique symbol;
+        export type SessionId = string & { readonly [_brand]: 'SessionId' };
+      This is a low-severity item only because the interface is declaration-
+      only with no runtime implementation in this task.
+
+  - severity: low
+    location: packages/core/src/adapter/interface.ts:45
+    finding: |
+      ADAPTER_CONCERN_GROUPS is typed as `readonly string[]`, not as a
+      literal tuple type. TEST_PLAN item "ADAPTER_CONCERN_GROUPS is exported
+      and lists the 7 group names as a readonly tuple" is satisfied at test
+      runtime (the test only checks length and values), but the declared type
+      offers no compile-time tuple guarantee. Object.keys() cannot narrow
+      to a tuple type without an explicit cast.
+    suggests: |
+      If the tuple requirement is intentional (i.e., order is load-bearing),
+      replace with an explicit cast:
+        export const ADAPTER_CONCERN_GROUPS = [
+          'Lifecycle', 'Subagents', 'Skills', 'Hooks',
+          'SlashCommands', 'FilesystemShell', 'TraceCapability',
+        ] as const satisfies readonly string[];
+      This makes order and length part of the type. If order is not load-
+      bearing, update the TEST_PLAN description to say "readonly array"
+      rather than "readonly tuple" to avoid a misleading contract.

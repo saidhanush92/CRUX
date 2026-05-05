@@ -1,0 +1,138 @@
+task: TASK-CRUX-002
+reviewer: reviewer
+verdict: request_changes
+cycle_number: 1
+escalation_target: null
+
+concerns:
+  - severity: medium
+    location: packages/core/src/trace/markdown.ts:252-262 and 340-352
+    finding: |
+      `normaliseFilePath` and `normaliseRepoRoot` are byte-for-byte duplicates.
+      Both implement the same heuristic (detect doubled drive prefix, strip it
+      when the original path does not exist on disk, return it otherwise). The
+      duplication violates DRY and means a future bug-fix or platform-corner-case
+      fix must be applied in two places.
+    suggests: |
+      Extract a single `normaliseWindowsPath(p: string): string` and call it
+      from both `readArtifact`/`computeArtifactHash` and `scanArtifacts`.
+
+  - severity: medium
+    location: packages/core/src/trace/markdown.ts:252-262
+    finding: |
+      The doubled-drive-prefix workaround in `normaliseFilePath` (and its twin
+      `normaliseRepoRoot`) is production code that papers over a platform-specific
+      artefact of `new URL(import.meta.url).pathname` on Windows. The test file
+      at `markdown.test.ts:41` computes REPO_ROOT via that same pattern and relies
+      on the production normaliser to silently fix it.
+
+      This is a legitimate cross-platform problem: on Windows, Vitest ESM resolves
+      `import.meta.url` as a `file:///C:/...` URL, so `new URL(...).pathname`
+      produces `/C:/Dev/CRUX`, and then `path.resolve('/C:/Dev/CRUX', ...)` under
+      the Windows path module yields `C:\C:\Dev\CRUX`. The fix therefore belongs
+      partly in production (where external callers can pass bad paths) and partly
+      in the test (where the test should not depend on the production layer to
+      sanitise its own constants).
+
+      The workaround is acceptable for TASK-002 scope because cross-platform path
+      edge cases are explicitly deferred to TASK-CRUX-014, but the structural
+      smell (test needing production code to fix its own constant) should be noted.
+    suggests: |
+      In the test file, compute REPO_ROOT with `fileURLToPath(import.meta.url)`
+      from `node:url` instead of `new URL(import.meta.url).pathname`, which
+      returns the correct OS-native path without the doubled-drive anomaly.
+      This removes the test's silent dependency on the production normaliser.
+      The production normaliser can remain as a defensive guard for external
+      callers.
+
+  - severity: medium
+    location: packages/core/src/trace/markdown.ts:375-424 (scanArtifacts, walk())
+    finding: |
+      The `walk` function has two silent-failure catch blocks:
+        1. `catch { return; }` when `fs.readdirSync` fails — silently skips
+           the entire directory and its subtree with no log or warning.
+        2. `catch { continue; }` when `readArtifact` fails (not `inferKind`) —
+           silently skips an individual artifact file.
+
+      The `inferKind` failure is intentional (non-artifact YAML files) and
+      correct. But the `readdirSync` swallow and the `readArtifact` swallow are
+      indistinguishable from permission errors or corrupt files; they produce an
+      incomplete artifact set with no observable signal to the caller.
+
+      For TASK-002's scope (canonical read layer), a partial scan that silently
+      drops artifacts could cause REQ-CRUX-003 AC#2 to report a false pass
+      (all nodes appear reachable, but some node files were silently skipped).
+    suggests: |
+      Collect failures in a `warnings` array and either return them alongside
+      artifacts (e.g., `{ artifacts, warnings }`) or re-throw if the caller
+      needs strict guarantees. At minimum, the `readdirSync` failure should
+      rethrow or surface a console.warn so operators know a directory was skipped.
+
+  - severity: medium
+    location: packages/core/src/trace/markdown.ts:551-560 (writeArtifact)
+    finding: |
+      If `fs.renameSync(tmpPath, filePath)` throws (e.g., cross-device link on
+      Linux, or access-denied on Windows), the `.tmp.<rand>` file is left on disk
+      permanently. The `finally` block only closes the file descriptor; it does
+      not clean up the temp file on rename failure.
+    suggests: |
+      Wrap the rename in a try/catch that unlinks `tmpPath` on failure before
+      rethrowing:
+        try {
+          fs.renameSync(tmpPath, filePath);
+        } catch (renameErr) {
+          try { fs.unlinkSync(tmpPath); } catch { /* best-effort */ }
+          throw renameErr;
+        }
+
+  - severity: low
+    location: packages/core/src/trace/index.ts
+    finding: |
+      `packages/core/src/trace/index.ts` is not listed in `TASK.touches_files`
+      for TASK-CRUX-002, yet it is a new untracked file created by this task.
+      The omission is minor (the file is a pure barrel with no logic) but the
+      scope manifest is technically inaccurate.
+    suggests: |
+      Add `packages/core/src/trace/index.ts` to the `touches_files` list in
+      `docs/sdlc/tasks/TASK-CRUX-002/TASK.yaml`.
+
+  - severity: low
+    location: packages/core/test/trace/markdown.test.ts
+    finding: |
+      `pnpm prettier --check packages/core/` exits non-zero because the test
+      file has style issues. Prettier reformatted the `path.resolve(...)` call at
+      line 41 (originally split across multiple lines in the source delivered to
+      the reviewer; prettier collapsed it to one line). The production source files
+      pass prettier cleanly. This is a test-file-only formatting defect.
+    suggests: |
+      Run `pnpm prettier --write packages/core/test/trace/markdown.test.ts` and
+      commit the result. No logic change needed.
+
+quality_gates:
+  vitest: PASS   # 81/81 tests pass; adapter/gate/mode suites unaffected (106/106 pass)
+  tsc: PASS      # pnpm tsc --noEmit exits 0, no type errors
+  eslint: PASS   # pnpm eslint packages/core/src/ exits 0, no lint errors
+  prettier: FAIL # packages/core/test/trace/markdown.test.ts fails --check
+
+summary: |
+  The canonical-layer implementation is functionally correct: all 81 tests pass,
+  TypeScript is clean, and ESLint is clean. The core design (markdown canonical,
+  atomic write via temp+fsync+rename, sha256+mtime hash, dangling-edge detection)
+  correctly honours ADR-CRUX-002 and supports REQ-CRUX-003 ACs.
+
+  Four concerns prevent approval:
+    - Two medium: structural duplication of the Windows path normaliser (DRY
+      violation) and two silent-swallow catch blocks in scanArtifacts that can
+      produce an invisibly partial artifact set.
+    - One medium: the atomic-write .tmp file is not cleaned up on rename failure.
+    - One low each: index.ts missing from touches_files; test file fails prettier.
+
+  The doubled-drive-prefix workaround is architecturally acceptable as a
+  defensive guard for external callers (TASK-CRUX-014 owns the full
+  cross-platform story), but the test should not silently rely on it for its
+  own REPO_ROOT constant — that dependency is the structural smell worth fixing
+  in TASK-CRUX-014 or sooner.
+
+  No ADR-CRUX-002 constraints are violated. No files outside touches_files
+  were modified (index.ts is new, not modified). No secrets or debug statements.
+  No dependency outside stack.yaml was added.

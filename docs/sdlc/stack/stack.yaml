@@ -35,6 +35,9 @@ frameworks:
 data:
   storage: sqlite                       # pinned by ADR-CRUX-002 (derived cache only; markdown is canonical)
   cache_path: .crux/trace.db            # gitignored (see .gitignore)
+  binding:
+    - name: better-sqlite3              # pinned by ADR-CRUX-011
+      version: "^11.5"                  # current stable line
   schema_dir: packages/core/schema
 
 testing:

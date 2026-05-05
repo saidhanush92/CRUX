@@ -1,0 +1,97 @@
+# REVIEW artifact -- verdict from the reviewer subagent.
+# Task: TASK-CRUX-007  Cycle: 2
+
+task: TASK-CRUX-007
+reviewer: reviewer
+verdict: approve
+cycle_number: 2
+escalation_target: null
+
+# False-positive resolution from cycle 1
+# The cycle-1 critical (out-of-scope writes to .claude/settings.json and
+# .claude/settings.local.json) is confirmed as a false positive.
+# Evidence: git log shows last commit touching those files is ee9f1df
+# (Phase 8). git status --porcelain shows them as ' M' (tracked-dirty from
+# Phase 8 carry-over). TASK-007 adapter files show as '??' (untracked new).
+# The coder for TASK-007 did not write to those files.
+
+quality_gates:
+  vitest: pass        # 29/29 tests green
+  tsc_noEmit: pass    # zero type errors
+  eslint: pass        # zero lint violations
+  prettier: pass      # all adapter files formatted
+
+cycle_1_resolutions:
+
+  - concern: critical / out-of-scope file writes
+    disposition: false_positive_confirmed
+    evidence: |
+      Last commit touching settings files is ee9f1df (Phase 8, not TASK-007).
+      git status --porcelain: .claude/settings.json and .claude/settings.local.json
+      are ' M' (tracked-dirty from pre-existing Phase 8 state). Adapter files
+      are '??' (untracked new TASK-007 output). Coder did not write to settings.
+
+  - concern: medium / manifest-interface desync
+    disposition: resolved
+    evidence: |
+      RuntimeAdapter is now a mapped type:
+        type RuntimeAdapter = { [K in AdapterFunctionName]: AdapterSignatures[K] };
+      AdapterFunctionName is derived from ADAPTER_INTERFACE_MANIFEST. Adding a
+      manifest name with no AdapterSignatures entry resolves to property type
+      'never', immediately breaking any concrete implementor. Removing a name
+      narrows the union and removes the key, causing type errors at call sites.
+      Desync is structurally impossible in both directions.
+
+  - concern: low / branded ID types
+    disposition: resolved
+    evidence: |
+      types.ts lines 9-12: SessionId, SubagentHandle, SkillId, CapabilityId all
+      use string & { readonly __brand: 'TypeName' }. Plain string assignment is
+      a compile-time type error.
+
+  - concern: low / ADAPTER_CONCERN_GROUPS tuple type
+    disposition: resolved
+    evidence: |
+      interface.ts lines 53-61 use as const satisfies
+      readonly (keyof typeof ADAPTER_INTERFACE_MANIFEST)[]. The as const
+      produces a 7-element literal tuple type. The satisfies constraint forces
+      each element to be a manifest key; unlisted names are compile errors.
+
+manifest_derivation_assessment: structural_not_conventional
+manifest_derivation_notes: |
+  The derivation is genuinely structural, not conventional. AdapterFunctionName
+  is computed at compile time from the manifest. RuntimeAdapter keys ARE the
+  manifest names via a mapped type, not a parallel hand-maintained list.
+  Adding a manifest name without an AdapterSignatures entry makes that property
+  type 'never', immediately breaking any concrete implementor. Removing a name
+  narrows RuntimeAdapter and breaks all call sites. The residual nuance
+  (structural typing in TypeScript allows extra properties on implementors
+  after a removal) is accurately documented at interface.ts line 68 and is
+  acceptable at the declaration-only stage of this task. No action required.
+
+adr_crux_003_compliance:
+  function_count: 17
+  group_count: 7
+  group_names_exact: true
+  per_group_counts:
+    Lifecycle: 3
+    Subagents: 2
+    Skills: 3
+    Hooks: 2
+    SlashCommands: 1
+    FilesystemShell: 3
+    TraceCapability: 3
+
+silent_failure_pass: clean
+silent_failure_notes: |
+  Both files are pure type and constant declarations with no IO, async code,
+  try/catch, or error propagation paths. Silent failure patterns do not apply.
+
+out_of_scope_files_written: none
+notes: |
+  All modified content is within packages/core/src/adapter/ and
+  packages/core/test/adapter/ -- exactly the files listed in TASK.touches_files.
+  No dependency added outside stack.yaml. No console.log, hardcoded secrets,
+  magic numbers, or functions over 50 lines. No file exceeds 115 lines.
+
+concerns: []

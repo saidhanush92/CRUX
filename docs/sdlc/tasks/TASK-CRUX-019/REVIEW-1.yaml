@@ -1,0 +1,64 @@
+task: TASK-CRUX-019
+reviewer: reviewer
+verdict: approve
+concerns:
+  - severity: low
+    location: packages/core/test/deferred-packages/stubs.test.ts:31
+    finding: |
+      Process anomaly (not a coder defect): the original test file had 6 path
+      traversals from the test file to REPO_ROOT
+      (`path.resolve(import.meta.url, '..', '..', '..', '..', '..', '..')`),
+      which resolved to `C:\Dev` instead of `C:\Dev\CRUX`. This caused the
+      coder's first write of the READMEs to land in `c:\Dev\packages\` outside
+      the repo. The orchestrator corrected the test to 5 traversals (the
+      current file has the fixed form) and cleaned the stray external dirs.
+      The current form is correct. No coder action required.
+    suggests: |
+      No action needed. The fix is already in place. For future test files
+      whose REPO_ROOT derivation crosses package boundaries, prefer an explicit
+      constant such as `process.env.npm_config_local_prefix` or a shared
+      `repoRoot()` utility that is tested in isolation, to prevent this class
+      of off-by-one path bug from recurring.
+cycle_number: 1
+escalation_target: null
+
+# ---------------------------------------------------------------------------
+# Review evidence summary
+# ---------------------------------------------------------------------------
+#
+# AC coverage (REQ-CRUX-019):
+#   AC#1  — audit-site README lists all four v1.0 surfaces (docs/sdlc/,
+#            crux-trace, crux-status, scripts/render-graph.sh). PASS.
+#   AC#2  — packages/audit-site/README.md exists; contains "deferred" and
+#            "v1.1"; rationale paragraph is well over 80 characters. PASS.
+#   AC#3  — packages/audit-site/ contains only README.md; no astro config,
+#            .storybook, chromatic config, package.json, or tsconfig.json. PASS.
+#   AC#4  — .github/workflows/ contains only ci.yml and trace-lint.yml;
+#            no audit-site-deploy.yml / .yaml. PASS.
+#   (by analogy) extension-vscode README exists, contains "deferred" and
+#            "v1.1", rationale well exceeds 80 characters. PASS.
+#
+# Files touched vs TASK.touches_files:
+#   packages/audit-site/README.md          — new, untracked. In scope.
+#   packages/extension-vscode/README.md    — new, untracked. In scope.
+#   packages/core/test/deferred-packages/  — new (harness, orchestrator).
+#   No files outside touches_files were modified by the coder.
+#
+# Dependency additions: none.
+# ADR violations: none (honors_adrs: []).
+# Silent failures: readIfExists() on line 45-50 swallows ENOENT to null;
+#   acceptable in test helper — every call site asserts non-null before use.
+# Console.log / debug statements: none.
+# Magic numbers: none.
+# Function length: all functions under 50 lines.
+# File length: stubs.test.ts is 243 lines; audit-site README is 56 lines;
+#   extension-vscode README is 32 lines. All well within 800-line limit.
+#
+# Quality gates:
+#   pnpm vitest run packages/core/test/deferred-packages  — 22/22 PASS
+#   Full regression (adapter/gate/mode/trace/cost/architecture/deferred)
+#     — 285/285 PASS
+#   pnpm prettier --check (both READMEs)                  — PASS
+#
+# Stray-file confirmation:
+#   c:/Dev/packages/ does not exist. Orchestrator cleanup verified.

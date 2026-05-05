@@ -1,0 +1,55 @@
+task: TASK-CRUX-019
+test_layers:
+  unit:
+    - covers: audit-site README.md exists at v1.0 (REQ-019 AC#2)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: extension-vscode README.md exists at v1.0
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README contains deferral keyword ("deferred" or "v1.1", case-insensitive) (REQ-019 AC#2)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README contains rationale paragraph of at least 80 characters (REQ-019 AC#2)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: extension-vscode README contains deferral keyword
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: extension-vscode README contains rationale paragraph of at least 80 characters
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README references docs/sdlc markdown/YAML surface (REQ-019 AC#1)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README references /crux-trace surface (REQ-019 AC#1)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README references /crux-status surface (REQ-019 AC#1)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: audit-site README references scripts/render-graph.sh surface (REQ-019 AC#1)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no astro.config.ts (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no astro.config.mjs (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no astro.config.js (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no .astro files at the top level (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no .storybook directory (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no chromatic.config.ts (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no chromatic.config.js (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no package.json at v1.0 (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/audit-site contains no tsconfig.json at v1.0 (REQ-019 AC#3)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: packages/extension-vscode contains no package.json at v1.0
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: .github/workflows/audit-site-deploy.yml does not exist (REQ-019 AC#4)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+    - covers: .github/workflows/audit-site-deploy.yaml does not exist (REQ-019 AC#4)
+      file: packages/core/test/deferred-packages/stubs.test.ts
+  integration: []
+  e2e: []
+coverage_target: 80
+out_of_scope:
+  - runtime rendering of audit-site Astro pages (deferred to v1.1)
+  - VS Code extension activation or commands (deferred to v1.1)
+  - Chromatic visual regression runs (no Chromatic config at v1.0)
+  - CI workflow execution for audit-site-deploy (workflow must not exist at v1.0)

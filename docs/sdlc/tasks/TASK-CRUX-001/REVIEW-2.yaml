@@ -1,0 +1,99 @@
+task: TASK-CRUX-001
+reviewer: reviewer
+verdict: approve
+concerns:
+  - severity: low
+    location: packages/core/test/mode/crux-mode.test.ts
+    finding: |
+      The regex widening (cycle-1 medium #2) was applied to the source
+      (CRUX_MODE_PATTERN now [a-zA-Z_]+) with an explanatory comment, but the
+      suggested regression test for the uppercase-value path was not added.
+      No test locks in that `crux_mode: COMPRESSED` routes to
+      CruxModeInvalidValueError instead of CruxModeMissingError. The fix is
+      correct and the general invalid-value path is tested via `crux_mode: turbo`,
+      but the specific uppercase-capture behaviour the fix enables is exercised
+      only implicitly. TEST_PLAN does not enumerate this case, so it does not
+      block approval.
+    suggests: |
+      Add one test to the 'readCruxMode — invalid crux_mode value' describe block:
+        it('throws CruxModeInvalidValueError (not CruxModeMissingError) for uppercase value', () => {
+          const stackPath = writeTmpStackYaml('crux_mode: COMPRESSED\n');
+          expect(() => readCruxMode(stackPath)).toThrowError(/invalid value.*COMPRESSED/i);
+        });
+
+  - severity: low
+    location: packages/core/test/gate/state-machine.test.ts (skip describe block, lines 253-273)
+    finding: |
+      The predecessor guard was added to skip() (cycle-1 low #3) — source is
+      correct. However the test suite only exercises skip(1) (gate 1 needs no
+      predecessor) and never calls skip(n) for n >= 2 without satisfying the
+      predecessor, so the new guard branch at state-machine.ts:157-160 has zero
+      test coverage.
+    suggests: |
+      Add to the skip() describe block:
+        it('throws when skipping gate 2 if gate 1 is not closed or skipped', () => {
+          const machine = createGateMachine();
+          expect(() => machine.skip(2)).toThrowError(/gate 1/i);
+        });
+        it('allows skipping gate 2 after gate 1 is closed', () => {
+          const machine = createGateMachine();
+          machine.open(1);
+          machine.close(1);
+          machine.skip(2);
+          const state = machine.all().find((g) => g.gate === 2);
+          expect(state?.status).toBe('skipped');
+        });
+
+  - severity: low
+    location: packages/core/test/gate/state-machine.test.ts (serialize/deserialize describe block)
+    finding: |
+      The per-entry validateGateState guard was added to deserialize() (cycle-1
+      low #4) — source is correct and atomic. However, no test exercises the
+      invalid-entry path. Passing { gates: [null] } or
+      { gates: [{ gate: 99, status: 'open' }] } should throw a descriptive error;
+      this behaviour is currently untested.
+    suggests: |
+      Add to the 'serialize() and deserialize()' describe block:
+        it('throws when snapshot contains a null entry', () => {
+          const machine = createGateMachine();
+          expect(() => machine.deserialize({ gates: [null] })).toThrow();
+        });
+        it('throws when snapshot contains an entry with an invalid gate id', () => {
+          const machine = createGateMachine();
+          expect(() => machine.deserialize({ gates: [{ gate: 99, status: 'open' }] })).toThrow();
+        });
+        it('does not mutate state when deserialize throws on invalid entry', () => {
+          const machine = createGateMachine();
+          machine.open(1);
+          expect(() => machine.deserialize({ gates: [{ gate: 99, status: 'open' }] })).toThrow();
+          expect(machine.all().some((g) => g.gate === 1 && g.status === 'open')).toBe(true);
+        });
+
+gate_results:
+  vitest: pass           # 106/106 tests (43 gate + 34 mode + 29 adapter)
+  tsc_noEmit: pass       # zero errors — no output produced
+  eslint: pass           # zero violations on packages/core/src/ — no output produced
+  prettier_check: pass   # "All matched files use Prettier code style!" — previously failing file now clean
+
+req_coverage:
+  REQ-CRUX-008_AC1: covered       # CruxModeFileNotFoundError message includes path
+  REQ-CRUX-008_AC2: covered       # defaultModeFor greenfield=compressed, brownfield=standard
+  REQ-CRUX-008_AC3: covered       # assertValidCruxMode lists valid modes; uppercase now correctly
+                                  # routes to CruxModeInvalidValueError (source fix); test gap noted
+                                  # as low, not blocking — general invalid-value path tested via turbo
+  REQ-CRUX-008_AC4: out_of_scope  # full-pipeline artifact-equality test; excluded per TEST_PLAN
+  REQ-CRUX-008_AC5: out_of_scope  # approvals.log write belongs to orchestrator task; excluded per TEST_PLAN
+
+adr_compliance:
+  ADR-CRUX-001: honored  # TypeScript monorepo with pnpm workspaces; tsconfig extends base; no violations
+  ADR-CRUX-006: honored  # five valid modes; isAutoApproveMode returns true only for compressed;
+                         # defaultModeFor maps correctly; no new runtime deps
+
+scope_check:
+  files_outside_touches_files: none  # git status confirms all TASK-001 new files sit within
+                                     # declared globs; adapter files (packages/core/src/adapter/**,
+                                     # packages/core/test/adapter/**) belong to TASK-007 which
+                                     # runs in parallel per TASK.yaml parallelizable_with
+
+cycle_number: 2
+escalation_target: null

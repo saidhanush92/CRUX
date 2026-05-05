@@ -1,0 +1,32 @@
+id: ADR-CRUX-011
+title: 'SQLite Node binding: better-sqlite3'
+status: accepted
+decision: |
+  The trace cache implementation uses better-sqlite3 (^11.x) as the SQLite Node binding. better-sqlite3 is a synchronous native binding that maps directly onto the single-threaded debounced indexer mutex semantics required by ADR-CRUX-002. It is added to packages/core/package.json as a runtime dependency and pinned in docs/sdlc/stack/stack.yaml.data with provenance ADR-CRUX-011.
+alternatives_considered:
+  - option: 'node:sqlite (built-in)'
+    rationale: |
+      rejected: stable only in Node 22.5+; absent in Node 20; stack.yaml pins node ">=20.10 <23". Choosing node:sqlite would force a Node-floor bump and exclude the LTS line that current users (incl. founding team) run.
+  - option: sql.js (pure-JS WASM)
+    rationale: |
+      rejected: loads the whole DB into memory; fine for ~500 artifacts but degrades on the 10k corpus revisit-when threshold from ADR-CRUX-002. Synchronous-but-slow primitives complicate the 100ms debounce window contract.
+  - option: 'sqlite3 (legacy node-sqlite3, async)'
+    rationale: |
+      rejected: async API mismatches the single-threaded mutex pattern; better-sqlite3 is the modern replacement and is what the better-sqlite3 README itself recommends migrating to.
+consequences:
+  - packages/core gains a runtime dependency (better-sqlite3) and its native build step.
+  - install adds a ~10MB native binary to node_modules; CI on linux/macos/windows must allow native compilation (already the case for vitest dev deps).
+  - The synchronous API matches ADR-CRUX-002's process-local mutex contract — no Promise wrappers needed in the indexer.
+  - Future migration to node:sqlite becomes feasible at v1.x when the Node 22 LTS line is the floor; documented in revisit_when.
+resolves: []
+satisfies:
+  - REQ-CRUX-003
+  - REQ-CRUX-004
+constrains:
+  - MOD-CRUX-001
+revisit_when: |
+  Node 22 becomes the LTS floor AND node:sqlite reaches feature-parity with better-sqlite3 (parameterized queries, prepared statements, transactions, WAL); OR a corpus growth pattern surfaces query latencies that better-sqlite3 cannot meet.
+validated_by:
+  - cache_rebuild_lossless CI check (per ADR-CRUX-002, exercised by TASK-CRUX-003 tests)
+approved_by: 'Dhanush Sai'
+approved_at: 2026-05-05T00:00:00Z

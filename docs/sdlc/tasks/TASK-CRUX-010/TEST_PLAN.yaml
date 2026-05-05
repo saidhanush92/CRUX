@@ -1,0 +1,45 @@
+# TEST_PLAN artifact — written BEFORE implementation by the test-writer subagent.
+# Task: TASK-CRUX-010 — Paper-only second-adapter spec (Cursor / Aider / raw Anthropic SDK)
+# The coder owns docs/sdlc/architecture/adapter-second-spec.md.
+# These tests validate the DOCUMENT's structural correctness — not production code.
+
+task: TASK-CRUX-010
+test_layers:
+  unit:
+    - covers: adapter-second-spec.md exists at the expected path
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: doc has a top-level heading naming one of the three allowed paper targets
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: doc contains a function feasibility matrix section covering all 17 function names from ADAPTER_INTERFACE_MANIFEST
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: every function name in the feasibility matrix has exactly one verdict token (feasible | needs-redesign | unknown) within 200 characters
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: doc contains a References section that is non-empty
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: doc contains a Conclusion section listing counts of feasible / needs-redesign / unknown verdicts
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: Conclusion section explicitly states whether ADR-CRUX-003 must be reopened (required when any function is needs-redesign)
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+    - covers: health invariant — if any function row carries the verdict needs-redesign, the test FAILS loudly naming the offending function(s)
+      file: packages/core/test/architecture/adapter-second-spec.test.ts
+  integration: []
+  e2e: []
+
+coverage_target: 80
+
+out_of_scope:
+  - runtime behavior of any paper adapter (no production code exists for the paper target)
+  - semantic correctness of the feasibility verdicts (human judgment, not machine-verifiable)
+  - ADR-CRUX-003 reopening process itself (governance artifact, out of test scope)
+  - formatting style of the markdown beyond section presence and table contents
+
+notes: |
+  The health-invariant test (needs-redesign check) is intentionally assertive:
+  if the coder assigns needs-redesign to any function, the test suite turns RED.
+  This enforces the ADR-CRUX-003 validated_by clause: any needs-redesign function
+  reopens the ADR pre-v1.0. Since ADR reopening is out of v1.0 scope, the test
+  acts as a gate that forces the coder to choose a paper target where all 17
+  functions are either feasible or unknown. If the coder believes a function
+  genuinely needs-redesign, they must surface that decision for human review
+  (halt the pipeline) rather than silently committing a document that would
+  reopen the ADR unnoticed.
