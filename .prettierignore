@@ -18,3 +18,5 @@ docs/sdlc/approvals.log
 
 # Template files use specific YAML / markdown structure.
 templates/*.tmpl
+# CLI bin entry point uses TypeScript syntax without .ts extension.
+packages/cli/bin/crux

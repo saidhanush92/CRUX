@@ -34,8 +34,7 @@ import { ADAPTER_INTERFACE_MANIFEST } from '../../src/adapter/interface.js';
 const ALLOWED_PAPER_TARGETS = ['Cursor', 'Aider', 'raw Anthropic SDK'] as const;
 
 /** Allowed verdict tokens per ADR-CRUX-003. */
-const ALLOWED_VERDICTS = ['feasible', 'needs-redesign', 'unknown'] as const;
-type Verdict = (typeof ALLOWED_VERDICTS)[number];
+type Verdict = 'feasible' | 'needs-redesign' | 'unknown';
 
 /**
  * Repo root is four directories up from this test file:

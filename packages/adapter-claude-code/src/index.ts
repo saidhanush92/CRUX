@@ -71,13 +71,15 @@ export function createClaudeCodeAdapter(rootDir: string): RuntimeAdapter {
     // -------------------------------------------------------------------------
     // Subagents (2)
     // -------------------------------------------------------------------------
-    spawn_subagent: (_opts?: SpawnOptions): Promise<SubagentHandle> =>
-      spawn_subagent(rootDir, {
-        sessionId: '' as SessionId,
-        agentName: 'default',
-        prompt: '',
+    spawn_subagent: (opts?: SpawnOptions): Promise<SubagentHandle> => {
+      const metadata = opts?.metadata ?? {};
+      return spawn_subagent(rootDir, {
+        sessionId: (metadata['sessionId'] as SessionId | undefined) ?? ('' as SessionId),
+        agentName: (metadata['agentName'] as string | undefined) ?? 'default',
+        prompt: (metadata['prompt'] as string | undefined) ?? '',
         isolated: true,
-      }),
+      });
+    },
 
     await_subagent: (handle: SubagentHandle): Promise<void> =>
       await_subagent(rootDir, handle, { timeoutMs: 30_000 }),
@@ -144,6 +146,7 @@ export function createClaudeCodeAdapter(rootDir: string): RuntimeAdapter {
 
     resolve_capability: (id: CapabilityId): Promise<boolean> => resolve_capability(rootDir, id),
 
-    invoke_skill: (id: SkillId, input: unknown): Promise<unknown> => invoke_skill(rootDir, id, input),
+    invoke_skill: (id: SkillId, input: unknown): Promise<unknown> =>
+      invoke_skill(rootDir, id, input),
   } satisfies RuntimeAdapter;
 }

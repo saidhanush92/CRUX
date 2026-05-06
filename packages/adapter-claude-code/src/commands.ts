@@ -49,10 +49,7 @@ const COMMAND_REGISTRY: Readonly<Record<string, CommandHandler>> = {
 // Exported functions
 // ---------------------------------------------------------------------------
 
-export async function run_command(
-  command: string,
-  args: readonly string[] = [],
-): Promise<string> {
+export async function run_command(command: string, args: readonly string[] = []): Promise<string> {
   const normalized = normalizeCommandName(command);
   const handler = COMMAND_REGISTRY[normalized];
 

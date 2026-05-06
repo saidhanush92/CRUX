@@ -5,12 +5,7 @@ import * as path from 'node:path';
 import type { Event, CapabilityId, SkillId } from '../../core/src/adapter/types.js';
 import { ADAPTER_INTERFACE_MANIFEST } from '../../core/src/adapter/interface.js';
 
-import {
-  emit_event,
-  resolve_capability,
-  invoke_skill,
-  TraceEventWriteError,
-} from '../src/trace.js';
+import { emit_event, resolve_capability, invoke_skill } from '../src/trace.js';
 
 function makeTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'crux-test-trace-'));

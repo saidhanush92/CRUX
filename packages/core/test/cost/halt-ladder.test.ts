@@ -15,7 +15,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import type { HaltLadder, AccrueResult, ConfirmResult } from '../../src/cost/halt-ladder.js';
+import type { AccrueResult } from '../../src/cost/halt-ladder.js';
 import { createHaltLadder } from '../../src/cost/halt-ladder.js';
 
 // ---------------------------------------------------------------------------

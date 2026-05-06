@@ -13,6 +13,7 @@
 ### Task 1: Create the design and planning artifacts
 
 **Files:**
+
 - Create: `docs/superpowers/specs/2026-05-05-crux-mission-control-design.md`
 - Create: `docs/superpowers/plans/2026-05-05-crux-mission-control-plan.md`
 
@@ -22,6 +23,7 @@
 ### Task 2: Build the standalone mission-control mock
 
 **Files:**
+
 - Create: `docs/crux-mission-control.html`
 
 - [ ] Add shared seeded data for gates, agents, artifacts, blockers, and event stream.
@@ -34,6 +36,7 @@
 ### Task 3: Verify the mock
 
 **Files:**
+
 - Verify: `docs/crux-mission-control.html`
 
 - [ ] Open the HTML file locally and confirm all three tabs render with visible differences.

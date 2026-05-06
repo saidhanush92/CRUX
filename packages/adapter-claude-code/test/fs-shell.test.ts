@@ -4,12 +4,7 @@ import * as os from 'node:os';
 import * as path from 'node:path';
 import { ADAPTER_INTERFACE_MANIFEST } from '../../core/src/adapter/interface.js';
 
-import {
-  read_file,
-  write_file,
-  run_shell,
-  PathOutsideRootError,
-} from '../src/fs-shell.js';
+import { read_file, write_file, run_shell, PathOutsideRootError } from '../src/fs-shell.js';
 
 function makeTempDir(): string {
   return fs.mkdtempSync(path.join(os.tmpdir(), 'crux-test-fs-shell-'));
@@ -53,9 +48,7 @@ describe('write_file', () => {
   });
 
   it('rejects a path traversal outside rootDir', async () => {
-    await expect(write_file(tmpDir, '../escape.txt', 'nope')).rejects.toThrow(
-      PathOutsideRootError,
-    );
+    await expect(write_file(tmpDir, '../escape.txt', 'nope')).rejects.toThrow(PathOutsideRootError);
   });
 });
 

@@ -22,7 +22,6 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import { fileURLToPath } from 'node:url';
 
-import type { Registry, ValidationResult } from '../../src/capabilities/registry.js';
 import {
   loadRegistry,
   hasCapability,

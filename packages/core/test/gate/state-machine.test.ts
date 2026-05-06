@@ -14,7 +14,7 @@
  *   - ADR-CRUX-001 (TypeScript monorepo conventions)
  */
 
-import { describe, it, expect, beforeEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import type { GateId, GateStatus, GateState } from '../../src/gate/state-machine.js';
 import { createGateMachine } from '../../src/gate/state-machine.js';
 

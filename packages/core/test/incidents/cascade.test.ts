@@ -20,13 +20,6 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
-import { fileURLToPath } from 'node:url';
-
-import type {
-  EmitIncidentInput,
-  EmitChangeInput,
-  EmitAmendmentInput,
-} from '../../src/incidents/cascade.js';
 import {
   emitIncident,
   emitChange,
@@ -37,8 +30,6 @@ import {
 // ---------------------------------------------------------------------------
 // Repo root (packages/core/test/incidents → up 5 levels)
 // ---------------------------------------------------------------------------
-
-const REPO_ROOT = path.resolve(fileURLToPath(import.meta.url), '..', '..', '..', '..', '..');
 
 // ---------------------------------------------------------------------------
 // Temp dir per test
@@ -597,7 +588,7 @@ describe('runCascade — synchronous, no background process (REQ-CRUX-010 AC#2)'
     const root = buildRoot({ skillName: 'tdd-workflow' });
 
     // No await, no callback — purely synchronous
-    const result = runCascade(root, {
+    runCascade(root, {
       title: 'Sync test',
       violated: ['REQ-CRUX-010'],
       root_cause: 'Cause.',
@@ -672,7 +663,7 @@ describe('cascade artifact linkage', () => {
 
   it('AMD file references the target_skill', () => {
     const root = buildRoot({ skillName: 'tdd-workflow' });
-    const result = runCascade(root, {
+    runCascade(root, {
       title: 'AMD linkage test',
       violated: ['REQ-CRUX-010'],
       root_cause: 'Cause.',

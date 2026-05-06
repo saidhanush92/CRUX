@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "dist",
+    "rootDir": "src",
+    "composite": true
+  },
+  "references": [{ "path": "../core" }, { "path": "../adapter-claude-code" }],
+  "include": ["src/**/*"],
+  "exclude": ["dist", "node_modules"]
+}

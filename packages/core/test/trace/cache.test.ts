@@ -26,8 +26,7 @@ import * as path from 'node:path';
 import * as os from 'node:os';
 import * as crypto from 'node:crypto';
 
-// The module under test — does not exist yet; imports will fail RED.
-import type { TraceCache } from '../../src/trace/cache.js';
+// The module under test
 import { openCache } from '../../src/trace/cache.js';
 
 import type { Artifact, TraceEdge } from '../../src/trace/types.js';

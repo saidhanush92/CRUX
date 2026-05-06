@@ -59,8 +59,7 @@ export async function write_file(
 export async function run_shell(rootDir: string, command: string): Promise<ShellResult> {
   return new Promise<ShellResult>((resolve) => {
     exec(command, { cwd: rootDir }, (error, stdout, stderr) => {
-      const exitCode =
-        typeof error?.code === 'number' ? error.code : error ? 1 : 0;
+      const exitCode = typeof error?.code === 'number' ? error.code : error ? 1 : 0;
 
       resolve({
         exitCode,

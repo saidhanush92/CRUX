@@ -1,0 +1,25 @@
+{
+  "name": "@crux/cli",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist",
+    "bin"
+  ],
+  "bin": {
+    "crux": "./bin/crux"
+  },
+  "exports": {
+    ".": "./src/index.ts",
+    "./dispatch": "./src/dispatch.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@crux/adapter-claude-code": "workspace:*",
+    "@crux/core": "workspace:*"
+  }
+}

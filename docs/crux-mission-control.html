@@ -1,748 +1,1467 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Crux Mission Control</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --navy-900:#0E2148;
-    --navy-800:#16306B;
-    --navy-700:#1E3A8A;
-    --navy-100:#D8DEE9;
-    --navy-050:#EEF1F6;
-    --bone:#FAF8F4;
-    --paper:#FFFFFF;
-    --ink:#0B0F1A;
-    --ink-2:#3A4256;
-    --ink-3:#6B7388;
-    --rule:#E2E5EC;
-    --rule-soft:#EEF0F4;
-    --red:#C8102E;
-    --amber:#B8761B;
-    --green:#2F6E3D;
-    --teal:#0F766E;
-    --teal-soft:#E6F1EF;
-    --ochre:#A86A1F;
-    --ochre-soft:#F6EBD7;
-    --plum:#6B2D5C;
-    --plum-soft:#F1E7EE;
-    --sky:#1E5A9A;
-    --sky-soft:#E5EEF7;
-    --rose-soft:#F7E4E7;
-    --mint:#0F766E;
-    --violet:#6B2D5C;
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Crux Mission Control</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --navy-900: #0e2148;
+        --navy-800: #16306b;
+        --navy-700: #1e3a8a;
+        --navy-100: #d8dee9;
+        --navy-050: #eef1f6;
+        --bone: #faf8f4;
+        --paper: #ffffff;
+        --ink: #0b0f1a;
+        --ink-2: #3a4256;
+        --ink-3: #6b7388;
+        --rule: #e2e5ec;
+        --rule-soft: #eef0f4;
+        --red: #c8102e;
+        --amber: #b8761b;
+        --green: #2f6e3d;
+        --teal: #0f766e;
+        --teal-soft: #e6f1ef;
+        --ochre: #a86a1f;
+        --ochre-soft: #f6ebd7;
+        --plum: #6b2d5c;
+        --plum-soft: #f1e7ee;
+        --sky: #1e5a9a;
+        --sky-soft: #e5eef7;
+        --rose-soft: #f7e4e7;
+        --mint: #0f766e;
+        --violet: #6b2d5c;
 
-    --serif:"Fraunces","Source Serif 4",Georgia,serif;
-    --sans:"IBM Plex Sans",system-ui,sans-serif;
-    --mono:"IBM Plex Mono",ui-monospace,monospace;
-  }
+        --serif: 'Fraunces', 'Source Serif 4', Georgia, serif;
+        --sans: 'IBM Plex Sans', system-ui, sans-serif;
+        --mono: 'IBM Plex Mono', ui-monospace, monospace;
+      }
 
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body{
-    min-height:100%;
-    background:
-      radial-gradient(800px 200px at 0% 0%, rgba(14,33,72,0.04), transparent 70%),
-      var(--bone);
-    color:var(--ink);
-    font-family:var(--sans);
-    font-size:14px;
-    line-height:1.45;
-    -webkit-font-smoothing:antialiased;
-    font-feature-settings:"ss01","cv11";
-  }
-  body::before{
-    content:"";
-    position:fixed;
-    inset:0;
-    background-image:
-      linear-gradient(rgba(14,33,72,0.02) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(14,33,72,0.02) 1px, transparent 1px);
-    background-size:48px 48px;
-    opacity:.22;
-    pointer-events:none;
-  }
-  a{color:inherit;text-decoration:none}
-  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+      html,
+      body {
+        min-height: 100%;
+        background:
+          radial-gradient(800px 200px at 0% 0%, rgba(14, 33, 72, 0.04), transparent 70%),
+          var(--bone);
+        color: var(--ink);
+        font-family: var(--sans);
+        font-size: 14px;
+        line-height: 1.45;
+        -webkit-font-smoothing: antialiased;
+        font-feature-settings: 'ss01', 'cv11';
+      }
+      body::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        background-image:
+          linear-gradient(rgba(14, 33, 72, 0.02) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(14, 33, 72, 0.02) 1px, transparent 1px);
+        background-size: 48px 48px;
+        opacity: 0.22;
+        pointer-events: none;
+      }
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+        background: none;
+        border: 0;
+        cursor: pointer;
+      }
 
-  .app{display:grid;grid-template-columns:220px 1fr;min-height:100vh;position:relative}
+      .app {
+        display: grid;
+        grid-template-columns: 220px 1fr;
+        min-height: 100vh;
+        position: relative;
+      }
 
-  .rail{
-    border-right:1px solid var(--rule);
-    background:var(--paper);
-    padding:14px 0 10px;
-    position:sticky;top:0;height:100vh;
-    display:flex;flex-direction:column;
-  }
-  .brand{padding:0 20px 14px;border-bottom:1px solid var(--rule)}
-  .brand .mark{display:flex;align-items:baseline;gap:8px}
-  .brand .mark .c{
-    font-family:var(--serif);font-weight:500;font-size:25px;letter-spacing:-0.02em;color:var(--ink);
-    font-style:italic;
-  }
-  .brand .mark .div{width:1px;height:18px;background:var(--rule)}
-  .brand .mark .os{
-    font-family:var(--sans);font-weight:500;font-size:10.5px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-3);
-  }
-  .brand .tag{margin-top:8px;font-size:10.5px;color:var(--ink-3);letter-spacing:0.04em}
+      .rail {
+        border-right: 1px solid var(--rule);
+        background: var(--paper);
+        padding: 14px 0 10px;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .brand {
+        padding: 0 20px 14px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .brand .mark {
+        display: flex;
+        align-items: baseline;
+        gap: 8px;
+      }
+      .brand .mark .c {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: 25px;
+        letter-spacing: -0.02em;
+        color: var(--ink);
+        font-style: italic;
+      }
+      .brand .mark .div {
+        width: 1px;
+        height: 18px;
+        background: var(--rule);
+      }
+      .brand .mark .os {
+        font-family: var(--sans);
+        font-weight: 500;
+        font-size: 10.5px;
+        letter-spacing: 0.24em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .brand .tag {
+        margin-top: 8px;
+        font-size: 10.5px;
+        color: var(--ink-3);
+        letter-spacing: 0.04em;
+      }
 
-  .nav{padding:10px 0;flex:1;overflow:auto}
-  .nav h6{
-    padding:10px 20px 4px;font-size:9px;text-transform:uppercase;letter-spacing:0.2em;color:var(--ink-3);font-weight:600;
-  }
-  .nav button{
-    width:100%;
-    display:flex;align-items:center;gap:9px;
-    padding:7px 20px;font-size:12.5px;color:var(--ink-2);
-    border-left:2px solid transparent;text-align:left;
-  }
-  .nav button:hover{background:rgba(169,200,255,0.06);color:var(--ink)}
-  .nav button.active{
-    color:var(--navy-900);border-left-color:var(--red);
-    background:linear-gradient(90deg,rgba(200,16,46,0.04),transparent 60%);font-weight:500;
-  }
-  .nav button .num{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
-  .nav button.active .num{color:var(--red)}
-  .nav .dot{width:5px;height:5px;background:var(--ink-3);opacity:.4}
-  .nav button.active .dot{background:var(--red);opacity:1}
+      .nav {
+        padding: 10px 0;
+        flex: 1;
+        overflow: auto;
+      }
+      .nav h6 {
+        padding: 10px 20px 4px;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: 0.2em;
+        color: var(--ink-3);
+        font-weight: 600;
+      }
+      .nav button {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 9px;
+        padding: 7px 20px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        border-left: 2px solid transparent;
+        text-align: left;
+      }
+      .nav button:hover {
+        background: rgba(169, 200, 255, 0.06);
+        color: var(--ink);
+      }
+      .nav button.active {
+        color: var(--navy-900);
+        border-left-color: var(--red);
+        background: linear-gradient(90deg, rgba(200, 16, 46, 0.04), transparent 60%);
+        font-weight: 500;
+      }
+      .nav button .num {
+        margin-left: auto;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ink-3);
+      }
+      .nav button.active .num {
+        color: var(--red);
+      }
+      .nav .dot {
+        width: 5px;
+        height: 5px;
+        background: var(--ink-3);
+        opacity: 0.4;
+      }
+      .nav button.active .dot {
+        background: var(--red);
+        opacity: 1;
+      }
 
-  .who{
-    border-top:1px solid var(--rule);padding:14px 20px;display:flex;align-items:center;gap:10px;
-  }
-  .who .av{
-    width:30px;height:30px;background:var(--navy-900);color:var(--bone);
-    display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-weight:500;font-size:14px;letter-spacing:-0.02em;
-    border:1px solid var(--rule);
-  }
-  .who .meta{font-size:11.5px;line-height:1.3}
-  .who .meta b{display:block;font-weight:500;color:var(--ink)}
-  .who .meta span{color:var(--ink-3);font-size:10.5px;letter-spacing:0.04em}
+      .who {
+        border-top: 1px solid var(--rule);
+        padding: 14px 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .who .av {
+        width: 30px;
+        height: 30px;
+        background: var(--navy-900);
+        color: var(--bone);
+        display: grid;
+        place-items: center;
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 500;
+        font-size: 14px;
+        letter-spacing: -0.02em;
+        border: 1px solid var(--rule);
+      }
+      .who .meta {
+        font-size: 11.5px;
+        line-height: 1.3;
+      }
+      .who .meta b {
+        display: block;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .who .meta span {
+        color: var(--ink-3);
+        font-size: 10.5px;
+        letter-spacing: 0.04em;
+      }
 
-  main{min-width:0;background:transparent}
+      main {
+        min-width: 0;
+        background: transparent;
+      }
 
-  .topbar{
-    display:flex;align-items:center;gap:16px;
-    padding:10px 22px;border-bottom:1px solid var(--rule);background:var(--paper);
-    position:sticky;top:0;z-index:5;
-  }
-  .crumb{font-size:11px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase}
-  .crumb b{color:var(--ink);font-weight:500}
-  .topbar .search{
-    margin-left:auto;display:flex;align-items:center;gap:10px;
-    border:1px solid var(--rule);padding:7px 12px;width:360px;background:var(--bone);
-  }
-  .topbar .search input{
-    border:0;background:transparent;outline:0;flex:1;font-family:var(--sans);font-size:12.5px;color:var(--ink);
-  }
-  .topbar .search input::placeholder{color:var(--ink-3)}
-  .topbar .search .k{font-family:var(--mono);font-size:10px;color:var(--ink-3);border:1px solid var(--rule);padding:1px 5px}
-  .iconbtn{
-    display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2);
-    padding:7px 10px;border:1px solid var(--rule);background:rgba(255,255,255,0.02);
-  }
-  .iconbtn.primary{background:var(--navy-900);color:var(--bone);border-color:var(--navy-900)}
+      .topbar {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 10px 22px;
+        border-bottom: 1px solid var(--rule);
+        background: var(--paper);
+        position: sticky;
+        top: 0;
+        z-index: 5;
+      }
+      .crumb {
+        font-size: 11px;
+        color: var(--ink-3);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+      .crumb b {
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .topbar .search {
+        margin-left: auto;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        border: 1px solid var(--rule);
+        padding: 7px 12px;
+        width: 360px;
+        background: var(--bone);
+      }
+      .topbar .search input {
+        border: 0;
+        background: transparent;
+        outline: 0;
+        flex: 1;
+        font-family: var(--sans);
+        font-size: 12.5px;
+        color: var(--ink);
+      }
+      .topbar .search input::placeholder {
+        color: var(--ink-3);
+      }
+      .topbar .search .k {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        border: 1px solid var(--rule);
+        padding: 1px 5px;
+      }
+      .iconbtn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 11px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        padding: 7px 10px;
+        border: 1px solid var(--rule);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .iconbtn.primary {
+        background: var(--navy-900);
+        color: var(--bone);
+        border-color: var(--navy-900);
+      }
 
-  .hero{
-    padding:20px 22px 14px;border-bottom:1px solid var(--rule);
-    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;
-    background:
-      radial-gradient(800px 200px at 0% 0%, rgba(14,33,72,0.04), transparent 70%),
-      var(--bone);
-  }
-  .hero .eyebrow{
-    font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:0.18em;text-transform:uppercase;
-    display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  }
-  .hero .eyebrow .pill{padding:2px 8px;border:1px solid var(--rule);color:var(--ink-2);background:var(--paper)}
-  .hero h1{
-    margin-top:10px;
-    font-family:var(--serif);font-weight:400;font-size:31px;line-height:1.08;letter-spacing:-0.018em;color:var(--ink);
-    max-width:30ch;
-  }
-  .hero h1 em{font-style:italic;font-weight:400;color:var(--plum)}
-  .hero h1 .ru{color:var(--red);font-style:normal;font-weight:500;padding:0 4px}
-  .hero h1 .uline{
-    background:linear-gradient(transparent 78%, var(--ochre-soft) 78%, var(--ochre-soft) 96%, transparent 96%);
-    padding:0 2px;
-  }
-  .hero .sub{
-    margin-top:8px;font-size:12.5px;color:var(--ink-2);max-width:78ch;line-height:1.55;
-  }
-  .hero aside{
-    border-left:1px solid var(--rule);padding-left:22px;
-    display:grid;grid-template-columns:auto auto;gap:6px 18px;font-size:11px;color:var(--ink-3);
-    text-align:right;
-  }
-  .hero aside b{color:var(--ink);font-weight:500;font-family:var(--mono);font-size:11.5px}
+      .hero {
+        padding: 20px 22px 14px;
+        border-bottom: 1px solid var(--rule);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 24px;
+        align-items: end;
+        background:
+          radial-gradient(800px 200px at 0% 0%, rgba(14, 33, 72, 0.04), transparent 70%),
+          var(--bone);
+      }
+      .hero .eyebrow {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ink-3);
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+      .hero .eyebrow .pill {
+        padding: 2px 8px;
+        border: 1px solid var(--rule);
+        color: var(--ink-2);
+        background: var(--paper);
+      }
+      .hero h1 {
+        margin-top: 10px;
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: 31px;
+        line-height: 1.08;
+        letter-spacing: -0.018em;
+        color: var(--ink);
+        max-width: 30ch;
+      }
+      .hero h1 em {
+        font-style: italic;
+        font-weight: 400;
+        color: var(--plum);
+      }
+      .hero h1 .ru {
+        color: var(--red);
+        font-style: normal;
+        font-weight: 500;
+        padding: 0 4px;
+      }
+      .hero h1 .uline {
+        background: linear-gradient(
+          transparent 78%,
+          var(--ochre-soft) 78%,
+          var(--ochre-soft) 96%,
+          transparent 96%
+        );
+        padding: 0 2px;
+      }
+      .hero .sub {
+        margin-top: 8px;
+        font-size: 12.5px;
+        color: var(--ink-2);
+        max-width: 78ch;
+        line-height: 1.55;
+      }
+      .hero aside {
+        border-left: 1px solid var(--rule);
+        padding-left: 22px;
+        display: grid;
+        grid-template-columns: auto auto;
+        gap: 6px 18px;
+        font-size: 11px;
+        color: var(--ink-3);
+        text-align: right;
+      }
+      .hero aside b {
+        color: var(--ink);
+        font-weight: 500;
+        font-family: var(--mono);
+        font-size: 11.5px;
+      }
 
-  .sec{padding:14px 22px 16px}
-  .sec + .sec{border-top:1px solid var(--rule)}
-  .sec-h{
-    display:grid;grid-template-columns:auto 1fr auto;align-items:end;
-    column-gap:14px;margin-bottom:10px;padding-bottom:7px;border-bottom:1px solid var(--rule);
-  }
-  .sec-h .n{
-    font-family:var(--serif);font-style:italic;font-weight:400;font-size:24px;line-height:0.9;color:var(--ink);
-    letter-spacing:-0.03em;
-  }
-  .sec-h .n::before{content:"";display:block;width:16px;height:2px;background:var(--accent,var(--sky));margin-bottom:5px}
-  .sec-h h2{
-    font-family:var(--serif);font-weight:500;font-size:17px;line-height:1.2;letter-spacing:-0.008em;color:var(--ink);
-  }
-  .sec-h h2 em{font-style:italic;color:var(--ink-2);font-weight:400}
-  .sec-h .meta{
-    font-size:10.5px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase;
-    text-align:right;font-family:var(--sans);
-  }
-  .sec-h .meta b{color:var(--ink);font-family:var(--mono);font-weight:500;letter-spacing:0}
-  .sec.acc-sky{--accent:var(--sky)}
-  .sec.acc-mint{--accent:var(--teal)}
-  .sec.acc-rose{--accent:var(--red)}
-  .sec.acc-ochre{--accent:var(--ochre)}
+      .sec {
+        padding: 14px 22px 16px;
+      }
+      .sec + .sec {
+        border-top: 1px solid var(--rule);
+      }
+      .sec-h {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: end;
+        column-gap: 14px;
+        margin-bottom: 10px;
+        padding-bottom: 7px;
+        border-bottom: 1px solid var(--rule);
+      }
+      .sec-h .n {
+        font-family: var(--serif);
+        font-style: italic;
+        font-weight: 400;
+        font-size: 24px;
+        line-height: 0.9;
+        color: var(--ink);
+        letter-spacing: -0.03em;
+      }
+      .sec-h .n::before {
+        content: '';
+        display: block;
+        width: 16px;
+        height: 2px;
+        background: var(--accent, var(--sky));
+        margin-bottom: 5px;
+      }
+      .sec-h h2 {
+        font-family: var(--serif);
+        font-weight: 500;
+        font-size: 17px;
+        line-height: 1.2;
+        letter-spacing: -0.008em;
+        color: var(--ink);
+      }
+      .sec-h h2 em {
+        font-style: italic;
+        color: var(--ink-2);
+        font-weight: 400;
+      }
+      .sec-h .meta {
+        font-size: 10.5px;
+        color: var(--ink-3);
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: right;
+        font-family: var(--sans);
+      }
+      .sec-h .meta b {
+        color: var(--ink);
+        font-family: var(--mono);
+        font-weight: 500;
+        letter-spacing: 0;
+      }
+      .sec.acc-sky {
+        --accent: var(--sky);
+      }
+      .sec.acc-mint {
+        --accent: var(--teal);
+      }
+      .sec.acc-rose {
+        --accent: var(--red);
+      }
+      .sec.acc-ochre {
+        --accent: var(--ochre);
+      }
 
-  .mode-switch{
-    display:flex;gap:8px;flex-wrap:wrap;
-  }
-  .mode-switch button{
-    padding:6px 10px;border:1px solid var(--rule);font-size:10.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);
-    background:rgba(255,255,255,0.02);
-  }
-  .mode-switch button.active{color:var(--ink);border-color:rgba(169,200,255,0.26);background:rgba(169,200,255,0.08)}
+      .mode-switch {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .mode-switch button {
+        padding: 6px 10px;
+        border: 1px solid var(--rule);
+        font-size: 10.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .mode-switch button.active {
+        color: var(--ink);
+        border-color: rgba(169, 200, 255, 0.26);
+        background: rgba(169, 200, 255, 0.08);
+      }
 
-  .panel-grid{display:grid;gap:1px;background:var(--rule);border:1px solid var(--rule)}
-  .panel-grid > *{background:var(--paper);min-width:0}
-  .grid-overview{grid-template-columns:1.15fr 1fr}
-  .grid-live{grid-template-columns:1.05fr 1.25fr}
-  .grid-proof{grid-template-columns:1fr 1fr}
+      .panel-grid {
+        display: grid;
+        gap: 1px;
+        background: var(--rule);
+        border: 1px solid var(--rule);
+      }
+      .panel-grid > * {
+        background: var(--paper);
+        min-width: 0;
+      }
+      .grid-overview {
+        grid-template-columns: 1.15fr 1fr;
+      }
+      .grid-live {
+        grid-template-columns: 1.05fr 1.25fr;
+      }
+      .grid-proof {
+        grid-template-columns: 1fr 1fr;
+      }
 
-  .card{padding:12px 14px}
-  .stack{display:grid;gap:1px;background:var(--rule)}
-  .stack > *{background:var(--paper)}
+      .card {
+        padding: 12px 14px;
+      }
+      .stack {
+        display: grid;
+        gap: 1px;
+        background: var(--rule);
+      }
+      .stack > * {
+        background: var(--paper);
+      }
 
-  .pulse-strip{
-    display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);
-  }
-  .pulse-strip > div{background:var(--paper);padding:11px 14px 10px;position:relative;overflow:hidden}
-  .pulse-strip > div::before{
-    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--sky));
-  }
-  .pulse-strip .p-complete{--accent:var(--green)}
-  .pulse-strip .p-current{--accent:var(--sky)}
-  .pulse-strip .p-agents{--accent:var(--plum)}
-  .pulse-strip .p-approvals{--accent:var(--red)}
-  .pulse-strip .lbl{font-size:9.5px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-3);font-weight:500}
-  .pulse-strip .v{
-    margin-top:4px;font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:-0.018em;color:var(--ink);
-    display:flex;align-items:baseline;gap:5px;line-height:1.1;
-  }
-  .pulse-strip .v .u{font-size:11px;color:var(--ink-3);font-family:var(--sans);font-weight:500}
-  .pulse-strip .d{margin-top:4px;font-family:var(--mono);font-size:10.5px;color:var(--ink-2)}
+      .pulse-strip {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1px;
+        background: var(--rule);
+      }
+      .pulse-strip > div {
+        background: var(--paper);
+        padding: 11px 14px 10px;
+        position: relative;
+        overflow: hidden;
+      }
+      .pulse-strip > div::before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: var(--accent, var(--sky));
+      }
+      .pulse-strip .p-complete {
+        --accent: var(--green);
+      }
+      .pulse-strip .p-current {
+        --accent: var(--sky);
+      }
+      .pulse-strip .p-agents {
+        --accent: var(--plum);
+      }
+      .pulse-strip .p-approvals {
+        --accent: var(--red);
+      }
+      .pulse-strip .lbl {
+        font-size: 9.5px;
+        text-transform: uppercase;
+        letter-spacing: 0.16em;
+        color: var(--ink-3);
+        font-weight: 500;
+      }
+      .pulse-strip .v {
+        margin-top: 4px;
+        font-family: var(--serif);
+        font-weight: 400;
+        font-size: 22px;
+        letter-spacing: -0.018em;
+        color: var(--ink);
+        display: flex;
+        align-items: baseline;
+        gap: 5px;
+        line-height: 1.1;
+      }
+      .pulse-strip .v .u {
+        font-size: 11px;
+        color: var(--ink-3);
+        font-family: var(--sans);
+        font-weight: 500;
+      }
+      .pulse-strip .d {
+        margin-top: 4px;
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--ink-2);
+      }
 
-  .gate-table .head,
-  .list-table .head{
-    display:grid;padding:7px 14px;border-bottom:1px solid var(--rule);
-    font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-3);font-weight:500;
-  }
-  .gate-table .head{grid-template-columns:42px 1.05fr 86px 1.35fr 1.3fr 62px}
-  .gate-table .row{
-    display:grid;grid-template-columns:42px 1.05fr 86px 1.35fr 1.3fr 62px;
-    padding:8px 14px;border-bottom:1px solid var(--rule-soft);align-items:start;gap:10px;
-  }
-  .gate-table .row:last-child{border-bottom:0}
-  .gate-table .idx,
-  .list-table .idx{font-family:var(--mono);font-size:10px;color:var(--ink-3)}
-  .gate-table .name,
-  .list-table .title{font-size:12.5px;color:var(--ink);line-height:1.28}
-  .gate-table .name em,
-  .list-table .title em{font-style:normal;color:var(--ink-3);font-size:10.5px;display:block;margin-top:1px;letter-spacing:0.04em}
-  .status-badge{
-    display:inline-flex;align-items:center;justify-content:center;padding:2px 8px;border:1px solid var(--rule);
-    font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);width:max-content;
-  }
-  .status-complete-badge{color:var(--green);border-color:#c8dbce;background:#eef6f0}
-  .status-running-badge{color:var(--sky);border-color:#c7d2e5;background:var(--sky-soft)}
-  .status-queued-badge{color:var(--plum);border-color:#d9c4d2;background:var(--plum-soft)}
-  .status-blocked-badge{color:var(--red);border-color:#e5c5c9;background:var(--rose-soft)}
-  .gate-table .summary,
-  .list-table .body{font-size:11.5px;color:var(--ink-2);line-height:1.35}
-  .gate-table .open,
-  .list-table .meta-open{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--sky);text-align:right}
-  .gate-artifacts{display:flex;flex-wrap:wrap;gap:6px;align-items:flex-start}
-  .artifact-link{
-    display:inline-flex;align-items:center;gap:6px;padding:3px 7px;border:1px solid var(--rule);
-    font-size:9.5px;letter-spacing:0.08em;color:var(--navy-900);background:var(--navy-050)
-  }
-  .artifact-link:hover{border-color:var(--navy-700);color:var(--red)}
+      .gate-table .head,
+      .list-table .head {
+        display: grid;
+        padding: 7px 14px;
+        border-bottom: 1px solid var(--rule);
+        font-size: 9px;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        font-weight: 500;
+      }
+      .gate-table .head {
+        grid-template-columns: 42px 1.05fr 86px 1.35fr 1.3fr 62px;
+      }
+      .gate-table .row {
+        display: grid;
+        grid-template-columns: 42px 1.05fr 86px 1.35fr 1.3fr 62px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+        align-items: start;
+        gap: 10px;
+      }
+      .gate-table .row:last-child {
+        border-bottom: 0;
+      }
+      .gate-table .idx,
+      .list-table .idx {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+      }
+      .gate-table .name,
+      .list-table .title {
+        font-size: 12.5px;
+        color: var(--ink);
+        line-height: 1.28;
+      }
+      .gate-table .name em,
+      .list-table .title em {
+        font-style: normal;
+        color: var(--ink-3);
+        font-size: 10.5px;
+        display: block;
+        margin-top: 1px;
+        letter-spacing: 0.04em;
+      }
+      .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2px 8px;
+        border: 1px solid var(--rule);
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        width: max-content;
+      }
+      .status-complete-badge {
+        color: var(--green);
+        border-color: #c8dbce;
+        background: #eef6f0;
+      }
+      .status-running-badge {
+        color: var(--sky);
+        border-color: #c7d2e5;
+        background: var(--sky-soft);
+      }
+      .status-queued-badge {
+        color: var(--plum);
+        border-color: #d9c4d2;
+        background: var(--plum-soft);
+      }
+      .status-blocked-badge {
+        color: var(--red);
+        border-color: #e5c5c9;
+        background: var(--rose-soft);
+      }
+      .gate-table .summary,
+      .list-table .body {
+        font-size: 11.5px;
+        color: var(--ink-2);
+        line-height: 1.35;
+      }
+      .gate-table .open,
+      .list-table .meta-open {
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sky);
+        text-align: right;
+      }
+      .gate-artifacts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: flex-start;
+      }
+      .artifact-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 3px 7px;
+        border: 1px solid var(--rule);
+        font-size: 9.5px;
+        letter-spacing: 0.08em;
+        color: var(--navy-900);
+        background: var(--navy-050);
+      }
+      .artifact-link:hover {
+        border-color: var(--navy-700);
+        color: var(--red);
+      }
 
-  .agent-summary{
-    padding:11px 14px;border-bottom:1px solid var(--rule-soft);
-  }
-  .agent-summary:last-child{border-bottom:0}
-  .agent-summary .top{
-    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
-  }
-  .agent-summary .nm{font-family:var(--serif);font-size:14px;color:var(--ink)}
-  .agent-summary .state{font-family:var(--mono);font-size:10px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.12em}
-  .agent-summary .task{margin-top:5px;font-size:11.5px;color:var(--ink-2);line-height:1.35}
-  .agent-summary .tags{margin-top:7px;display:flex;gap:6px;flex-wrap:wrap}
-  .tag{
-    font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);
-    border:1px solid var(--rule);padding:1px 6px;background:var(--paper);
-  }
+      .agent-summary {
+        padding: 11px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+      }
+      .agent-summary:last-child {
+        border-bottom: 0;
+      }
+      .agent-summary .top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 10px;
+      }
+      .agent-summary .nm {
+        font-family: var(--serif);
+        font-size: 14px;
+        color: var(--ink);
+      }
+      .agent-summary .state {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        text-transform: uppercase;
+        letter-spacing: 0.12em;
+      }
+      .agent-summary .task {
+        margin-top: 5px;
+        font-size: 11.5px;
+        color: var(--ink-2);
+        line-height: 1.35;
+      }
+      .agent-summary .tags {
+        margin-top: 7px;
+        display: flex;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+      .tag {
+        font-size: 9.5px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+        border: 1px solid var(--rule);
+        padding: 1px 6px;
+        background: var(--paper);
+      }
 
-  .event-line{
-    display:grid;grid-template-columns:54px 74px 1fr;gap:10px;padding:8px 14px;border-bottom:1px solid var(--rule-soft);align-items:start;
-  }
-  .event-line:last-child{border-bottom:0}
-  .event-line .tm{font-family:var(--mono);font-size:10.5px;color:var(--sky);padding-top:1px}
-  .event-line .tp{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3)}
-  .event-line .cp{font-size:11.5px;color:var(--ink-2);line-height:1.35}
+      .event-line {
+        display: grid;
+        grid-template-columns: 54px 74px 1fr;
+        gap: 10px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+        align-items: start;
+      }
+      .event-line:last-child {
+        border-bottom: 0;
+      }
+      .event-line .tm {
+        font-family: var(--mono);
+        font-size: 10.5px;
+        color: var(--sky);
+        padding-top: 1px;
+      }
+      .event-line .tp {
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .event-line .cp {
+        font-size: 11.5px;
+        color: var(--ink-2);
+        line-height: 1.35;
+      }
 
-  .artifact-line,
-  .blocker-line{
-    display:grid;grid-template-columns:70px 1fr auto;gap:10px;padding:8px 14px;border-bottom:1px solid var(--rule-soft);align-items:start;
-  }
-  .artifact-line:last-child,
-  .blocker-line:last-child{border-bottom:0}
-  .artifact-line .kind,
-  .blocker-line .kind{font-family:var(--mono);font-size:10px;color:var(--ink-3);padding-top:2px}
-  .artifact-line .copy,
-  .blocker-line .copy{font-size:11.5px;color:var(--ink-2);line-height:1.35}
-  .artifact-line .copy b,
-  .blocker-line .copy b{display:block;color:var(--ink);font-weight:500}
-  .artifact-line .open,
-  .blocker-line .open{font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--sky)}
+      .artifact-line,
+      .blocker-line {
+        display: grid;
+        grid-template-columns: 70px 1fr auto;
+        gap: 10px;
+        padding: 8px 14px;
+        border-bottom: 1px solid var(--rule-soft);
+        align-items: start;
+      }
+      .artifact-line:last-child,
+      .blocker-line:last-child {
+        border-bottom: 0;
+      }
+      .artifact-line .kind,
+      .blocker-line .kind {
+        font-family: var(--mono);
+        font-size: 10px;
+        color: var(--ink-3);
+        padding-top: 2px;
+      }
+      .artifact-line .copy,
+      .blocker-line .copy {
+        font-size: 11.5px;
+        color: var(--ink-2);
+        line-height: 1.35;
+      }
+      .artifact-line .copy b,
+      .blocker-line .copy b {
+        display: block;
+        color: var(--ink);
+        font-weight: 500;
+      }
+      .artifact-line .open,
+      .blocker-line .open {
+        font-size: 9.5px;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        color: var(--sky);
+      }
 
-  .sidebar-note{padding:12px 14px}
-  .sidebar-note h3{font-family:var(--serif);font-size:14px;font-weight:500;color:var(--ink)}
-  .sidebar-note p{margin-top:8px;font-size:12px;color:var(--ink-2);line-height:1.5}
-  .sidebar-note ul{list-style:none;margin-top:12px;border-top:1px solid var(--rule)}
-  .sidebar-note li{padding:9px 0;border-bottom:1px solid var(--rule-soft);font-size:11.5px;color:var(--ink-2);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline}
-  .sidebar-note li b{font-family:var(--mono);font-size:11px;color:var(--rose);font-weight:500}
-  .sidebar-note li span{color:var(--ink-3);font-size:10.5px}
+      .sidebar-note {
+        padding: 12px 14px;
+      }
+      .sidebar-note h3 {
+        font-family: var(--serif);
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--ink);
+      }
+      .sidebar-note p {
+        margin-top: 8px;
+        font-size: 12px;
+        color: var(--ink-2);
+        line-height: 1.5;
+      }
+      .sidebar-note ul {
+        list-style: none;
+        margin-top: 12px;
+        border-top: 1px solid var(--rule);
+      }
+      .sidebar-note li {
+        padding: 9px 0;
+        border-bottom: 1px solid var(--rule-soft);
+        font-size: 11.5px;
+        color: var(--ink-2);
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        gap: 10px;
+        align-items: baseline;
+      }
+      .sidebar-note li b {
+        font-family: var(--mono);
+        font-size: 11px;
+        color: var(--rose);
+        font-weight: 500;
+      }
+      .sidebar-note li span {
+        color: var(--ink-3);
+        font-size: 10.5px;
+      }
 
-  .view{display:none}
-  .view.active{display:block}
+      .view {
+        display: none;
+      }
+      .view.active {
+        display: block;
+      }
 
-  .cinematic .grid-overview{grid-template-columns:1.25fr .95fr}
-  .cinematic .hero h1{max-width:27ch}
-  .executive .pulse-strip .v{font-size:20px}
-  .operator .panel-grid{border-color:rgba(169,200,255,0.18)}
-  .operator .gate-table .head,
-  .operator .list-table .head{letter-spacing:0.14em}
-  .operator .event-line,
-  .operator .artifact-line,
-  .operator .blocker-line,
-  .operator .gate-table .row{padding-top:7px;padding-bottom:7px}
+      .cinematic .grid-overview {
+        grid-template-columns: 1.25fr 0.95fr;
+      }
+      .cinematic .hero h1 {
+        max-width: 27ch;
+      }
+      .executive .pulse-strip .v {
+        font-size: 20px;
+      }
+      .operator .panel-grid {
+        border-color: rgba(169, 200, 255, 0.18);
+      }
+      .operator .gate-table .head,
+      .operator .list-table .head {
+        letter-spacing: 0.14em;
+      }
+      .operator .event-line,
+      .operator .artifact-line,
+      .operator .blocker-line,
+      .operator .gate-table .row {
+        padding-top: 7px;
+        padding-bottom: 7px;
+      }
 
-  @media (max-width:1100px){
-    .app{grid-template-columns:1fr}
-    .rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
-    .nav{display:none}
-    .hero{grid-template-columns:1fr}
-    .hero aside{border-left:0;padding-left:0;grid-template-columns:repeat(2,auto);text-align:left}
-    .grid-overview,.grid-live,.grid-proof,.pulse-strip{grid-template-columns:1fr}
-    .gate-table .head,.gate-table .row{grid-template-columns:32px 1.1fr 76px 1.3fr 1.2fr 58px}
-  }
-</style>
-</head>
-<body>
-<div class="app">
-  <aside class="rail">
-    <div class="brand">
-      <div class="mark">
-        <span class="c">Crux</span>
-        <span class="div"></span>
-        <span class="os">Mission Control</span>
-      </div>
-      <div class="tag">Pipeline, agents, artifacts, approvals</div>
-    </div>
-
-    <nav class="nav">
-      <h6>Views</h6>
-      <button class="mode-btn active" data-view="cinematic"><span class="dot"></span>Cinematic<span class="num">01</span></button>
-      <button class="mode-btn" data-view="executive"><span class="dot"></span>Executive<span class="num">02</span></button>
-      <button class="mode-btn" data-view="operator"><span class="dot"></span>Operator<span class="num">03</span></button>
-
-      <h6>Story</h6>
-      <button disabled><span class="dot"></span>Where are we?<span class="num">8</span></button>
-      <button disabled><span class="dot"></span>What is running?<span class="num">4</span></button>
-      <button disabled><span class="dot"></span>What was produced?<span class="num">18</span></button>
-      <button disabled><span class="dot"></span>What needs approval?<span class="num">2</span></button>
-    </nav>
-
-    <div class="who">
-      <div class="av">C</div>
-      <div class="meta">
-        <b>Crux Run</b>
-        <span>Live mock preview</span>
-      </div>
-    </div>
-  </aside>
-
-  <main id="appRoot" class="cinematic">
-    <div class="topbar">
-      <div class="crumb">Project <span style="color:var(--ink-3)">·</span> <b>Task Execution Run</b></div>
-      <div class="search">
-        <span style="color:var(--ink-3);font-size:12px">Ask</span>
-        <input placeholder="What is blocked right now?" />
-        <span class="k">⌘K</span>
-      </div>
-      <button class="iconbtn">Refresh</button>
-      <button class="iconbtn primary">Open trace</button>
-    </div>
-
-    <header class="hero">
-      <div>
-        <div class="eyebrow">
-          <span>Tuesday · 5 May 2026</span>
-          <span class="pill" id="heroCurrentGate">Gate 7 active</span>
-          <span class="pill" id="heroCompletion">72% complete</span>
-        </div>
-        <h1>
-          <span class="uline">Build is in progress</span><span class="ru">·</span>
-          review is active and <em>release check</em> is waiting on approval.
-        </h1>
-        <p class="sub" id="heroNarrative">
-          Crux has cleared the first six gates. The current run is in Build, with parallel
-          agent activity visible below. This screen is structured to answer four questions:
-          where the work is, what is running now, what has been produced, and what still
-          needs a human decision.
-        </p>
-      </div>
-      <aside>
-        <span>Last updated</span><b>14:52 IST</b>
-        <span>Current gate</span><b>Build</b>
-        <span>Active agents</span><b>4</b>
-        <span>Artifacts</span><b>18</b>
-      </aside>
-    </header>
-
-    <section class="sec acc-sky">
-      <div class="sec-h">
-        <span class="n">01</span>
-        <div><h2>Run summary <em>— current state</em></h2></div>
-        <span class="meta">Top-level status</span>
-      </div>
-
-      <div class="pulse-strip" id="summaryStrip"></div>
-    </section>
-
-    <section class="sec acc-mint">
-      <div class="sec-h">
-        <span class="n">02</span>
-        <div><h2>Pipeline status <em>— where the work is</em></h2></div>
-        <span class="meta"><b>8</b> gates</span>
-      </div>
-
-      <div class="panel-grid grid-overview">
-        <section class="gate-table">
-          <div class="head">
-            <span>#</span><span>Gate</span><span>Status</span><span>Meaning</span><span>Artifacts</span><span></span>
+      @media (max-width: 1100px) {
+        .app {
+          grid-template-columns: 1fr;
+        }
+        .rail {
+          position: relative;
+          height: auto;
+          border-right: 0;
+          border-bottom: 1px solid var(--rule);
+        }
+        .nav {
+          display: none;
+        }
+        .hero {
+          grid-template-columns: 1fr;
+        }
+        .hero aside {
+          border-left: 0;
+          padding-left: 0;
+          grid-template-columns: repeat(2, auto);
+          text-align: left;
+        }
+        .grid-overview,
+        .grid-live,
+        .grid-proof,
+        .pulse-strip {
+          grid-template-columns: 1fr;
+        }
+        .gate-table .head,
+        .gate-table .row {
+          grid-template-columns: 32px 1.1fr 76px 1.3fr 1.2fr 58px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="rail">
+        <div class="brand">
+          <div class="mark">
+            <span class="c">Crux</span>
+            <span class="div"></span>
+            <span class="os">Mission Control</span>
           </div>
-          <div id="gateRows"></div>
+          <div class="tag">Pipeline, agents, artifacts, approvals</div>
+        </div>
+
+        <nav class="nav">
+          <h6>Views</h6>
+          <button class="mode-btn active" data-view="cinematic">
+            <span class="dot"></span>Cinematic<span class="num">01</span>
+          </button>
+          <button class="mode-btn" data-view="executive">
+            <span class="dot"></span>Executive<span class="num">02</span>
+          </button>
+          <button class="mode-btn" data-view="operator">
+            <span class="dot"></span>Operator<span class="num">03</span>
+          </button>
+
+          <h6>Story</h6>
+          <button disabled><span class="dot"></span>Where are we?<span class="num">8</span></button>
+          <button disabled>
+            <span class="dot"></span>What is running?<span class="num">4</span>
+          </button>
+          <button disabled>
+            <span class="dot"></span>What was produced?<span class="num">18</span>
+          </button>
+          <button disabled>
+            <span class="dot"></span>What needs approval?<span class="num">2</span>
+          </button>
+        </nav>
+
+        <div class="who">
+          <div class="av">C</div>
+          <div class="meta">
+            <b>Crux Run</b>
+            <span>Live mock preview</span>
+          </div>
+        </div>
+      </aside>
+
+      <main id="appRoot" class="cinematic">
+        <div class="topbar">
+          <div class="crumb">
+            Project <span style="color: var(--ink-3)">·</span> <b>Task Execution Run</b>
+          </div>
+          <div class="search">
+            <span style="color: var(--ink-3); font-size: 12px">Ask</span>
+            <input placeholder="What is blocked right now?" />
+            <span class="k">⌘K</span>
+          </div>
+          <button class="iconbtn">Refresh</button>
+          <button class="iconbtn primary">Open trace</button>
+        </div>
+
+        <header class="hero">
+          <div>
+            <div class="eyebrow">
+              <span>Tuesday · 5 May 2026</span>
+              <span class="pill" id="heroCurrentGate">Gate 7 active</span>
+              <span class="pill" id="heroCompletion">72% complete</span>
+            </div>
+            <h1>
+              <span class="uline">Build is in progress</span><span class="ru">·</span> review is
+              active and <em>release check</em> is waiting on approval.
+            </h1>
+            <p class="sub" id="heroNarrative">
+              Crux has cleared the first six gates. The current run is in Build, with parallel agent
+              activity visible below. This screen is structured to answer four questions: where the
+              work is, what is running now, what has been produced, and what still needs a human
+              decision.
+            </p>
+          </div>
+          <aside>
+            <span>Last updated</span><b>14:52 IST</b> <span>Current gate</span><b>Build</b>
+            <span>Active agents</span><b>4</b> <span>Artifacts</span><b>18</b>
+          </aside>
+        </header>
+
+        <section class="sec acc-sky">
+          <div class="sec-h">
+            <span class="n">01</span>
+            <div>
+              <h2>Run summary <em>— current state</em></h2>
+            </div>
+            <span class="meta">Top-level status</span>
+          </div>
+
+          <div class="pulse-strip" id="summaryStrip"></div>
         </section>
 
-        <aside class="sidebar-note">
-          <h3>How to read this screen</h3>
-          <p>
-            The first panel answers the pipeline question. It shows the full 8-gate path,
-            the active gate, and what each stage means in plain language.
-          </p>
-          <ul>
-            <li><b>6</b><span>gates completed</span><strong></strong></li>
-            <li><b>1</b><span>gate running</span><strong></strong></li>
-            <li><b>1</b><span>gate queued</span><strong></strong></li>
-            <li><b>2</b><span>human checkpoints left</span><strong></strong></li>
-          </ul>
-        </aside>
-      </div>
-    </section>
+        <section class="sec acc-mint">
+          <div class="sec-h">
+            <span class="n">02</span>
+            <div>
+              <h2>Pipeline status <em>— where the work is</em></h2>
+            </div>
+            <span class="meta"><b>8</b> gates</span>
+          </div>
 
-    <section class="sec acc-rose">
-      <div class="sec-h">
-        <span class="n">03</span>
-        <div><h2>Live operations <em>— what is running now</em></h2></div>
-        <span class="meta"><b>4</b> active roles</span>
-      </div>
+          <div class="panel-grid grid-overview">
+            <section class="gate-table">
+              <div class="head">
+                <span>#</span><span>Gate</span><span>Status</span><span>Meaning</span
+                ><span>Artifacts</span><span></span>
+              </div>
+              <div id="gateRows"></div>
+            </section>
 
-      <div class="panel-grid grid-live">
-        <section class="stack" id="agentStack"></section>
-        <section class="stack" id="eventStack"></section>
-      </div>
-    </section>
+            <aside class="sidebar-note">
+              <h3>How to read this screen</h3>
+              <p>
+                The first panel answers the pipeline question. It shows the full 8-gate path, the
+                active gate, and what each stage means in plain language.
+              </p>
+              <ul>
+                <li><b>6</b><span>gates completed</span><strong></strong></li>
+                <li><b>1</b><span>gate running</span><strong></strong></li>
+                <li><b>1</b><span>gate queued</span><strong></strong></li>
+                <li><b>2</b><span>human checkpoints left</span><strong></strong></li>
+              </ul>
+            </aside>
+          </div>
+        </section>
 
-    <section class="sec acc-ochre">
-      <div class="sec-h">
-        <span class="n">04</span>
-        <div><h2>Artifacts and approvals <em>— what has been produced and what needs attention</em></h2></div>
-        <span class="meta"><b>18</b> artifacts · <b>2</b> approvals</span>
-      </div>
+        <section class="sec acc-rose">
+          <div class="sec-h">
+            <span class="n">03</span>
+            <div>
+              <h2>Live operations <em>— what is running now</em></h2>
+            </div>
+            <span class="meta"><b>4</b> active roles</span>
+          </div>
 
-      <div class="panel-grid grid-proof">
-        <section class="stack" id="artifactStack"></section>
-        <section class="stack" id="blockerStack"></section>
-      </div>
-    </section>
-  </main>
-</div>
+          <div class="panel-grid grid-live">
+            <section class="stack" id="agentStack"></section>
+            <section class="stack" id="eventStack"></section>
+          </div>
+        </section>
 
-<script>
-  const data = {
-    completion: 72,
-    currentGate: 7,
-    summary: [
-      { label: "Completed", value: "6", unit: "gates", detail: "Input through Design cleared", accent: "p-complete" },
-      { label: "Current gate", value: "7", unit: "Build", detail: "Implementation and review active", accent: "p-current" },
-      { label: "Agents live", value: "4", unit: "roles", detail: "Coder, reviewer, design-reviewer, trace monitoring", accent: "p-agents" },
-      { label: "Approvals", value: "2", unit: "pending", detail: "1 blocking review, 1 release check", accent: "p-approvals" }
-    ],
-    gates: [
-      { id: 1, name: "Input", status: "complete", summary: "Idea captured and tagged for the run.", artifacts: [
-        { label: "IDEA-001", href: "sdlc/input/IDEA-001.md" }
-      ]},
-      { id: 2, name: "PRD", status: "complete", summary: "Goals, scope, and constraints approved.", artifacts: [
-        { label: "PRD.md", href: "sdlc/prd/PRD.md" },
-        { label: "REQ-017", href: "sdlc/prd/REQ-CRUX-017.yaml" }
-      ]},
-      { id: 3, name: "Modules", status: "complete", summary: "System slices decomposed into buildable units.", artifacts: [
-        { label: "MOD-003", href: "sdlc/modules/MOD-CRUX-003.yaml" }
-      ]},
-      { id: 4, name: "Architecture", status: "complete", summary: "ADRs locked with critique and pre-mortem.", artifacts: [
-        { label: "ADR-007", href: "sdlc/adr/ADR-CRUX-007.yaml" },
-        { label: "Synthesis", href: "sdlc/architecture/synthesis.md" }
-      ]},
-      { id: 5, name: "Harness", status: "complete", summary: "Hooks and skills installed with collision checks.", artifacts: [
-        { label: "harness.lock", href: "sdlc/harness/harness.lock" }
-      ]},
-      { id: 6, name: "Design", status: "complete", summary: "Interaction and UI direction approved.", artifacts: [
-        { label: "Design spec", href: "superpowers/specs/2026-05-05-crux-mission-control-design.md" }
-      ]},
-      { id: 7, name: "Build", status: "running", summary: "Agents are writing, reviewing, and escalating.", artifacts: [
-        { label: "TEST_PLAN", href: "sdlc/tasks/TASK-CRUX-007/TEST_PLAN.yaml" },
-        { label: "REVIEW-2", href: "sdlc/tasks/TASK-CRUX-007/REVIEW-2.yaml" },
-        { label: "PR_DESC", href: "sdlc/tasks/TASK-CRUX-007/PR_DESCRIPTION.md" }
-      ]},
-      { id: 8, name: "Release Check", status: "queued", summary: "Readiness summary waits on build approval.", artifacts: [
-        { label: "REQ-024", href: "sdlc/prd/REQ-CRUX-024.yaml" }
-      ]}
-    ],
-    agents: [
-      {
-        name: "coder",
-        role: "implementation",
-        state: "running",
-        task: "Implementing task orchestration and trace output",
-        detail: "Touching only the planned files while keeping stack constraints intact.",
-        tags: ["build", "code", "running"]
-      },
-      {
-        name: "reviewer",
-        role: "independent review",
-        state: "running",
-        task: "Checking diff against REQ-CRUX-017 and REQ-CRUX-023",
-        detail: "Validates behavior, authority boundaries, and trace completeness.",
-        tags: ["build", "review", "running"]
-      },
-      {
-        name: "design-reviewer",
-        role: "ui conformance",
-        state: "running",
-        task: "Inspecting clarity of dashboard states and motion restraint",
-        detail: "Checks whether the UI explains progress without decorative overload.",
-        tags: ["design", "ui", "running"]
-      },
-      {
-        name: "test-writer",
-        role: "quality gate",
-        state: "complete",
-        task: "Locked failing contract for TASK-CRUX-016",
-        detail: "Encoded the expected build-pipeline behavior before implementation.",
-        tags: ["build", "tests", "complete"]
-      },
-      {
-        name: "architect",
-        role: "decision authority",
-        state: "complete",
-        task: "Ratified the orchestration and amendment model",
-        detail: "Produced ADR-backed constraints that downstream work must respect.",
-        tags: ["architecture", "adr", "complete"]
-      }
-    ],
-    events: [
-      { time: "14:51", type: "write", copy: "Coder updated command orchestration for /crux-task." },
-      { time: "14:51", type: "review", copy: "Reviewer reopened the build cycle to inspect trace-block completeness." },
-      { time: "14:49", type: "artifact", copy: "PR_DESCRIPTION template staged with REQ, ADR, and cost sections." },
-      { time: "14:48", type: "handoff", copy: "test-writer handed failing contract to coder without transcript sharing." },
-      { time: "14:46", type: "approval", copy: "Design gate approved the dashboard direction for mixed audiences." }
-    ],
-    artifacts: [
-      { kind: "REQ", title: "REQ-CRUX-017", detail: "Three isolated subagent invocations.", status: "satisfied" },
-      { kind: "ADR", title: "ADR-CRUX-007", detail: "DAG pipeline and role separation.", status: "accepted" },
-      { kind: "MOD", title: "MOD-CRUX-003", detail: "CLI orchestration and trace responsibilities.", status: "active" },
-      { kind: "TASK", title: "TASK-CRUX-016", detail: "Pipeline implementation in progress.", status: "running" },
-      { kind: "REVIEW", title: "REVIEW-2", detail: "Independent review cycle underway.", status: "pending" },
-      { kind: "PR", title: "PR_DESCRIPTION.md", detail: "Opens only after approvals land.", status: "queued" }
-    ],
-    blockers: [
-      {
-        kind: "Review",
-        title: "Human approval needed",
-        detail: "Reviewer found a trace-summary ambiguity. Human can accept the clarified phrasing or request a new pass.",
-        status: "blocked"
-      },
-      {
-        kind: "Release",
-        title: "Release check waiting",
-        detail: "Gate 8 remains queued until build reviewers approve and cost summary is finalized.",
-        status: "queued"
-      }
-    ]
-  };
+        <section class="sec acc-ochre">
+          <div class="sec-h">
+            <span class="n">04</span>
+            <div>
+              <h2>
+                Artifacts and approvals <em>— what has been produced and what needs attention</em>
+              </h2>
+            </div>
+            <span class="meta"><b>18</b> artifacts · <b>2</b> approvals</span>
+          </div>
 
-  const summaryStrip = document.getElementById("summaryStrip");
-  const gateRows = document.getElementById("gateRows");
-  const agentStack = document.getElementById("agentStack");
-  const eventStack = document.getElementById("eventStack");
-  const artifactStack = document.getElementById("artifactStack");
-  const blockerStack = document.getElementById("blockerStack");
-  const heroCurrentGate = document.getElementById("heroCurrentGate");
-  const heroCompletion = document.getElementById("heroCompletion");
-  const appRoot = document.getElementById("appRoot");
+          <div class="panel-grid grid-proof">
+            <section class="stack" id="artifactStack"></section>
+            <section class="stack" id="blockerStack"></section>
+          </div>
+        </section>
+      </main>
+    </div>
 
-  const escapeHtml = (text) =>
-    text
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
+    <script>
+      const data = {
+        completion: 72,
+        currentGate: 7,
+        summary: [
+          {
+            label: 'Completed',
+            value: '6',
+            unit: 'gates',
+            detail: 'Input through Design cleared',
+            accent: 'p-complete',
+          },
+          {
+            label: 'Current gate',
+            value: '7',
+            unit: 'Build',
+            detail: 'Implementation and review active',
+            accent: 'p-current',
+          },
+          {
+            label: 'Agents live',
+            value: '4',
+            unit: 'roles',
+            detail: 'Coder, reviewer, design-reviewer, trace monitoring',
+            accent: 'p-agents',
+          },
+          {
+            label: 'Approvals',
+            value: '2',
+            unit: 'pending',
+            detail: '1 blocking review, 1 release check',
+            accent: 'p-approvals',
+          },
+        ],
+        gates: [
+          {
+            id: 1,
+            name: 'Input',
+            status: 'complete',
+            summary: 'Idea captured and tagged for the run.',
+            artifacts: [{ label: 'IDEA-001', href: 'sdlc/input/IDEA-001.md' }],
+          },
+          {
+            id: 2,
+            name: 'PRD',
+            status: 'complete',
+            summary: 'Goals, scope, and constraints approved.',
+            artifacts: [
+              { label: 'PRD.md', href: 'sdlc/prd/PRD.md' },
+              { label: 'REQ-017', href: 'sdlc/prd/REQ-CRUX-017.yaml' },
+            ],
+          },
+          {
+            id: 3,
+            name: 'Modules',
+            status: 'complete',
+            summary: 'System slices decomposed into buildable units.',
+            artifacts: [{ label: 'MOD-003', href: 'sdlc/modules/MOD-CRUX-003.yaml' }],
+          },
+          {
+            id: 4,
+            name: 'Architecture',
+            status: 'complete',
+            summary: 'ADRs locked with critique and pre-mortem.',
+            artifacts: [
+              { label: 'ADR-007', href: 'sdlc/adr/ADR-CRUX-007.yaml' },
+              { label: 'Synthesis', href: 'sdlc/architecture/synthesis.md' },
+            ],
+          },
+          {
+            id: 5,
+            name: 'Harness',
+            status: 'complete',
+            summary: 'Hooks and skills installed with collision checks.',
+            artifacts: [{ label: 'harness.lock', href: 'sdlc/harness/harness.lock' }],
+          },
+          {
+            id: 6,
+            name: 'Design',
+            status: 'complete',
+            summary: 'Interaction and UI direction approved.',
+            artifacts: [
+              {
+                label: 'Design spec',
+                href: 'superpowers/specs/2026-05-05-crux-mission-control-design.md',
+              },
+            ],
+          },
+          {
+            id: 7,
+            name: 'Build',
+            status: 'running',
+            summary: 'Agents are writing, reviewing, and escalating.',
+            artifacts: [
+              { label: 'TEST_PLAN', href: 'sdlc/tasks/TASK-CRUX-007/TEST_PLAN.yaml' },
+              { label: 'REVIEW-2', href: 'sdlc/tasks/TASK-CRUX-007/REVIEW-2.yaml' },
+              { label: 'PR_DESC', href: 'sdlc/tasks/TASK-CRUX-007/PR_DESCRIPTION.md' },
+            ],
+          },
+          {
+            id: 8,
+            name: 'Release Check',
+            status: 'queued',
+            summary: 'Readiness summary waits on build approval.',
+            artifacts: [{ label: 'REQ-024', href: 'sdlc/prd/REQ-CRUX-024.yaml' }],
+          },
+        ],
+        agents: [
+          {
+            name: 'coder',
+            role: 'implementation',
+            state: 'running',
+            task: 'Implementing task orchestration and trace output',
+            detail: 'Touching only the planned files while keeping stack constraints intact.',
+            tags: ['build', 'code', 'running'],
+          },
+          {
+            name: 'reviewer',
+            role: 'independent review',
+            state: 'running',
+            task: 'Checking diff against REQ-CRUX-017 and REQ-CRUX-023',
+            detail: 'Validates behavior, authority boundaries, and trace completeness.',
+            tags: ['build', 'review', 'running'],
+          },
+          {
+            name: 'design-reviewer',
+            role: 'ui conformance',
+            state: 'running',
+            task: 'Inspecting clarity of dashboard states and motion restraint',
+            detail: 'Checks whether the UI explains progress without decorative overload.',
+            tags: ['design', 'ui', 'running'],
+          },
+          {
+            name: 'test-writer',
+            role: 'quality gate',
+            state: 'complete',
+            task: 'Locked failing contract for TASK-CRUX-016',
+            detail: 'Encoded the expected build-pipeline behavior before implementation.',
+            tags: ['build', 'tests', 'complete'],
+          },
+          {
+            name: 'architect',
+            role: 'decision authority',
+            state: 'complete',
+            task: 'Ratified the orchestration and amendment model',
+            detail: 'Produced ADR-backed constraints that downstream work must respect.',
+            tags: ['architecture', 'adr', 'complete'],
+          },
+        ],
+        events: [
+          {
+            time: '14:51',
+            type: 'write',
+            copy: 'Coder updated command orchestration for /crux-task.',
+          },
+          {
+            time: '14:51',
+            type: 'review',
+            copy: 'Reviewer reopened the build cycle to inspect trace-block completeness.',
+          },
+          {
+            time: '14:49',
+            type: 'artifact',
+            copy: 'PR_DESCRIPTION template staged with REQ, ADR, and cost sections.',
+          },
+          {
+            time: '14:48',
+            type: 'handoff',
+            copy: 'test-writer handed failing contract to coder without transcript sharing.',
+          },
+          {
+            time: '14:46',
+            type: 'approval',
+            copy: 'Design gate approved the dashboard direction for mixed audiences.',
+          },
+        ],
+        artifacts: [
+          {
+            kind: 'REQ',
+            title: 'REQ-CRUX-017',
+            detail: 'Three isolated subagent invocations.',
+            status: 'satisfied',
+          },
+          {
+            kind: 'ADR',
+            title: 'ADR-CRUX-007',
+            detail: 'DAG pipeline and role separation.',
+            status: 'accepted',
+          },
+          {
+            kind: 'MOD',
+            title: 'MOD-CRUX-003',
+            detail: 'CLI orchestration and trace responsibilities.',
+            status: 'active',
+          },
+          {
+            kind: 'TASK',
+            title: 'TASK-CRUX-016',
+            detail: 'Pipeline implementation in progress.',
+            status: 'running',
+          },
+          {
+            kind: 'REVIEW',
+            title: 'REVIEW-2',
+            detail: 'Independent review cycle underway.',
+            status: 'pending',
+          },
+          {
+            kind: 'PR',
+            title: 'PR_DESCRIPTION.md',
+            detail: 'Opens only after approvals land.',
+            status: 'queued',
+          },
+        ],
+        blockers: [
+          {
+            kind: 'Review',
+            title: 'Human approval needed',
+            detail:
+              'Reviewer found a trace-summary ambiguity. Human can accept the clarified phrasing or request a new pass.',
+            status: 'blocked',
+          },
+          {
+            kind: 'Release',
+            title: 'Release check waiting',
+            detail:
+              'Gate 8 remains queued until build reviewers approve and cost summary is finalized.',
+            status: 'queued',
+          },
+        ],
+      };
 
-  const statusClass = (status) => {
-    if (status === "complete" || status === "accepted" || status === "satisfied") return "status-complete-badge";
-    if (status === "running" || status === "active") return "status-running-badge";
-    if (status === "blocked" || status === "pending") return "status-blocked-badge";
-    return "status-queued-badge";
-  };
+      const summaryStrip = document.getElementById('summaryStrip');
+      const gateRows = document.getElementById('gateRows');
+      const agentStack = document.getElementById('agentStack');
+      const eventStack = document.getElementById('eventStack');
+      const artifactStack = document.getElementById('artifactStack');
+      const blockerStack = document.getElementById('blockerStack');
+      const heroCurrentGate = document.getElementById('heroCurrentGate');
+      const heroCompletion = document.getElementById('heroCompletion');
+      const appRoot = document.getElementById('appRoot');
 
-  function renderSummary() {
-    summaryStrip.innerHTML = data.summary
-      .map((item) => `
+      const escapeHtml = (text) =>
+        text.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;');
+
+      const statusClass = (status) => {
+        if (status === 'complete' || status === 'accepted' || status === 'satisfied')
+          return 'status-complete-badge';
+        if (status === 'running' || status === 'active') return 'status-running-badge';
+        if (status === 'blocked' || status === 'pending') return 'status-blocked-badge';
+        return 'status-queued-badge';
+      };
+
+      function renderSummary() {
+        summaryStrip.innerHTML = data.summary
+          .map(
+            (item) => `
         <div class="${item.accent}">
           <div class="lbl">${escapeHtml(item.label)}</div>
           <div class="v">${escapeHtml(item.value)} <span class="u">${escapeHtml(item.unit)}</span></div>
           <div class="d">${escapeHtml(item.detail)}</div>
         </div>
-      `)
-      .join("");
-  }
+      `,
+          )
+          .join('');
+      }
 
-  function renderGates() {
-    gateRows.innerHTML = data.gates
-      .map((gate) => `
+      function renderGates() {
+        gateRows.innerHTML = data.gates
+          .map(
+            (gate) => `
         <div class="row">
-          <span class="idx">${String(gate.id).padStart(2, "0")}</span>
+          <span class="idx">${String(gate.id).padStart(2, '0')}</span>
           <div class="name">${escapeHtml(gate.name)}<em>Gate ${gate.id}</em></div>
           <div><span class="status-badge ${statusClass(gate.status)}">${escapeHtml(gate.status)}</span></div>
           <div class="summary">${escapeHtml(gate.summary)}</div>
-          <div class="gate-artifacts">${gate.artifacts.map((artifact) => `<a class="artifact-link" href="${escapeHtml(artifact.href)}">${escapeHtml(artifact.label)}</a>`).join("")}</div>
-          <div class="open">${gate.id === data.currentGate ? "Current" : gate.status === "complete" ? "Done" : "Queued"}</div>
+          <div class="gate-artifacts">${gate.artifacts.map((artifact) => `<a class="artifact-link" href="${escapeHtml(artifact.href)}">${escapeHtml(artifact.label)}</a>`).join('')}</div>
+          <div class="open">${gate.id === data.currentGate ? 'Current' : gate.status === 'complete' ? 'Done' : 'Queued'}</div>
         </div>
-      `)
-      .join("");
-  }
+      `,
+          )
+          .join('');
+      }
 
-  function renderAgents(view) {
-    const base = view === "operator" ? data.agents : data.agents.slice(0, 4);
-    agentStack.innerHTML = base
-      .map((agent) => `
+      function renderAgents(view) {
+        const base = view === 'operator' ? data.agents : data.agents.slice(0, 4);
+        agentStack.innerHTML = base
+          .map(
+            (agent) => `
         <div class="agent-summary">
           <div class="top">
             <div class="nm">${escapeHtml(agent.name)}</div>
             <div class="state">${escapeHtml(agent.state)}</div>
           </div>
           <div class="task"><strong>${escapeHtml(agent.role)}</strong><br>${escapeHtml(agent.task)}<br><br>${escapeHtml(agent.detail)}</div>
-          <div class="tags">${agent.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("")}</div>
+          <div class="tags">${agent.tags.map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join('')}</div>
         </div>
-      `)
-      .join("");
-  }
+      `,
+          )
+          .join('');
+      }
 
-  function renderEvents(view) {
-    const list = view === "cinematic" ? data.events.slice(0, 4) : data.events;
-    eventStack.innerHTML = `
+      function renderEvents(view) {
+        const list = view === 'cinematic' ? data.events.slice(0, 4) : data.events;
+        eventStack.innerHTML = `
       <div class="list-table">
         <div class="head" style="grid-template-columns:54px 74px 1fr">
           <span>Time</span><span>Type</span><span>Event</span>
         </div>
-        ${list.map((event) => `
+        ${list
+          .map(
+            (event) => `
           <div class="event-line">
             <span class="tm">${escapeHtml(event.time)}</span>
             <span class="tp">${escapeHtml(event.type)}</span>
             <div class="cp">${escapeHtml(event.copy)}</div>
           </div>
-        `).join("")}
+        `,
+          )
+          .join('')}
       </div>
     `;
-  }
+      }
 
-  function renderArtifacts(view) {
-    const list = view === "executive" ? data.artifacts.slice(0, 4) : data.artifacts;
-    artifactStack.innerHTML = `
+      function renderArtifacts(view) {
+        const list = view === 'executive' ? data.artifacts.slice(0, 4) : data.artifacts;
+        artifactStack.innerHTML = `
       <div class="list-table">
         <div class="head" style="grid-template-columns:70px 1fr auto">
           <span>Type</span><span>Artifact</span><span></span>
         </div>
-        ${list.map((artifact) => `
+        ${list
+          .map(
+            (artifact) => `
           <div class="artifact-line">
             <span class="kind">${escapeHtml(artifact.kind)}</span>
             <div class="copy"><b>${escapeHtml(artifact.title)}</b>${escapeHtml(artifact.detail)}</div>
             <span class="status-badge ${statusClass(artifact.status)}">${escapeHtml(artifact.status)}</span>
           </div>
-        `).join("")}
+        `,
+          )
+          .join('')}
       </div>
     `;
-  }
+      }
 
-  function renderBlockers() {
-    blockerStack.innerHTML = `
+      function renderBlockers() {
+        blockerStack.innerHTML = `
       <div class="list-table">
         <div class="head" style="grid-template-columns:70px 1fr auto">
           <span>Kind</span><span>Attention needed</span><span></span>
         </div>
-        ${data.blockers.map((item) => `
+        ${data.blockers
+          .map(
+            (item) => `
           <div class="blocker-line">
             <span class="kind">${escapeHtml(item.kind)}</span>
             <div class="copy"><b>${escapeHtml(item.title)}</b>${escapeHtml(item.detail)}</div>
             <span class="status-badge ${statusClass(item.status)}">${escapeHtml(item.status)}</span>
           </div>
-        `).join("")}
+        `,
+          )
+          .join('')}
       </div>
     `;
-  }
+      }
 
-  function setMode(mode) {
-    appRoot.className = mode;
-    document.querySelectorAll(".mode-btn").forEach((btn) => {
-      btn.classList.toggle("active", btn.dataset.view === mode);
-    });
+      function setMode(mode) {
+        appRoot.className = mode;
+        document.querySelectorAll('.mode-btn').forEach((btn) => {
+          btn.classList.toggle('active', btn.dataset.view === mode);
+        });
 
-    renderAgents(mode);
-    renderEvents(mode);
-    renderArtifacts(mode);
-  }
+        renderAgents(mode);
+        renderEvents(mode);
+        renderArtifacts(mode);
+      }
 
-  document.querySelectorAll(".mode-btn").forEach((btn) => {
-    btn.addEventListener("click", () => setMode(btn.dataset.view));
-  });
+      document.querySelectorAll('.mode-btn').forEach((btn) => {
+        btn.addEventListener('click', () => setMode(btn.dataset.view));
+      });
 
-  heroCurrentGate.textContent = `Gate ${data.currentGate} active`;
-  heroCompletion.textContent = `${data.completion}% complete`;
-  renderSummary();
-  renderGates();
-  renderBlockers();
-  setMode("cinematic");
-</script>
-</body>
+      heroCurrentGate.textContent = `Gate ${data.currentGate} active`;
+      heroCompletion.textContent = `${data.completion}% complete`;
+      renderSummary();
+      renderGates();
+      renderBlockers();
+      setMode('cinematic');
+    </script>
+  </body>
 </html>

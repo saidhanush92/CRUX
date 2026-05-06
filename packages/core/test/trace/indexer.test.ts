@@ -26,14 +26,13 @@
  *   - All tests are async.
  */
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import * as fsp from 'node:fs/promises';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as os from 'node:os';
 
-// The modules under test — neither exists yet; imports will fail RED.
-import type { Indexer } from '../../src/trace/indexer.js';
+// The modules under test
 import { createIndexer } from '../../src/trace/indexer.js';
 import { openCache } from '../../src/trace/cache.js';
 
