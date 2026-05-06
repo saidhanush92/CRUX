@@ -1,0 +1,155 @@
+task: TASK-CRUX-003
+reviewer: reviewer
+verdict: request_changes
+cycle_number: 1
+escalation_target: null
+
+gates:
+  tsc_noEmit: pass
+  eslint: pass
+  vitest_run: pass
+  prettier_check: fail
+  prettier_failing_files:
+    - packages/core/test/trace/cache.test.ts
+    - packages/core/test/trace/indexer.test.ts
+    - packages/core/test/architecture/adapter-second-spec.test.ts  # pre-existing
+    - packages/core/test/deferred-packages/stubs.test.ts           # pre-existing
+
+concerns:
+  - severity: high
+    location: packages/core/src/trace/indexer.ts:214-215
+    finding: |
+      onPassComplete is called synchronously without awaiting its result.
+      The field is typed () => void | Promise<void>, meaning callers can supply
+      an async callback. The current call `this.onPassComplete()` discards the
+      returned Promise. Any async work inside the hook races with the next
+      processQueue() invocation. The debounce test (Section 7 of indexer.test.ts)
+      passes today only because its callback is synchronous.
+    suggests: |
+      Change the call to `await this.onPassComplete()` inside executePass, which
+      is already async. No other call sites are affected.
+
+  - severity: high
+    location: packages/core/test/trace/cache.test.ts (missing test)
+    finding: |
+      TEST_PLAN.yaml line 9 specifies a required unit test:
+        "flush cleans up the temp file when rename fails (atomicity guard)"
+      No such test exists in cache.test.ts. Section 7 covers only the happy path
+      (temp file absent on success). The atomicWriteBytes implementation does
+      handle rename failure correctly (cache.ts:73-80), but this code path is
+      completely untested. A regression would silently leave orphaned .tmp.* files.
+    suggests: |
+      Add a test that stubs fs.renameSync to throw and asserts:
+      (a) the temp file is removed from the directory, and
+      (b) the original error is re-thrown.
+
+  - severity: medium
+    location: packages/core/src/trace/indexer.ts:134-136
+    finding: |
+      Silent swallow in processQueue: `.catch(() => { })` discards all errors
+      thrown by executePass, including scan-level crashes and unhandled rejections
+      from onPassStart. No logging, no callback, no observable signal. ADR-CRUX-002
+      does not mandate error suppression here.
+    suggests: |
+      At minimum emit to stderr before suppressing. Ideally add an onPassError
+      callback to IndexerOptions so callers can route errors to their log sink.
+
+  - severity: medium
+    location: packages/core/src/trace/cache.ts:27-37
+    finding: |
+      normaliseFilePath in cache.ts is a verbatim copy of the same function in
+      markdown.ts (which delegates to stripDoubledDrivePrefix). Any future fix
+      must be applied in two places. The coder acknowledged this duplication.
+    suggests: |
+      Extract stripDoubledDrivePrefix to packages/core/src/trace/path-utils.ts
+      and import it from both cache.ts and markdown.ts.
+
+  - severity: medium
+    location: packages/core/src/trace/indexer.ts:219-254
+    finding: |
+      readArtifact performs an inline upsert (upsertArtifact + upsertEdges) on
+      hash mismatch but does NOT call cache.flush(). The correction lives only in
+      the in-memory sql.js database. If the process terminates before the next
+      scheduled pass, the correction is lost and the stale row reappears on next
+      openCache. ADR-CRUX-002 says reads ALWAYS return current state, but the
+      durability guarantee is not met.
+    suggests: |
+      After the inline upsert call `await this.cache.flush()` to persist
+      immediately (bounded to less than 1ms per ADR-CRUX-002 benchmarks),
+      OR document and test that the correction is intentionally ephemeral and
+      survives only until process restart.
+
+  - severity: medium
+    location: packages/core/test/trace/cache.test.ts and indexer.test.ts
+    finding: |
+      Prettier reports formatting issues in both new test files. The project
+      prettier gate runs in CI (pnpm prettier --check packages/core/) and will
+      fail on first push.
+    suggests: |
+      Run pnpm prettier --write packages/core/test/trace/ before closing the task.
+
+  - severity: low
+    location: packages/core/src/trace/indexer.ts:97-109
+    finding: |
+      scheduleItem comment says "pending (not-yet-started) item" but
+      queue.length > 0 is also true while item-0 is actively in-flight.
+      The distinction matters for understanding the FIFO coalescing semantics
+      and could mislead a future maintainer.
+    suggests: |
+      Clarify comment: "If there is already an item in the queue (running or
+      waiting), piggy-back this notification so it fires when that item settles.
+      Callers that need a subsequent scan must call enqueuePass() explicitly."
+
+  - severity: low
+    location: packages/core/src/trace/indexer.ts:209-211
+    finding: |
+      flush() I/O failures are silently swallowed alongside CacheClosedError.
+      A disk-full or permissions error leaves the pass with no observable signal.
+    suggests: |
+      Distinguish CacheClosedError (expected, silent) from other errors (log
+      to stderr or surface via onPassError). Address together with the medium
+      silent-swallow concern above.
+
+fifo_coalescing_assessment: |
+  ADR-CRUX-002 guarantee: "If a write arrives while a pass is running, a
+  follow-up pass is enqueued to run after the current pass commits."
+
+  Actual behaviour: when a write arrives during pass-1, enqueuePass() fires,
+  the debounce collapses all concurrent callers, scheduleItem() is called,
+  and because queue.length > 0 (item-0 is in-flight), the new resolver
+  piggy-backs onto item-0's resolve slot. No new queue item is added. After
+  item-0 finishes, both resolvers fire but the queue is empty — no follow-up
+  pass runs automatically.
+
+  A true follow-up only runs if the caller explicitly calls enqueuePass() a
+  second time (as the follow-up-pass test does via `void indexer.enqueuePass()`
+  inside onPassStart). The test passes today because the second fixture file
+  is written inside onPassStart BEFORE pass-1 scans, so pass-1 picks it up
+  directly. The test does not verify that a second scan executes after pass-1
+  commits.
+
+  Consequence: a write that arrives AFTER scheduleItem coalesces but whose
+  file lands on disk BEFORE pass-1's scanArtifacts call will be indexed by
+  pass-1. A write whose file lands AFTER pass-1's scanArtifacts call and
+  BEFORE flush will be missed, and no automatic follow-up is scheduled.
+  This is a latent gap between the ADR text and the implementation.
+
+  This gap is NOT currently raising a high-severity finding because (a) the
+  read-time sha256 check in readArtifact catches stale rows inline, and (b)
+  the PM-CRUX-001 test uses real debounce (10ms) which, combined with
+  sleep(300), gives the indexer enough time that all writes precede the scan.
+  But the ADR-002 "follow-up pass" contract is not implemented as described.
+  The medium concern on readArtifact persistence gap is related.
+
+schema_path_resolution_assessment: |
+  At compiled runtime (outDir = packages/core/dist):
+    import.meta.url -> .../dist/trace/cache.js
+    path.dirname    -> .../dist/trace/
+    ../../schema/v1.sql -> .../schema/v1.sql (correct, file exists in source)
+
+  Risk: when @crux/core is installed as an npm dependency, the path resolves to
+  node_modules/@crux/core/schema/v1.sql. This is correct ONLY if schema/ is
+  listed in the package.json "files" array. If omitted, SCHEMA_SQL throws ENOENT
+  at module load time (before any test or call site reaches openCache).
+  packages/core/package.json should be checked and schema/ added to "files" if
+  absent. This was not verified in the diff but is a deployment risk.

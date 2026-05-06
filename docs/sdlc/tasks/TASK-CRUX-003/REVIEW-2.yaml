@@ -1,0 +1,85 @@
+task: TASK-CRUX-003
+reviewer: reviewer
+verdict: approve
+cycle_number: 2
+escalation_target: null
+
+gates:
+  tsc_noEmit: pass
+  eslint: pass
+  vitest_run: pass
+  prettier_check: pass
+
+concerns: []
+
+adr_002_follow_up_assessment: |
+  The cycle-1 HIGH-3 finding (FIFO gap) is correctly resolved.
+
+  Walk-through of the new isPostScan phase tracker:
+
+  Phase A (pre-scan): isProcessing=true, isPostScan=false.
+    enqueuePass() -> scheduleItem() hits the !isPostScan branch -> resolver
+    attached to the in-flight item's resolve chain, no new queue entry.
+    Writes arriving here are captured by the upcoming scanArtifacts call.
+
+  isPostScan = true is set immediately after onPassStart() returns, before
+  scanArtifacts(). This is the correct sentinel point.
+
+  Phase B (post-scan): isPostScan=true.
+    enqueuePass() -> scheduleItem() hits the post-scan branch.
+    If queue.length < 2, a new WorkItem is pushed as queue[1] (the follow-up).
+    If queue.length >= 2, the caller's resolver is coalesced onto the existing
+    follow-up item. Bounded depth at 2 slots: compliant with the design.
+
+  After in-flight pass settles: queue.shift(), isProcessing=false, isPostScan=false,
+  resolveNotify() fires, then processQueue() runs queue[0] (the follow-up).
+
+  The Section 8b test (indexer.test.ts) exercises the critical path: onAfterScan
+  fires after scanArtifacts() has run (isPostScan=true at that point), calls
+  enqueuePass(), which correctly creates queue[1]. REQ-SCAN-B is absent from
+  pass-1's scan, then picked up by the follow-up pass. The test passes deterministically
+  because onAfterScan is injected at the exact post-scan hook point.
+
+  ADR-CRUX-002 contract ("If a write arrives while a pass is running, a follow-up
+  pass is enqueued to run after the current pass commits") is now correctly
+  implemented for writes arriving after the scan phase. Writes arriving during
+  onPassStart (pre-scan) are still folded into the current pass — a valid and
+  documented optimization consistent with the ADR's intent.
+
+  Residual note (not blocking): onAfterScan is marked @internal in JSDoc but
+  is part of the exported IndexerOptions interface and re-exported from index.ts.
+  It is therefore part of the public API surface. This is a deliberate test-seam
+  design choice and acceptable for v1 given the annotation, but a future cleanup
+  could hide it behind a separate internal factory overload.
+
+cycle_1_resolutions_verified:
+  HIGH-1_await_onPassComplete: |
+    indexer.ts:288-289 — `if (this.onPassComplete) { await this.onPassComplete(); }`.
+    Confirmed awaited. Resolved.
+  HIGH-2_atomic_write_cleanup_test: |
+    cache.test.ts:480-503 — standalone `it` block (outside any describe) at top level.
+    Test opens cache, upserts artifact, blocks rename target with a directory,
+    asserts flush() rejects AND no .tmp.* file remains. Exercises both assertions
+    from TEST_PLAN.yaml. Resolved.
+  HIGH-3_fifo_gap: |
+    Resolved. See adr_002_follow_up_assessment above.
+  MEDIUM-1_silent_swallow: |
+    indexer.ts:186-191 — onPassError callback surface added to IndexerOptions and
+    implemented in processQueue. Flush errors (non-CacheClosedError) also routed to
+    onPassError or console.error at indexer.ts:275-286. Resolved.
+  MEDIUM-2_path_utils_extraction: |
+    path-utils.ts created. Both cache.ts:16 and markdown.ts:14 import
+    stripDoubledDrivePrefix from './path-utils.js'. Resolved.
+  MEDIUM-3_readArtifact_flush: |
+    indexer.ts:329 — `await this.cache.flush()` present after inline upsert.
+    Resolved.
+  MEDIUM-4_prettier: |
+    pnpm prettier --check passes clean across all packages/core/. Resolved.
+  LOW-1_comment: |
+    scheduleItem JSDoc at indexer.ts:107-119 now accurately describes all three
+    scheduling branches (no item, pre-scan in-flight, post-scan in-flight). Resolved.
+  LOW-2_CacheClosedError_distinction: |
+    indexer.ts:275-286 — CacheClosedError caught silently; other errors surfaced
+    via onPassError or console.error. Resolved.
+  schema_files_array: |
+    packages/core/package.json — "files": ["dist", "schema"] present. Resolved.

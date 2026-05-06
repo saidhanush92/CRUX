@@ -1,0 +1,69 @@
+task: TASK-CRUX-006
+test_layers:
+  unit:
+    - covers: loadRegistry returns Registry with version and namespaces from synthetic YAML
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: loadRegistry throws RegistryNotFoundError when registry.v1.yaml is absent
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: loadRegistry throws with file path in message on malformed YAML
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: loadRegistry throws on duplicate capability id within one namespace
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: loadRegistry succeeds without local namespace when local.yaml is absent
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: loadRegistry adds local namespace when local.yaml is present
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: hasCapability returns true for existing capability id
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: hasCapability returns false for unknown capability id
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: hasCapability returns false for id without dot separator
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: validateSkillCapabilities returns valid true when all declared caps exist
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: validateSkillCapabilities returns valid false and populates missing list
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: validateSkillCapabilities handles empty and undefined provides_capabilities
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: listGoverningGate returns capability ids for matching gate number
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: listGoverningGate returns empty array for gate with no matches
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: emitIncident returns INC-prefixed id and writes yaml to docs/sdlc/incidents/
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitIncident allocates INC-001 on first call then INC-002 on second (monotonic)
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitChange returns CHG-prefixed id and writes yaml to docs/sdlc/chg/
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitChange allocates sequential ids when called twice
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitAmendment returns AMD-prefixed id and writes yaml to docs/sdlc/amendments/
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitAmendment does NOT modify SKILL.md byte content (ADR-CRUX-005)
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: emitAmendment writes artifact outside .claude/skills/ directory
+      file: packages/core/test/incidents/cascade.test.ts
+  integration:
+    - covers: loadRegistry against real capabilities/registry.v1.yaml loads testing.tdd-loop and quality.coverage-floor
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: validateSkillCapabilities validates real tdd-workflow frontmatter against real registry
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: listGoverningGate against real registry returns expected capability ids for gate 7
+      file: packages/core/test/capabilities/registry.test.ts
+    - covers: runCascade produces INC + at least one CHG + at least one AMD when target_skill matches (REQ-CRUX-010 AC#1)
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: runCascade completes synchronously with no daemon; files readable immediately after return (REQ-CRUX-010 AC#2)
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: runCascade does not return a Promise
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: cascade artifact linkage — INC references violated REQ; CHG references INC or violated REQ; AMD references target_skill
+      file: packages/core/test/incidents/cascade.test.ts
+    - covers: runCascade does not mutate SKILL.md bytes across a full cascade (ADR-CRUX-005)
+      file: packages/core/test/incidents/cascade.test.ts
+  e2e: []
+coverage_target: 80
+out_of_scope:
+  - resolveAmendmentsForSkill runtime merge (owned by MOD-CRUX-001 orchestrator, separate task)
+  - /crux-incident CLI prompt UI (integration tested via SDLC workflow, not unit tested here)
+  - performance benchmarks for registry load time
+  - cross-platform path normalisation edge cases (covered by TASK-CRUX-002 markdown tests)

@@ -1,0 +1,47 @@
+task: TASK-CRUX-004
+test_layers:
+  unit:
+    - covers: resolveAmendmentsForSkill returns SKILL.md body verbatim when no amendments target the skill
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill appends Active amendments section when at least one AMD matches
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill formats each amendment line with id, severity, applies_when, and rule
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill prefixes severity-high amendments with BLOCKING
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill lists multiple matching amendments in lexicographic order by id
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill excludes AMD files whose target_skill does not match
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill skips AMD files missing target_skill rule or severity and logs console.error
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill never writes to SKILL.md — byte content unchanged after call
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill throws SkillNotFoundError with skill name when SKILL.md is absent
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: resolveAmendmentsForSkill returns SKILL.md body unchanged when amendments directory is missing
+      file: packages/core/test/amendments/resolve.test.ts
+    - covers: detectCycles returns hasCycle false for an empty module list
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles returns hasCycle false for a linear chain with no cycle
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles returns hasCycle true with cycle array for a simple two-node cycle
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles returns hasCycle true with cycle array for a three-node cycle
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles detects a self-loop as a cycle
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles detects multiple disjoint cycles and reports all of them
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles reports edges to non-existent modules as unknownTargets not cycles
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles never mutates the input modules array
+      file: packages/core/test/graph/cycle.test.ts
+    - covers: detectCycles produces deterministic output with sorted cycle starts
+      file: packages/core/test/graph/cycle.test.ts
+coverage_target: 80
+out_of_scope:
+  - performance benchmarks for amendment scanning at large scale
+  - cross-platform path handling beyond what is tested in TASK-CRUX-002
+  - SQLite cache invalidation (covered by TASK-CRUX-003)
+  - /crux-modules CLI exit-code integration (slash-command surface is out of core)

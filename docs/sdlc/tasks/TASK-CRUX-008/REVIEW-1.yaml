@@ -1,0 +1,144 @@
+task: TASK-CRUX-008
+reviewer: reviewer
+verdict: request_changes
+cycle_number: 1
+escalation_target: null
+
+gates:
+  vitest: PASS - 551 tests, 18 test files, 0 failures
+  tsc_noEmit: PASS - clean, 0 errors
+  eslint: PASS - 0 warnings, 0 errors
+  prettier: PASS - all files conform
+
+subagent_isolation_proof: |
+  spawn_subagent writes one file per invocation at
+  <rootDir>/.crux/subagents/<handleId>.request.json.
+  The payload contains only sessionId, agentName, prompt, isolated, ts.
+  No module-level accumulator collects prior prompts. No field references
+  another handles data.
+  The tests at subagents.test.ts:189-232 directly assert that req2 does
+  not contain secretPrompt from h1 and req1 does not contain secretPrompt
+  from h2. Both pass. ADR-CRUX-004 isolation contract is met.
+
+polling_loop_analysis: |
+  await_subagent uses a while-loop with await new Promise via setTimeout.
+  SUCCESS: while-condition short-circuits, returns normally, no leak.
+  TIMEOUT: SubagentTimeoutError thrown after deadline. Final setTimeout
+  was awaited before the condition check, so no orphan timers.
+  ERROR: if existsSync throws, exception propagates; any outstanding
+  setTimeout resolves a void Promise held by nothing -- no-op.
+  Conclusion: no timer leaks on any exit path.
+
+concerns:
+
+  - id: C1
+    severity: high
+    location: >
+      packages/adapter-claude-code/src/subagents.ts,
+      packages/adapter-claude-code/src/skills.ts,
+      packages/adapter-claude-code/src/hooks.ts
+    finding: |
+      All 7 implemented functions have signatures incompatible with
+      AdapterSignatures in packages/core/src/adapter/interface.ts.
+      Key divergences (adapter vs interface):
+        spawn_subagent:  (rootDir, SpawnSubagentOptions) vs (options?: SpawnOptions)
+        await_subagent:  (rootDir, handle, AwaitSubagentOptions) vs (handle)
+        install_skill:   (rootDir, InstallSkillOptions)->InstallSkillResult vs (id)->void
+        uninstall_skill: (rootDir, UninstallSkillOptions) vs (id: SkillId)
+        list_skills:     (rootDir, sessionId)->SkillDescriptorLocal[] vs ()->SkillDescriptor[]
+        install_hook:    (rootDir, InstallHookOptions) vs (spec: HookSpec)
+        list_hooks:      (rootDir, sessionId)->HookSpec[] vs ()->HookDescriptor[]
+      None are assignable to RuntimeAdapter. The adapter never declares
+      satisfies RuntimeAdapter so TypeScript does not flag the divergence.
+      Manifest-conformance tests check export names only, not signatures.
+      REQ-CRUX-006 AC and ADR-CRUX-003 require implementing the interface.
+      Without a type-level guard or explicit ADR amendment documenting the
+      extended-signature design decision, REQ-CRUX-006 is unverifiable.
+    suggests: |
+      Create a factory:
+        export function createClaudeCodeAdapter(rootDir: string): RuntimeAdapter
+      that calls the existing helpers internally and uses the satisfies
+      keyword on the returned object literal. This gives permanent
+      compile-time safety with zero runtime cost. Alternatively, open
+      an ADR amendment before v1.0 if extended signatures are intentional.
+
+  - id: C2
+    severity: high
+    location: >
+      packages/adapter-claude-code/src/skills.ts:51-55,
+      packages/core/src/adapter/types.ts:47-51
+    finding: |
+      SkillDescriptorLocal uses field name skillId; canonical SkillDescriptor
+      uses id. SkillDescriptorLocal lacks the required version field.
+      Any consumer typed against RuntimeAdapter.list_skills() will see
+      id and version as missing. This is a data-contract violation independent
+      of the signature mismatch in C1.
+    suggests: |
+      Make version optional in types.ts (readonly version?: string) and
+      rename skillId to id in SkillDescriptorLocal. Alternatively, return
+      a SkillDescriptor directly with version set to a sentinel.
+
+  - id: C3
+    severity: high
+    location: packages/adapter-claude-code/src/hooks.ts:52-53
+    finding: |
+      JSON.parse(raw) in readSettings is unguarded. If settings.json
+      contains invalid JSON (truncated by a prior crash), JSON.parse throws
+      a SyntaxError with no reference to the file path. Caller receives a
+      raw SyntaxError that is impossible to diagnose without a stack trace.
+      Silent-failure-hunter rule: errors must include actionable context.
+    suggests: |
+      Wrap in try/catch:
+        try { return JSON.parse(raw) as SettingsFile; }
+        catch (cause) {
+          throw new Error('Malformed JSON in ' + filePath + ': ' + String(cause), { cause });
+        }
+
+  - id: C4
+    severity: medium
+    location: packages/adapter-claude-code/src/hooks.ts:61
+    finding: |
+      Temp file is written to os.tmpdir(); destination is inside rootDir.
+      On Windows when TEMP is on a different drive than rootDir,
+      fsPromises.rename() throws EXDEV. No fallback, no error context.
+      The test suite does not exercise this because TEMP and rootDir
+      share the same drive (C:) in the test environment.
+    suggests: |
+      Write the temp file into path.dirname(filePath) rather than
+      os.tmpdir(). Matches the atomic-write pattern in
+      packages/core/src/cost/ledger.ts and guarantees same-filesystem rename.
+
+  - id: C5
+    severity: medium
+    location: packages/adapter-claude-code/src/skills.ts:102
+    finding: |
+      uninstall_skill is declared async but calls fs.rmSync (blocking sync)
+      inside the async body. Blocks the event loop and is inconsistent
+      with the rest of the module which uses fsPromises throughout.
+    suggests: |
+      Replace with: await fsPromises.rm(dir, { recursive: true, force: true })
+
+  - id: C6
+    severity: medium
+    location: >
+      packages/adapter-claude-code/test/subagents.test.ts:85-87,
+      packages/adapter-claude-code/test/skills.test.ts:87-89,
+      packages/adapter-claude-code/test/hooks.test.ts:72-74
+    finding: |
+      All three test files call session_start in beforeEach but never call
+      session_end in afterEach. The module-level sessions Map in lifecycle.ts
+      accumulates entries for the lifetime of the test process, making it
+      a shared mutable side-channel across test files.
+    suggests: |
+      Add to each afterEach: await session_end(sessionId).catch(() => {})
+
+  - id: C7
+    severity: low
+    location: packages/adapter-claude-code/src/subagents.ts:109
+    finding: |
+      await_subagent calls fs.existsSync (synchronous) on every poll tick.
+      Inconsistent with the rest of the module. Negligible at 10ms default
+      but fragile at lower pollMs values.
+    suggests: |
+      Use fsPromises.access(responsePath).then(() => true, () => false).
+      Low priority for v1.0.

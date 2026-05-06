@@ -1,0 +1,23 @@
+{
+  "name": "@crux/adapter-claude-code",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": "./src/index.ts",
+    "./lifecycle": "./src/lifecycle.ts",
+    "./subagents": "./src/subagents.ts",
+    "./skills": "./src/skills.ts",
+    "./hooks": "./src/hooks.ts"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@crux/core": "workspace:*"
+  }
+}

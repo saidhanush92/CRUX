@@ -11,6 +11,7 @@ import * as fs from 'node:fs';
 import * as path from 'node:path';
 import * as crypto from 'node:crypto';
 import type { Artifact, ArtifactKind, TraceEdge, TraceGraph } from './types.js';
+import { stripDoubledDrivePrefix } from './path-utils.js';
 
 // ---------------------------------------------------------------------------
 // Internal: minimal YAML parser
@@ -248,23 +249,6 @@ export function parseYaml(text: string): Record<string, unknown> {
 // On Windows, path.resolve(new URL(import.meta.url).pathname, ...) can produce
 // doubled-drive paths like "C:\C:\Dev\CRUX\...". Normalise those before any
 // filesystem access.
-
-/**
- * Strip a doubled Windows drive prefix if the path does not exist as-is.
- * Detects pattern X:\X:\... and returns the inner X:\... portion.
- * Single source of truth shared by normaliseFilePath and normaliseRepoRoot.
- */
-function stripDoubledDrivePrefix(p: string): string {
-  const sep = path.sep;
-  const firstSepIdx = p.indexOf(sep);
-  if (firstSepIdx > 0) {
-    const afterFirstSep = p.slice(firstSepIdx + 1);
-    if (/^[A-Za-z]:/.test(afterFirstSep) && !fs.existsSync(p)) {
-      return afterFirstSep;
-    }
-  }
-  return p;
-}
 
 function normaliseFilePath(filePath: string): string {
   return stripDoubledDrivePrefix(filePath);

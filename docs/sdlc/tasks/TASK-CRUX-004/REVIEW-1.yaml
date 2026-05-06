@@ -1,0 +1,33 @@
+task: TASK-CRUX-004
+reviewer: reviewer
+verdict: approve
+concerns:
+  - severity: medium
+    location: packages/core/src/graph/cycle.ts:99-133
+    finding: |
+      `pathSet` (a `Set<string>`) is allocated and propagated on every DFS stack
+      frame but is never read. The cycle-detection path uses `frame.path.indexOf()`
+      exclusively. The dead field costs one `new Set(...)` allocation per frame push
+      and misleads future maintainers into thinking membership-check optimisation is
+      already in place.
+    suggests: |
+      Remove `pathSet` from the `Frame` type and all three sites that construct it.
+      If O(n) `indexOf` becomes a bottleneck at scale, add the `Set` back at that
+      point with a comment explaining its purpose.
+
+  - severity: low
+    location: packages/core/src/amendments/resolve.ts:32-82
+    finding: |
+      `parseFlatYaml` stores quoted-string values with their surrounding quote
+      characters intact (e.g., `"foo"` is stored as the string `"foo"` including
+      the double-quotes). AMD files in practice use plain or block scalars so this
+      does not affect any current test, but the function's doc comment does not
+      document this limitation. A future amendment author who writes
+      `target_skill: "tdd-workflow"` would silently fail to match.
+    suggests: |
+      Either strip surrounding `"…"` / `'…'` pairs in the scalar branch, or add a
+      JSDoc note: "quoted-string values are not unquoted; AMD files must use plain
+      or block scalars for all required fields."
+
+cycle_number: 1
+escalation_target: null

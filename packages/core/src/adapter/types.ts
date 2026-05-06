@@ -47,7 +47,7 @@ export interface SpawnOptions {
 export interface SkillDescriptor {
   readonly id: SkillId;
   readonly name: string;
-  readonly version: string;
+  readonly version?: string;
 }
 
 /** Descriptor for an installed hook. */

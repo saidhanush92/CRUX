@@ -1,0 +1,46 @@
+task: TASK-CRUX-003
+test_layers:
+  unit:
+    - covers: openCache creates a new DB with correct schema when dbPath does not exist
+      file: packages/core/test/trace/cache.test.ts
+    - covers: openCache loads existing DB bytes and preserves previously upserted artifacts
+      file: packages/core/test/trace/cache.test.ts
+    - covers: upsertArtifact stores id, kind, path, raw_yaml, sha256, mtime and getArtifact returns them
+      file: packages/core/test/trace/cache.test.ts
+    - covers: upsertEdges stores edges and listEdges returns them with optional from_id filter
+      file: packages/core/test/trace/cache.test.ts
+    - covers: delete removes artifact row and its outgoing edges
+      file: packages/core/test/trace/cache.test.ts
+    - covers: getHash returns sha256+mtime for a known artifact and null for an unknown id
+      file: packages/core/test/trace/cache.test.ts
+    - covers: listArtifacts returns all upserted artifacts
+      file: packages/core/test/trace/cache.test.ts
+    - covers: flush writes bytes to dbPath atomically (temp+rename) so reloaded DB is equivalent
+      file: packages/core/test/trace/cache.test.ts
+    - covers: flush cleans up the temp file when rename fails (atomicity guard)
+      file: packages/core/test/trace/cache.test.ts
+    - covers: close marks the cache as closed and subsequent calls throw
+      file: packages/core/test/trace/cache.test.ts
+  integration:
+    - covers: REQ-003 AC1 - deleting dbPath and re-running indexer pass produces identical artifacts and edges (cache rebuild lossless)
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: REQ-004 AC1 - mutating markdown file out-of-band causes readArtifact to return new value not stale cache (markdown wins)
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: REQ-004 AC2 - cache stores sha256; mutating file changes hash; next indexer pass detects and re-indexes
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: removed files detected during pass and deleted from cache
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: debounce collapses 5 enqueuePass calls within 50ms into a single pass execution
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: follow-up pass - pass enqueued while a pass is running executes after the first completes
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: PM-CRUX-001 race assertion - 10 fixture GRILLs written in tight loop are all reachable via readArtifact within 200ms of last write
+      file: packages/core/test/trace/indexer.test.ts
+    - covers: concurrent writes do not corrupt the DB - every artifact readable after concurrent enqueue storm
+      file: packages/core/test/trace/indexer.test.ts
+  e2e: []
+coverage_target: 80
+out_of_scope:
+  - performance benchmarks (tracked separately under benchmarks/)
+  - schema migrations (require their own ADR per ADR-CRUX-002 consequences)
+  - cross-platform path edge cases beyond Windows normalisation (covered by TASK-CRUX-002 tests)

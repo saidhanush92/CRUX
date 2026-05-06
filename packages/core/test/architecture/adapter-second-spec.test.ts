@@ -89,8 +89,7 @@ function sectionExistsAndNonEmpty(docContent: string, headingPattern: RegExp): b
   // Find where the next heading starts (## or #)
   const afterHeading = docContent.slice(headingMatch.index + headingMatch[0].length);
   const nextHeadingIdx = afterHeading.search(/^#{1,6}\s/m);
-  const sectionBody =
-    nextHeadingIdx === -1 ? afterHeading : afterHeading.slice(0, nextHeadingIdx);
+  const sectionBody = nextHeadingIdx === -1 ? afterHeading : afterHeading.slice(0, nextHeadingIdx);
 
   return sectionBody.trim().length > 0;
 }
@@ -105,7 +104,10 @@ describe('adapter-second-spec.md — file existence', () => {
     const exists = existsSync(SPEC_PATH);
 
     // Assert
-    expect(exists, `Expected the paper-only second-adapter spec to exist at:\n  ${SPEC_PATH}\nThe coder must create this file.`).toBe(true);
+    expect(
+      exists,
+      `Expected the paper-only second-adapter spec to exist at:\n  ${SPEC_PATH}\nThe coder must create this file.`,
+    ).toBe(true);
   });
 });
 
@@ -139,9 +141,7 @@ describe('adapter-second-spec.md — top-level heading', () => {
     expect(h1Match, 'No top-level "# " heading found in the document').not.toBeNull();
 
     const headingText = h1Match![1];
-    const mentionsATarget = ALLOWED_PAPER_TARGETS.some((target) =>
-      headingText.includes(target),
-    );
+    const mentionsATarget = ALLOWED_PAPER_TARGETS.some((target) => headingText.includes(target));
 
     expect(
       mentionsATarget,

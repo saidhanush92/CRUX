@@ -11,3 +11,9 @@ export {
   buildGraph,
   computeArtifactHash,
 } from './markdown.js';
+
+export type { TraceCache } from './cache.js';
+export { openCache, CacheClosedError } from './cache.js';
+
+export type { Indexer, IndexerOptions } from './indexer.js';
+export { createIndexer } from './indexer.js';

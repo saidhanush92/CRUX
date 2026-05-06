@@ -1,23 +1,26 @@
 id: ADR-CRUX-011
-title: 'SQLite Node binding: better-sqlite3'
+title: 'SQLite Node binding: sql.js (pure-JS WASM)'
 status: accepted
 decision: |
-  The trace cache implementation uses better-sqlite3 (^11.x) as the SQLite Node binding. better-sqlite3 is a synchronous native binding that maps directly onto the single-threaded debounced indexer mutex semantics required by ADR-CRUX-002. It is added to packages/core/package.json as a runtime dependency and pinned in docs/sdlc/stack/stack.yaml.data with provenance ADR-CRUX-011.
+  The trace cache implementation uses sql.js (^1.10) as the SQLite engine. sql.js compiles SQLite to WebAssembly and runs entirely in-process with no native build step. It is added to packages/core/package.json as a runtime dependency and pinned in docs/sdlc/stack/stack.yaml.data with provenance ADR-CRUX-011.
+
+  Choosing sql.js trades raw query throughput for install simplicity and zero-toolchain installs. At v1.0 corpus sizing (<500 artifacts per ADR-CRUX-002 revisit_when), the throughput delta vs better-sqlite3 is not user-perceptible. Persistence to .crux/trace.db is achieved by db.export() to bytes followed by atomic temp+fsync+rename per ADR-CRUX-002.
 alternatives_considered:
+  - option: better-sqlite3 (synchronous native binding)
+    rationale: |
+      preferred technically; rejected on environmental grounds. Founding-team developer environments include corporate-network TLS interception that prevents node-gyp from fetching Node header tarballs needed to compile from source when prebuilt binaries are absent for the installed Node version. better-sqlite3 v11.x prebuilds cover Node 18/20/22 only; users on Node 24+ must compile, which corporate proxies block. sql.js sidesteps this entire class of failure by shipping pre-compiled WASM with no fetch step.
   - option: 'node:sqlite (built-in)'
     rationale: |
-      rejected: stable only in Node 22.5+; absent in Node 20; stack.yaml pins node ">=20.10 <23". Choosing node:sqlite would force a Node-floor bump and exclude the LTS line that current users (incl. founding team) run.
-  - option: sql.js (pure-JS WASM)
-    rationale: |
-      rejected: loads the whole DB into memory; fine for ~500 artifacts but degrades on the 10k corpus revisit-when threshold from ADR-CRUX-002. Synchronous-but-slow primitives complicate the 100ms debounce window contract.
+      rejected: stable only in Node 22.5+; absent in Node 20; stack.yaml pins node ">=20.10 <23". Choosing node:sqlite would force a Node-floor bump and exclude users on Node 20 LTS.
   - option: 'sqlite3 (legacy node-sqlite3, async)'
     rationale: |
-      rejected: async API mismatches the single-threaded mutex pattern; better-sqlite3 is the modern replacement and is what the better-sqlite3 README itself recommends migrating to.
+      rejected: async API mismatches the single-threaded mutex pattern; same native-build risk as better-sqlite3.
 consequences:
-  - packages/core gains a runtime dependency (better-sqlite3) and its native build step.
-  - install adds a ~10MB native binary to node_modules; CI on linux/macos/windows must allow native compilation (already the case for vitest dev deps).
-  - The synchronous API matches ADR-CRUX-002's process-local mutex contract — no Promise wrappers needed in the indexer.
-  - Future migration to node:sqlite becomes feasible at v1.x when the Node 22 LTS line is the floor; documented in revisit_when.
+  - packages/core gains a runtime dependency (sql.js) with no native build.
+  - install size adds ~1MB WASM blob; no toolchain, no prebuild fetch, no network sensitivity.
+  - The DB is in-memory; persistence requires explicit db.export() to bytes and atomic write to .crux/trace.db. Indexer pass shape per ADR-CRUX-002 still applies.
+  - Query latency is ~3–10x slower than better-sqlite3 on synthetic benchmarks; bounded acceptable at v1.0 corpus sizing.
+  - Future swap to better-sqlite3 or node:sqlite becomes feasible once corporate-network friction or Node-floor constraints relax; documented in revisit_when.
 resolves: []
 satisfies:
   - REQ-CRUX-003
@@ -25,7 +28,7 @@ satisfies:
 constrains:
   - MOD-CRUX-001
 revisit_when: |
-  Node 22 becomes the LTS floor AND node:sqlite reaches feature-parity with better-sqlite3 (parameterized queries, prepared statements, transactions, WAL); OR a corpus growth pattern surfaces query latencies that better-sqlite3 cannot meet.
+  Corpus exceeds the ADR-CRUX-002 ~500-artifact comfort range and query latency is observed to drift past the 200ms soft target; OR developer-environment friction with native builds is no longer a binding constraint (e.g., consistent corporate-network TLS handling); OR Node 22 becomes the LTS floor and node:sqlite reaches feature-parity.
 validated_by:
   - cache_rebuild_lossless CI check (per ADR-CRUX-002, exercised by TASK-CRUX-003 tests)
 approved_by: 'Dhanush Sai'

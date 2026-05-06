@@ -3,19 +3,29 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "files": [
+    "dist",
+    "schema"
+  ],
   "exports": {
     "./gate": "./src/gate/index.ts",
     "./mode": "./src/mode/index.ts",
     "./adapter": "./src/adapter/interface.ts",
     "./trace": "./src/trace/index.ts",
-    "./cost": "./src/cost/index.ts"
+    "./cost": "./src/cost/index.ts",
+    "./capabilities": "./src/capabilities/index.ts",
+    "./incidents": "./src/incidents/index.ts",
+    "./amendments": "./src/amendments/index.ts",
+    "./graph": "./src/graph/index.ts"
   },
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "test": "vitest run"
   },
+  "dependencies": {
+    "sql.js": "^1.14.1"
+  },
   "devDependencies": {
-    "@types/better-sqlite3": "^7.6.13",
-    "better-sqlite3": "^11.10.0"
+    "@types/sql.js": "^1.4.11"
   }
 }

@@ -3,38 +3,37 @@
     "PostToolUse": [
       {
         "matcher": "Write|Edit",
-        "command": "pnpm prettier --write \"$FILE_PATH\" 2>/dev/null || true",
-        "description": "Auto-format edited TypeScript/JavaScript/JSON/YAML/Markdown files",
-        "priority": 10,
-        "_source_skill": "git-workflow",
-        "_event": "PostToolUse"
-      },
-      {
-        "matcher": "Write|Edit",
-        "command": "pnpm eslint --fix \"$FILE_PATH\" 2>/dev/null || true",
-        "description": "Auto-fix ESLint violations on edited files",
-        "priority": 20,
-        "_source_skill": "git-workflow",
-        "_event": "PostToolUse"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm prettier --write \"$FILE_PATH\" 2>/dev/null || true"
+          },
+          {
+            "type": "command",
+            "command": "pnpm eslint --fix \"$FILE_PATH\" 2>/dev/null || true"
+          }
+        ]
       }
     ],
     "PreToolUse": [
       {
-        "matcher": "Bash\\(git commit.*\\)",
-        "command": "pnpm tsc --noEmit && pnpm vitest run --changed",
-        "description": "Pre-commit: typecheck + run tests related to staged changes",
-        "priority": 10,
-        "_source_skill": "tdd-workflow",
-        "_event": "PreToolUse"
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm tsc --noEmit && pnpm vitest run --changed"
+          }
+        ]
       }
     ],
     "Stop": [
       {
-        "command": "pnpm tsc --noEmit && pnpm vitest run",
-        "description": "Session-end: full typecheck + full test suite",
-        "priority": 10,
-        "_source_skill": "verification-loop",
-        "_event": "Stop"
+        "hooks": [
+          {
+            "type": "command",
+            "command": "pnpm tsc --noEmit && pnpm vitest run"
+          }
+        ]
       }
     ]
   },

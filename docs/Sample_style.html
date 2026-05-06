@@ -1,0 +1,821 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Chola — ExecOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy-900:#0E2148;
+    --navy-800:#16306B;
+    --navy-700:#1E3A8A;
+    --navy-100:#D8DEE9;
+    --navy-050:#EEF1F6;
+    --bone:#FAF8F4;
+    --paper:#FFFFFF;
+    --ink:#0B0F1A;
+    --ink-2:#3A4256;
+    --ink-3:#6B7388;
+    --rule:#E2E5EC;
+    --rule-soft:#EEF0F4;
+    --red:#C8102E;
+    --red-soft:#A8132A;
+    --amber:#B8761B;
+    --green:#2F6E3D;
+    --teal:#0F766E;
+    --teal-soft:#E6F1EF;
+    --ochre:#A86A1F;
+    --ochre-soft:#F6EBD7;
+    --plum:#6B2D5C;
+    --plum-soft:#F1E7EE;
+    --sky:#1E5A9A;
+    --sky-soft:#E5EEF7;
+    --rose-soft:#F7E4E7;
+
+    --serif:"Fraunces", "Source Serif 4", Georgia, serif;
+    --sans:"IBM Plex Sans", system-ui, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bone);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.45;-webkit-font-smoothing:antialiased;font-feature-settings:"ss01","cv11"}
+  ::selection{background:var(--navy-900);color:var(--bone)}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* ── Layout ───────────────────────────────────────────────── */
+  .app{display:grid;grid-template-columns:196px 1fr;min-height:100vh}
+
+  /* ── Sidebar ──────────────────────────────────────────────── */
+  .rail{
+    border-right:1px solid var(--rule);
+    background:var(--paper);
+    padding:14px 0 10px;
+    position:sticky;top:0;height:100vh;
+    display:flex;flex-direction:column;
+  }
+  .brand{padding:0 18px 14px;border-bottom:1px solid var(--rule)}
+  .brand .mark{display:flex;align-items:baseline;gap:8px}
+  .brand .mark .c{
+    font-family:var(--serif);font-weight:500;font-size:26px;letter-spacing:-0.02em;color:var(--navy-900);
+    font-style:italic;
+  }
+  .brand .mark .div{width:1px;height:18px;background:var(--rule);align-self:center}
+  .brand .mark .os{
+    font-family:var(--sans);font-weight:500;font-size:11px;letter-spacing:0.24em;text-transform:uppercase;color:var(--ink-2);
+  }
+  .brand .tag{
+    margin-top:8px;font-size:10.5px;color:var(--ink-3);letter-spacing:0.04em;
+  }
+
+  .nav{padding:8px 0;flex:1;overflow:auto}
+  .nav h6{
+    padding:10px 18px 4px;font-size:9px;text-transform:uppercase;letter-spacing:0.2em;color:var(--ink-3);font-weight:600;
+  }
+  .nav a{
+    display:flex;align-items:center;gap:9px;
+    padding:5px 18px;font-size:12.5px;color:var(--ink-2);
+    border-left:2px solid transparent;
+  }
+  .nav a:hover{background:var(--navy-050);color:var(--ink)}
+  .nav a.active{
+    color:var(--navy-900);border-left-color:var(--red);background:linear-gradient(90deg,rgba(200,16,46,0.04),transparent 60%);font-weight:500;
+  }
+  .nav a .num{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:var(--ink-3)}
+  .nav a.active .num{color:var(--red)}
+  .nav .dot{width:5px;height:5px;background:var(--ink-3);opacity:.4}
+  .nav a.active .dot{background:var(--red);opacity:1}
+
+  .who{
+    border-top:1px solid var(--rule);padding:14px 22px;display:flex;align-items:center;gap:10px;
+  }
+  .who .av{
+    width:30px;height:30px;background:var(--navy-900);color:var(--bone);
+    display:grid;place-items:center;font-family:var(--serif);font-style:italic;font-weight:500;font-size:14px;letter-spacing:-0.02em;
+  }
+  .who .meta{font-size:11.5px;line-height:1.3}
+  .who .meta b{display:block;font-weight:500;color:var(--ink)}
+  .who .meta span{color:var(--ink-3);font-size:10.5px;letter-spacing:0.04em}
+
+  /* ── Main ─────────────────────────────────────────────────── */
+  main{min-width:0;background:var(--bone)}
+
+  .topbar{
+    display:flex;align-items:center;gap:18px;
+    padding:9px 22px;border-bottom:1px solid var(--rule);background:var(--paper);
+    position:sticky;top:0;z-index:5;
+  }
+  .crumb{font-size:11px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase}
+  .crumb b{color:var(--ink);font-weight:500}
+  .topbar .search{
+    margin-left:auto;display:flex;align-items:center;gap:10px;
+    border:1px solid var(--rule);padding:7px 12px;width:360px;background:var(--bone);
+  }
+  .topbar .search input{
+    border:0;background:transparent;outline:0;flex:1;font-family:var(--sans);font-size:12.5px;color:var(--ink);
+  }
+  .topbar .search .k{font-family:var(--mono);font-size:10px;color:var(--ink-3);border:1px solid var(--rule);padding:1px 5px}
+  .iconbtn{
+    display:inline-flex;align-items:center;gap:6px;font-size:11px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-2);
+    padding:7px 10px;border:1px solid var(--rule);background:var(--paper);
+  }
+  .iconbtn:hover{border-color:var(--navy-700);color:var(--navy-900)}
+  .iconbtn.primary{background:var(--navy-900);color:var(--bone);border-color:var(--navy-900)}
+  .iconbtn.primary:hover{background:var(--navy-700)}
+
+  /* ── Page header (hero) ───────────────────────────────────── */
+  .hero{
+    padding:20px 22px 14px;border-bottom:1px solid var(--rule);
+    display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end;
+    background:
+      radial-gradient(800px 200px at 0% 0%, rgba(14,33,72,0.04), transparent 70%),
+      var(--bone);
+  }
+  .hero .eyebrow{
+    font-family:var(--mono);font-size:10.5px;color:var(--ink-3);letter-spacing:0.18em;text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+  }
+  .hero .eyebrow .pill{padding:2px 8px;border:1px solid var(--rule);color:var(--ink-2)}
+  .hero h1{
+    margin-top:10px;
+    font-family:var(--serif);font-weight:400;font-size:30px;line-height:1.08;letter-spacing:-0.018em;color:var(--navy-900);
+    max-width:34ch;
+  }
+  .hero h1 em{font-style:italic;font-weight:400;color:var(--plum)}
+  .hero h1 .ru{color:var(--red);font-style:normal;font-weight:500;padding:0 4px}
+  .hero h1 .uline{
+    background:linear-gradient(transparent 78%, var(--ochre-soft) 78%, var(--ochre-soft) 96%, transparent 96%);
+    padding:0 2px;
+  }
+  .hero .sub{
+    margin-top:8px;font-size:12.5px;color:var(--ink-2);max-width:74ch;line-height:1.5;
+  }
+  .hero aside{
+    border-left:1px solid var(--rule);padding-left:22px;
+    display:grid;grid-template-columns:auto auto;gap:6px 18px;font-size:11px;color:var(--ink-3);
+    text-align:right;
+  }
+  .hero aside b{color:var(--ink);font-weight:500;font-family:var(--mono);font-size:11.5px}
+
+  /* ── Section heading ──────────────────────────────────────── */
+  .sec{padding:14px 22px 16px}
+  .sec + .sec{border-top:1px solid var(--rule)}
+  .sec-h{
+    display:grid;grid-template-columns:auto 1fr auto;align-items:end;
+    column-gap:14px;margin-bottom:10px;padding-bottom:7px;
+    border-bottom:1px solid var(--rule);
+  }
+  .sec-h .lead{display:flex;align-items:baseline;gap:14px;min-width:0;position:relative}
+  .sec-h .n{
+    font-family:var(--serif);font-style:italic;font-weight:400;font-size:24px;line-height:0.9;
+    color:var(--ink);letter-spacing:-0.03em;
+  }
+  .sec-h .n::before{content:"";display:block;width:16px;height:2px;background:var(--accent,var(--red));margin-bottom:5px}
+  .sec-h h2{
+    font-family:var(--serif);font-weight:500;font-size:17px;line-height:1.2;letter-spacing:-0.008em;color:var(--navy-900);
+  }
+  .sec-h h2 em{font-style:italic;color:var(--ink-2);font-weight:400}
+  .sec-h .meta{
+    font-size:10.5px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase;
+    text-align:right;font-family:var(--sans);
+  }
+  .sec-h .meta b{color:var(--ink);font-family:var(--mono);font-weight:500;letter-spacing:0}
+  /* per-section accent */
+  .sec.acc-red{--accent:var(--red)}
+  .sec.acc-teal{--accent:var(--teal)}
+  .sec.acc-ochre{--accent:var(--ochre)}
+  .sec.acc-plum{--accent:var(--plum)}
+  .sec.acc-sky{--accent:var(--sky)}
+
+  /* ── Split rows ───────────────────────────────────────────── */
+  .split-pulse-cal{
+    display:grid;grid-template-columns:1.55fr 1fr;gap:1px;background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .split-pulse-cal > *{background:var(--paper);min-width:0}
+  .split-mov-heat{
+    display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);
+    border:1px solid var(--rule);
+  }
+  .split-mov-heat > *{background:var(--paper);min-width:0}
+
+  /* ── Pulse strip ──────────────────────────────────────────── */
+  .pulse{
+    display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--rule);
+  }
+  .pulse > div{background:var(--paper);padding:11px 14px 10px;position:relative;overflow:hidden}
+  .pulse > div::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent,var(--navy-700));
+  }
+  .pulse .p-disb{--accent:var(--green)}
+  .pulse .p-pipe{--accent:var(--sky)}
+  .pulse .p-coll{--accent:var(--ochre)}
+  .pulse .p-bnce{--accent:var(--red)}
+  .pulse .lbl{
+    font-size:9.5px;text-transform:uppercase;letter-spacing:0.16em;color:var(--ink-3);font-weight:500;
+  }
+  .pulse .v{
+    margin-top:4px;font-family:var(--serif);font-weight:400;font-size:22px;letter-spacing:-0.018em;color:var(--navy-900);
+    display:flex;align-items:baseline;gap:5px;line-height:1.1;
+  }
+  .pulse .v .u{font-size:11px;color:var(--ink-3);letter-spacing:0;font-family:var(--sans);font-weight:500}
+  .pulse .d{
+    margin-top:3px;font-family:var(--mono);font-size:10.5px;color:var(--green);
+    display:flex;align-items:center;gap:6px;
+  }
+  .pulse .d.neg{color:var(--red)}
+  .pulse .d .vs{color:var(--ink-3)}
+  .pulse .spark{margin-top:6px;height:18px;width:100%}
+
+  /* ── Movers + Calendar grid ───────────────────────────────── */
+  .row2{display:grid;grid-template-columns:1.6fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule)}
+  .row2 > section{background:var(--paper)}
+
+  /* movers */
+  .movers{padding:0}
+  .movers .head{
+    display:grid;grid-template-columns:28px 1.5fr 86px 2fr 64px;
+    padding:7px 14px;border-bottom:1px solid var(--rule);
+    font-size:9px;letter-spacing:0.18em;text-transform:uppercase;color:var(--ink-3);font-weight:500;
+  }
+  .movers .row{
+    display:grid;grid-template-columns:28px 1.5fr 86px 2fr 64px;
+    padding:8px 14px;border-bottom:1px solid var(--rule-soft);align-items:center;gap:10px;
+    transition:background .15s;
+  }
+  .movers .row:last-child{border-bottom:0}
+  .movers .row:hover{background:var(--navy-050)}
+  .movers .row .idx{
+    font-family:var(--mono);font-size:10px;color:var(--ink-3);
+    display:flex;align-items:center;gap:8px;
+  }
+  .movers .row .idx::before{
+    content:"";width:3px;height:14px;background:var(--pip,var(--ink-3));
+  }
+  .movers .row.cat-vf{--pip:var(--teal)}
+  .movers .row.cat-gold{--pip:var(--ochre)}
+  .movers .row.cat-lap{--pip:var(--sky)}
+  .movers .row.cat-sme{--pip:var(--red)}
+  .movers .row.cat-2w{--pip:var(--plum)}
+  .movers .row .what{font-size:12.5px;color:var(--ink);line-height:1.25}
+  .movers .row .what em{font-style:normal;color:var(--ink-3);font-size:10.5px;display:block;margin-top:1px;letter-spacing:0.04em}
+  .movers .row .delta{font-family:var(--mono);font-size:12.5px;color:var(--green);font-weight:500}
+  .movers .row .delta.neg{color:var(--red)}
+  .movers .row .why{font-size:11.5px;color:var(--ink-2);line-height:1.35}
+  .movers .row .why .conf{
+    font-size:9px;color:var(--ink-3);text-transform:uppercase;letter-spacing:0.12em;display:inline-block;margin-right:5px;
+    border:1px solid var(--rule);padding:0 4px;
+  }
+  .movers .row .open{
+    font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--navy-700);text-align:right;
+  }
+  .movers .row .open:hover{color:var(--red)}
+
+  /* calendar */
+  .cal{padding:11px 14px}
+  .cal h3{
+    font-family:var(--serif);font-style:italic;font-weight:400;font-size:13px;color:var(--navy-900);
+    display:flex;align-items:baseline;justify-content:space-between;
+  }
+  .cal h3 small{font-family:var(--sans);font-style:normal;font-size:9.5px;color:var(--ink-3);letter-spacing:0.14em;text-transform:uppercase}
+  .cal ol{list-style:none;margin-top:8px;border-top:1px solid var(--rule-soft)}
+  .cal li{
+    display:grid;grid-template-columns:48px 1fr auto;gap:10px;padding:7px 0;border-bottom:1px solid var(--rule-soft);
+    align-items:start;
+  }
+  .cal li:last-child{border-bottom:0}
+  .cal .t{font-family:var(--mono);font-size:10.5px;color:var(--navy-700);padding-top:1px}
+  .cal .ttl{font-size:12px;color:var(--ink);line-height:1.3}
+  .cal .ttl em{font-style:normal;display:block;color:var(--ink-3);font-size:10.5px;margin-top:1px}
+  .cal .tag{
+    font-size:9.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3);
+    border:1px solid var(--rule);padding:1px 6px;height:18px;display:inline-flex;align-items:center;
+  }
+  .cal .tag.dec{color:var(--red);border-color:#E5C5C9;background:var(--rose-soft)}
+  .cal .tag.brf{color:var(--sky);border-color:#C7D2E5;background:var(--sky-soft)}
+  .cal .tag.brief{color:var(--teal);border-color:#BFDDD8;background:var(--teal-soft)}
+  .cal .tag.ppl{color:var(--plum);border-color:#D9C4D2;background:var(--plum-soft)}
+
+  /* ── Vehicle Finance segment row ──────────────────────────── */
+  .vf{
+    display:grid;grid-template-columns:1.1fr repeat(5,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);
+  }
+  .vf > div{background:var(--paper);padding:11px 14px;display:flex;flex-direction:column;justify-content:space-between;min-height:118px}
+  .vf .summary{background:linear-gradient(180deg,#0E2148 0%,#16306B 100%);color:var(--bone)}
+  .vf .summary .lbl{font-size:9.5px;letter-spacing:0.22em;text-transform:uppercase;color:rgba(250,248,244,0.6);font-weight:500}
+  .vf .summary h4{
+    margin-top:5px;font-family:var(--serif);font-weight:400;font-size:19px;letter-spacing:-0.018em;color:var(--bone);line-height:1.1;
+  }
+  .vf .summary h4 em{font-style:italic;color:rgba(250,248,244,0.7);font-weight:400;font-size:11.5px;display:block;margin-top:2px}
+  .vf .summary .kv{
+    margin-top:8px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:10.5px;
+  }
+  .vf .summary .kv b{color:var(--bone);font-family:var(--mono);font-weight:500}
+  .vf .summary .kv span{color:rgba(250,248,244,0.55)}
+
+  .vf .seg .code{
+    font-family:var(--mono);font-size:10px;color:var(--ink-3);letter-spacing:0.1em;
+  }
+  .vf .seg h5{
+    margin-top:2px;font-family:var(--serif);font-weight:500;font-size:13px;color:var(--navy-900);letter-spacing:-0.008em;
+  }
+  .vf .seg .v{margin-top:3px;font-family:var(--mono);font-size:12px;color:var(--ink)}
+  .vf .seg .row{
+    margin-top:4px;display:flex;justify-content:space-between;font-size:9.5px;color:var(--ink-3);
+    text-transform:uppercase;letter-spacing:0.08em;
+  }
+  .vf .seg .row b{font-family:var(--mono);font-size:11px;color:var(--green);font-weight:500;letter-spacing:0}
+  .vf .seg .row b.neg{color:var(--red)}
+  .vf .seg .row b.flat{color:var(--ink-2)}
+  .vf .seg .spark{margin-top:5px;height:20px}
+
+  /* ── Heatmap ──────────────────────────────────────────────── */
+  .heat-wrap{display:grid;grid-template-columns:1fr 260px;gap:18px}
+  .heat{border:1px solid var(--rule);background:var(--paper);overflow:hidden}
+  .heat table{width:100%;border-collapse:collapse;font-size:11.5px;font-family:var(--mono)}
+  .heat th, .heat td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--rule-soft);border-right:1px solid var(--rule-soft)}
+  .heat th{background:var(--navy-050);color:var(--ink-2);font-weight:500;font-size:9.5px;letter-spacing:0.12em;text-transform:uppercase;font-family:var(--sans)}
+  .heat th:first-child, .heat td:first-child{text-align:left;font-family:var(--sans);font-size:11.5px;color:var(--ink);padding-left:14px;border-right:1px solid var(--rule)}
+  .heat tr:last-child td{border-bottom:0}
+  .heat td{position:relative;color:var(--ink)}
+  .heat td .cell{
+    position:absolute;inset:0;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;
+  }
+  .heat .h0{background:rgba(47,110,61,0.06)}
+  .heat .h1{background:rgba(184,118,27,0.10)}
+  .heat .h2{background:rgba(200,16,46,0.10)}
+  .heat .h3{background:rgba(200,16,46,0.20)}
+  .heat .h4{background:rgba(200,16,46,0.32);color:#5b0915}
+
+  .heat-side h3{
+    font-family:var(--serif);font-weight:500;font-size:14px;color:var(--navy-900);
+  }
+  .heat-side p{font-size:12px;color:var(--ink-2);margin-top:8px;line-height:1.55}
+  .heat-side ul{list-style:none;margin-top:14px;border-top:1px solid var(--rule)}
+  .heat-side li{padding:10px 0;border-bottom:1px solid var(--rule-soft);font-size:12px;color:var(--ink-2);display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:baseline}
+  .heat-side li b{font-family:var(--mono);font-size:11px;color:var(--red);font-weight:500}
+  .heat-side li span{color:var(--ink-3);font-size:10.5px}
+  .legend{display:flex;align-items:center;gap:6px;font-family:var(--mono);font-size:10px;color:var(--ink-3);margin-top:14px}
+  .legend i{width:14px;height:10px;display:inline-block}
+
+  /* ── Ask bar (fixed) ──────────────────────────────────────── */
+  .ask{
+    position:sticky;bottom:0;background:var(--paper);border-top:1px solid var(--rule);
+    padding:8px 22px;display:flex;align-items:center;gap:12px;
+  }
+  .ask .pre{font-family:var(--serif);font-style:italic;font-weight:400;font-size:14px;color:var(--ink-3)}
+  .ask .input{
+    flex:1;display:flex;align-items:center;gap:10px;border:1px solid var(--rule);padding:10px 14px;background:var(--bone);
+  }
+  .ask .input input{flex:1;border:0;background:transparent;outline:0;font-family:var(--sans);font-size:13px;color:var(--ink)}
+  .ask .input input::placeholder{color:var(--ink-3)}
+  .ask .chips{display:flex;gap:6px;flex-wrap:nowrap}
+  .ask .chip{font-size:10.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);border:1px solid var(--rule);padding:5px 9px}
+  .ask .chip:hover{color:var(--navy-900);border-color:var(--navy-700)}
+  .ask .send{
+    background:var(--navy-900);color:var(--bone);padding:10px 16px;font-size:11px;letter-spacing:0.18em;text-transform:uppercase;
+  }
+  .ask .send:hover{background:var(--red)}
+
+  /* ── small helpers ────────────────────────────────────────── */
+  .tabular{font-variant-numeric:tabular-nums}
+  .arrow{display:inline-block;width:0;height:0;border-left:4px solid transparent;border-right:4px solid transparent}
+  .up{border-bottom:5px solid var(--green)}
+  .dn{border-top:5px solid var(--red)}
+
+  /* reveal */
+  @keyframes rise{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .r{animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+  .r1{animation-delay:.04s}.r2{animation-delay:.10s}.r3{animation-delay:.18s}
+  .r4{animation-delay:.26s}.r5{animation-delay:.34s}.r6{animation-delay:.42s}
+
+  @media (max-width:1100px){
+    .app{grid-template-columns:1fr}
+    .rail{position:relative;height:auto;border-right:0;border-bottom:1px solid var(--rule)}
+    .nav{display:none}
+    .heat-wrap{grid-template-columns:1fr}
+    .vf{grid-template-columns:1fr 1fr}
+    .row2{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ─── SIDEBAR ───────────────────────────────────────────── -->
+  <aside class="rail">
+    <div class="brand">
+      <div class="mark">
+        <span class="c">Chola</span>
+        <span class="div"></span>
+        <span class="os">ExecOS</span>
+      </div>
+      <div class="tag">Office of the Managing Director</div>
+    </div>
+
+    <nav class="nav">
+      <h6>Daily</h6>
+      <a class="active" href="#"><span class="dot"></span>Brief<span class="num">01</span></a>
+      <a href="#"><span class="dot"></span>Movers<span class="num">07</span></a>
+      <a href="#"><span class="dot"></span>Calendar<span class="num">06</span></a>
+
+      <h6>Portfolio</h6>
+      <a href="#"><span class="dot"></span>Group<span class="num"></span></a>
+      <a href="#"><span class="dot"></span>Vehicle Finance<span class="num"></span></a>
+      <a href="#"><span class="dot"></span>Home Loan<span class="num"></span></a>
+      <a href="#"><span class="dot"></span>LAP &amp; SME<span class="num"></span></a>
+      <a href="#"><span class="dot"></span>Gold</a>
+
+      <h6>Lenses</h6>
+      <a href="#"><span class="dot"></span>CRO Lens<span class="num">3</span></a>
+      <a href="#"><span class="dot"></span>People</a>
+      <a href="#"><span class="dot"></span>Scenario</a>
+      <a href="#"><span class="dot"></span>Prep</a>
+    </nav>
+
+    <div class="who">
+      <div class="av">RV</div>
+      <div class="meta">
+        <b>Ravindra Kumar V.</b>
+        <span>Managing Director</span>
+      </div>
+    </div>
+  </aside>
+
+  <!-- ─── MAIN ──────────────────────────────────────────────── -->
+  <main>
+
+    <!-- top bar -->
+    <div class="topbar">
+      <div class="crumb">Home <span style="color:var(--ink-3)">·</span> <b>Morning Brief</b></div>
+      <div class="search">
+        <span style="color:var(--ink-3);font-size:12px">Ask</span>
+        <input placeholder="Why is VF down 1.4% vs LY in commercial vehicles?" />
+        <span class="k">⌘K</span>
+      </div>
+      <button class="iconbtn">Refresh</button>
+      <button class="iconbtn primary">Run brief</button>
+    </div>
+
+    <!-- hero -->
+    <header class="hero r">
+      <div>
+        <div class="eyebrow">
+          <span>Tuesday · 5 May 2026</span>
+          <span class="pill">Day 5 of FY27 Q1</span>
+          <span class="pill" style="color:var(--green)">Markets open</span>
+        </div>
+        <h1>
+          Good morning, <em>Ravi.</em><br/>
+          Disbursement <span class="uline">holding pace</span><span class="ru">·</span> two segments need a call.
+        </h1>
+        <p class="sub">
+          Vehicle Finance MTD tracking +9.8% vs LY but Used CV is the only sub-segment behind plan.
+          Gold disbursed ₹148 Cr in 18 new branches — TN concentration now 41%.
+          Five decisions are awaiting your sign-off.
+        </p>
+      </div>
+      <aside>
+        <span>Last updated</span><b>09:42 IST</b>
+        <span>Coverage</span><b>Group · 6 BUs</b>
+        <span>Confidence</span><b>High</b>
+        <span>Sources</span><b>14 systems</b>
+      </aside>
+    </header>
+
+    <!-- pulse + today (split row) -->
+    <section class="sec acc-sky">
+      <div class="sec-h">
+        <span class="n">01</span>
+        <div class="lead"><h2>Today's pulse <em>— MTD &amp; calendar</em></h2></div>
+        <span class="meta">Updated <b>09:42</b> · vs LY · vs Budget</span>
+      </div>
+
+      <div class="split-pulse-cal">
+      <div class="pulse">
+        <div class="p-disb r r1">
+          <div class="lbl">Disbursement MTD</div>
+          <div class="v tabular">3,842 <span class="u">Cr</span></div>
+          <div class="d"><span class="arrow up"></span>+9.8% <span class="vs">vs LY</span> · <span class="vs">+2.1% vs Bgt</span></div>
+          <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#2F6E3D" stroke-width="1.5" points="0,18 14,16 28,17 42,14 56,15 70,12 84,13 98,10 112,11 126,8 140,9 154,7 168,8 182,5 200,6"/>
+          </svg>
+        </div>
+        <div class="p-pipe r r2">
+          <div class="lbl">Login Pipeline</div>
+          <div class="v tabular">28,914</div>
+          <div class="d"><span class="vs">Conv</span> 41.2% <span class="vs">· 7d 40.8%</span></div>
+          <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#1E3A8A" stroke-width="1.5" points="0,12 14,11 28,13 42,10 56,12 70,9 84,11 98,8 112,9 126,7 140,9 154,6 168,8 182,5 200,7"/>
+          </svg>
+        </div>
+        <div class="p-coll r r3">
+          <div class="lbl">Collection MTD</div>
+          <div class="v tabular">2,961 <span class="u">Cr</span></div>
+          <div class="d neg"><span class="arrow dn"></span>−1.6% <span class="vs">vs LY</span> · <span class="vs">−0.4% vs Bgt</span></div>
+          <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#C8102E" stroke-width="1.5" points="0,8 14,10 28,9 42,12 56,11 70,13 84,12 98,14 112,13 126,15 140,14 154,16 168,15 182,17 200,16"/>
+          </svg>
+        </div>
+        <div class="p-bnce r r4">
+          <div class="lbl">Bounce rate</div>
+          <div class="v tabular">3.84 <span class="u">%</span></div>
+          <div class="d neg">+22 bps <span class="vs">vs 7d avg 3.62%</span></div>
+          <svg class="spark" viewBox="0 0 200 24" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#B8761B" stroke-width="1.5" points="0,16 14,15 28,14 42,15 56,13 70,12 84,14 98,11 112,10 126,9 140,8 154,9 168,7 182,6 200,5"/>
+          </svg>
+        </div>
+      </div>
+
+        <section class="cal">
+          <h3>Today <small>06 May · 5 entries</small></h3>
+          <ol>
+            <li>
+              <span class="t">09:30</span>
+              <div class="ttl">CRO weekly — risk lens
+                <em>Rajeev S. · 30m · Boardroom 4</em>
+              </div>
+              <span class="tag brf">Brief</span>
+            </li>
+            <li>
+              <span class="t">11:00</span>
+              <div class="ttl">VF sub-segment review
+                <em>D. Arul + 4 · 60m</em>
+              </div>
+              <span class="tag dec">Decision</span>
+            </li>
+            <li>
+              <span class="t">14:30</span>
+              <div class="ttl">Gold expansion — fit-outs
+                <em>Hari Krishnan · 30m · Phase 2</em>
+              </div>
+              <span class="tag dec">Decision</span>
+            </li>
+            <li>
+              <span class="t">16:00</span>
+              <div class="ttl">Investor follow-up — Fidelity
+                <em>IR + CFO · 45m</em>
+              </div>
+              <span class="tag brief">Briefing</span>
+            </li>
+            <li>
+              <span class="t">18:15</span>
+              <div class="ttl">Promotion slate review
+                <em>CHRO · 30m · 12 names</em>
+              </div>
+              <span class="tag ppl">People</span>
+            </li>
+          </ol>
+        </section>
+      </div>
+    </section>
+
+    <!-- movers (full-width) -->
+    <section class="sec acc-red">
+      <div class="sec-h">
+        <span class="n">02</span>
+        <div class="lead"><h2>What moved <em>— and why</em></h2></div>
+        <span class="meta"><b>7</b> items · <b>2</b> low-confidence</span>
+      </div>
+
+      <div class="r r2" style="border:1px solid var(--rule);background:var(--paper)">
+        <section class="movers">
+          <div class="head">
+            <span></span><span>Driver</span><span>Δ</span><span>Hypothesis</span><span></span>
+          </div>
+
+          <div class="row cat-vf">
+            <span class="idx">01</span>
+            <div class="what">Used CV disbursement
+              <em>South zone · 14 branches</em>
+            </div>
+            <div class="delta neg">−4.6%</div>
+            <div class="why"><span class="conf">Med conf</span>Floor stock turning over slower at 3 partner dealers; collections team flagged 11 May.</div>
+            <a class="open" href="#">Open →</a>
+          </div>
+
+          <div class="row cat-gold">
+            <span class="idx">02</span>
+            <div class="what">Gold loan acquisition
+              <em>Tier-3 TN cluster</em>
+            </div>
+            <div class="delta">+18.4%</div>
+            <div class="why"><span class="conf">High conf</span>Three new branches crossed run-rate in week two; ATS holding at ₹74,000.</div>
+            <a class="open" href="#">Open →</a>
+          </div>
+
+          <div class="row cat-lap">
+            <span class="idx">03</span>
+            <div class="what">LAP yield compression
+              <em>Mumbai metro</em>
+            </div>
+            <div class="delta neg">−14 bps</div>
+            <div class="why"><span class="conf">Med conf</span>Two competitors cut by 30bps on prime salaried; book mix still defensible.</div>
+            <a class="open" href="#">Open →</a>
+          </div>
+
+          <div class="row cat-sme">
+            <span class="idx">04</span>
+            <div class="what">SME 30+ DPD
+              <em>Manufacturing sub-segment</em>
+            </div>
+            <div class="delta neg">+38 bps</div>
+            <div class="why"><span class="conf">Low conf</span>Concentrated in 6 obligors; auto-component exposure. CRO requesting review.</div>
+            <a class="open" href="#">Open →</a>
+          </div>
+
+          <div class="row cat-2w">
+            <span class="idx">05</span>
+            <div class="what">Two-wheeler conversion
+              <em>Festival prep states</em>
+            </div>
+            <div class="delta">+3.1%</div>
+            <div class="why"><span class="conf">High conf</span>Hero MotoCorp pre-Akshaya scheme; book-to-look at 44.8% across UP, MP, RJ.</div>
+            <a class="open" href="#">Open →</a>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- vehicle finance -->
+    <section class="sec acc-teal">
+      <div class="sec-h">
+        <span class="n">03</span>
+        <div class="lead"><h2>Vehicle finance <em>— sub-segment view</em></h2></div>
+        <span class="meta">May MTD · <b>6</b> sub-segments</span>
+      </div>
+
+      <div class="vf r r3">
+        <div class="summary">
+          <div class="lbl">Vehicle Finance</div>
+          <h4>₹2,148 Cr<em>MTD disbursement · 56% of group</em></h4>
+          <div class="kv">
+            <span>vs LY</span><b>+9.8%</b>
+            <span>vs Budget</span><b>+2.1%</b>
+            <span>GNPA</span><b>2.94%</b>
+            <span>Δ MoM</span><b>−6 bps</b>
+          </div>
+        </div>
+
+        <div class="seg">
+          <span class="code">VF · NEW-CV</span>
+          <h5>New Commercial</h5>
+          <div class="v tabular">₹612 Cr</div>
+          <div class="row"><span>YoY</span><b>+12.4%</b></div>
+          <div class="row"><span>Industry</span><b class="flat">+8.1%</b></div>
+          <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#2F6E3D" stroke-width="1.4" points="0,22 10,20 20,18 30,19 40,15 50,16 60,12 70,13 80,9 90,10 100,7"/>
+          </svg>
+        </div>
+
+        <div class="seg">
+          <span class="code">VF · USED-CV</span>
+          <h5>Used Commercial</h5>
+          <div class="v tabular">₹284 Cr</div>
+          <div class="row"><span>YoY</span><b class="neg">−4.6%</b></div>
+          <div class="row"><span>Industry</span><b class="flat">−1.2%</b></div>
+          <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#C8102E" stroke-width="1.4" points="0,8 10,9 20,11 30,10 40,13 50,12 60,15 70,14 80,18 90,17 100,21"/>
+          </svg>
+        </div>
+
+        <div class="seg">
+          <span class="code">VF · TRACTOR</span>
+          <h5>Tractor</h5>
+          <div class="v tabular">₹318 Cr</div>
+          <div class="row"><span>YoY</span><b>+14.8%</b></div>
+          <div class="row"><span>Industry</span><b class="flat">+11.0%</b></div>
+          <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#2F6E3D" stroke-width="1.4" points="0,18 10,17 20,15 30,14 40,12 50,11 60,10 70,8 80,7 90,5 100,4"/>
+          </svg>
+        </div>
+
+        <div class="seg">
+          <span class="code">VF · 2W</span>
+          <h5>Two-Wheeler</h5>
+          <div class="v tabular">₹462 Cr</div>
+          <div class="row"><span>YoY</span><b>+3.1%</b></div>
+          <div class="row"><span>Industry</span><b class="flat">+5.8%</b></div>
+          <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#1E3A8A" stroke-width="1.4" points="0,14 10,13 20,15 30,12 40,14 50,11 60,13 70,10 80,12 90,9 100,11"/>
+          </svg>
+        </div>
+
+        <div class="seg">
+          <span class="code">VF · CAR</span>
+          <h5>Car</h5>
+          <div class="v tabular">₹372 Cr</div>
+          <div class="row"><span>YoY</span><b>+11.2%</b></div>
+          <div class="row"><span>Industry</span><b class="flat">+6.4%</b></div>
+          <svg class="spark" viewBox="0 0 100 28" preserveAspectRatio="none">
+            <polyline fill="none" stroke="#2F6E3D" stroke-width="1.4" points="0,20 10,18 20,17 30,15 40,16 50,13 60,14 70,11 80,12 90,8 100,9"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- heatmap -->
+    <section class="sec acc-ochre">
+      <div class="sec-h">
+        <span class="n">04</span>
+        <div class="lead"><h2>Deterioration heatmap <em>— 30-day Δ in 30+ DPD bps</em></h2></div>
+        <span class="meta">Zone × Product · <b>5×6</b></span>
+      </div>
+
+      <div class="heat-wrap r r4">
+        <div class="heat">
+          <table>
+            <thead>
+              <tr>
+                <th>Zone</th><th>VF</th><th>HL</th><th>LAP</th><th>SME</th><th>2W</th><th>Gold</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>South</td>
+                <td class="h0"><span class="cell">−4</span></td>
+                <td class="h1"><span class="cell">+8</span></td>
+                <td class="h0"><span class="cell">−2</span></td>
+                <td class="h2"><span class="cell">+18</span></td>
+                <td class="h1"><span class="cell">+12</span></td>
+                <td class="h0"><span class="cell">−1</span></td>
+              </tr>
+              <tr>
+                <td>West</td>
+                <td class="h1"><span class="cell">+9</span></td>
+                <td class="h0"><span class="cell">−6</span></td>
+                <td class="h3"><span class="cell">+24</span></td>
+                <td class="h2"><span class="cell">+16</span></td>
+                <td class="h1"><span class="cell">+7</span></td>
+                <td class="h0"><span class="cell">+1</span></td>
+              </tr>
+              <tr>
+                <td>North</td>
+                <td class="h2"><span class="cell">+19</span></td>
+                <td class="h1"><span class="cell">+11</span></td>
+                <td class="h1"><span class="cell">+8</span></td>
+                <td class="h4"><span class="cell">+38</span></td>
+                <td class="h0"><span class="cell">+3</span></td>
+                <td class="h0"><span class="cell">−2</span></td>
+              </tr>
+              <tr>
+                <td>East</td>
+                <td class="h1"><span class="cell">+6</span></td>
+                <td class="h0"><span class="cell">−1</span></td>
+                <td class="h2"><span class="cell">+14</span></td>
+                <td class="h2"><span class="cell">+17</span></td>
+                <td class="h1"><span class="cell">+9</span></td>
+                <td class="h0"><span class="cell">+2</span></td>
+              </tr>
+              <tr>
+                <td>Central</td>
+                <td class="h0"><span class="cell">−2</span></td>
+                <td class="h1"><span class="cell">+7</span></td>
+                <td class="h1"><span class="cell">+9</span></td>
+                <td class="h2"><span class="cell">+15</span></td>
+                <td class="h0"><span class="cell">+1</span></td>
+                <td class="h0"><span class="cell">−4</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="heat-side">
+          <h3>Two cells worth a call</h3>
+          <p>SME × North is a single-vintage concentration: 6 obligors in auto-component cluster account for 78% of the +38 bps move. LAP × West softness traces to two re-priced tickets, not credit deterioration.</p>
+          <ul>
+            <li><b>+38</b><span>SME × North · 6 obligors</span><span style="color:var(--ink-3)">→ CRO</span></li>
+            <li><b>+24</b><span>LAP × West · pricing</span><span style="color:var(--ink-3)">→ Pricing</span></li>
+            <li><b>+19</b><span>VF × North · UCV cluster</span><span style="color:var(--ink-3)">→ BU head</span></li>
+          </ul>
+          <div class="legend">
+            <span>Δ bps</span>
+            <i style="background:rgba(47,110,61,0.12)"></i><span>≤0</span>
+            <i style="background:rgba(184,118,27,0.18)"></i><span>1–10</span>
+            <i style="background:rgba(200,16,46,0.18)"></i><span>10–20</span>
+            <i style="background:rgba(200,16,46,0.32)"></i><span>20+</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ask bar -->
+    <div class="ask">
+      <span class="pre">Ask ExecOS</span>
+      <div class="input">
+        <input placeholder="Compare Used CV trajectory in South zone vs West for the last six months." />
+        <span class="chips">
+          <button class="chip">Brief Bu head</button>
+          <button class="chip">Draft note</button>
+          <button class="chip">Run scenario</button>
+        </span>
+      </div>
+      <button class="send">Send</button>
+    </div>
+
+  </main>
+</div>
+</body>
+</html>

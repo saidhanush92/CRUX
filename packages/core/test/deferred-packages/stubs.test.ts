@@ -137,20 +137,24 @@ describe('packages/audit-site/README.md references all four v1.0 audit surfaces'
 
   it('references the /crux-trace surface', () => {
     const content = readIfExists(AUDIT_SITE_README) ?? '';
-    const mentions = content.toLowerCase().includes('/crux-trace') || content.toLowerCase().includes('crux-trace');
+    const mentions =
+      content.toLowerCase().includes('/crux-trace') || content.toLowerCase().includes('crux-trace');
     expect(mentions).toBe(true);
   });
 
   it('references the /crux-status surface', () => {
     const content = readIfExists(AUDIT_SITE_README) ?? '';
-    const mentions = content.toLowerCase().includes('/crux-status') || content.toLowerCase().includes('crux-status');
+    const mentions =
+      content.toLowerCase().includes('/crux-status') ||
+      content.toLowerCase().includes('crux-status');
     expect(mentions).toBe(true);
   });
 
   it('references the scripts/render-graph.sh surface', () => {
     const content = readIfExists(AUDIT_SITE_README) ?? '';
     const mentions =
-      content.toLowerCase().includes('render-graph.sh') || content.toLowerCase().includes('render-graph');
+      content.toLowerCase().includes('render-graph.sh') ||
+      content.toLowerCase().includes('render-graph');
     expect(mentions).toBe(true);
   });
 });
@@ -179,9 +183,7 @@ describe('packages/audit-site contains no Astro/Storybook/Chromatic config files
     // Scan direct children of audit-site dir for .astro files
     let astroFiles: string[] = [];
     if (fs.existsSync(AUDIT_SITE_DIR)) {
-      astroFiles = fs
-        .readdirSync(AUDIT_SITE_DIR)
-        .filter((name) => name.endsWith('.astro'));
+      astroFiles = fs.readdirSync(AUDIT_SITE_DIR).filter((name) => name.endsWith('.astro'));
     }
     expect(astroFiles).toHaveLength(0);
   });

@@ -1,0 +1,55 @@
+task: TASK-CRUX-008
+test_layers:
+  unit:
+    - covers: session_start returns a branded SessionId and records the session
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+    - covers: session_start called twice produces two distinct session IDs
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+    - covers: session_end resolves for a known session
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+    - covers: session_end throws UnknownSessionError for an unrecognised session ID
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+    - covers: capabilities_supported returns a CapabilityMap containing the required capability IDs
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+    - covers: spawn_subagent writes a request file at the expected path and returns a SubagentHandle
+      file: packages/adapter-claude-code/test/subagents.test.ts
+    - covers: spawn_subagent request file does not contain any other subagent prompt (isolation contract per ADR-CRUX-004)
+      file: packages/adapter-claude-code/test/subagents.test.ts
+    - covers: await_subagent resolves with result when response file is present
+      file: packages/adapter-claude-code/test/subagents.test.ts
+    - covers: await_subagent throws SubagentTimeoutError when response file is absent after timeoutMs
+      file: packages/adapter-claude-code/test/subagents.test.ts
+    - covers: install_skill copies SKILL.md to the expected path and returns SkillId + path
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: install_skill throws when SKILL.md source is missing
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: install_skill throws when skill name is already present
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: uninstall_skill removes the skill directory and resolves
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: uninstall_skill is idempotent when skill is absent
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: list_skills returns descriptors for every sub-dir containing SKILL.md
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: list_skills returns empty array when no skills are installed
+      file: packages/adapter-claude-code/test/skills.test.ts
+    - covers: install_hook appends HookSpec to settings.json under the correct event key
+      file: packages/adapter-claude-code/test/hooks.test.ts
+    - covers: install_hook creates settings.json when it does not exist
+      file: packages/adapter-claude-code/test/hooks.test.ts
+    - covers: install_hook throws HookCollisionError on exact duplicate (event, matcher, command)
+      file: packages/adapter-claude-code/test/hooks.test.ts
+    - covers: list_hooks returns every installed HookSpec in a flat array
+      file: packages/adapter-claude-code/test/hooks.test.ts
+    - covers: list_hooks returns empty array when no hooks are installed
+      file: packages/adapter-claude-code/test/hooks.test.ts
+    - covers: adapter exports conform to the 10-function subset of ADAPTER_INTERFACE_MANIFEST (Lifecycle + Subagents + Skills + Hooks)
+      file: packages/adapter-claude-code/test/lifecycle.test.ts
+  integration: []
+  e2e: []
+coverage_target: 80
+out_of_scope:
+  - run_command, read_file, write_file, run_shell, emit_event, resolve_capability, invoke_skill (covered by TASK-CRUX-009)
+  - cross-platform path normalisation (tracked separately)
+  - performance benchmarks
+  - live Claude Code SDK invocations (adapter is a file-side shim at v1.0)
